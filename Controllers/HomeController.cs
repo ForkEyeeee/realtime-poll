@@ -22,14 +22,21 @@ namespace realTimePolls.Controllers
         public IActionResult Index()
         {
             var polls = _context.Polls.ToList();
+
             //foreach (Poll poll in polls)
             //{
             //   var ages = people.Select(person => person.Age).ToArray();
             //}
-            var pollNames = polls.ConvertAll<string>(poll => poll.Name);
 
+            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+            //var pollOptions = polls.ConvertAll<string>(poll => poll.FirstOption)
             // Pass the polls to the view
-            return View(pollNames);
+            var viewModel = new PollsViewModel
+            {
+                Polls = polls,
+                PollTitles = pollTitles
+            };
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

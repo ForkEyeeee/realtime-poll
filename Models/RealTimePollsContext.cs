@@ -13,7 +13,7 @@ namespace realTimePolls.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Poll>().ToTable("poll"); // Maps the Poll entity to the "poll" table
-            modelBuilder.Entity<User>().ToTable("user"); // Maps the User entity to the "poll" table
+            modelBuilder.Entity<User>().ToTable("user"); // Maps the User entity to the "user" table
 
         }
     }

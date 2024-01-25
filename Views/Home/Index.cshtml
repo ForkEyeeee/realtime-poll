@@ -1,6 +1,4 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model realTimePolls.Models.PollsViewModel
 
 <div class="text-center">
     <div>
@@ -16,7 +14,7 @@
             to do this, when the view loads, a GET request has to be made. we can do this in the Index
         *@
         <select name="polls" id="polls">
-            @foreach (var poll in Model)
+            @foreach (var poll in Model.PollTitles)
             {
                 <option value="@poll">@poll</option>
             }
