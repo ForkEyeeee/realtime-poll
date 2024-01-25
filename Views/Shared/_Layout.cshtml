@@ -26,6 +26,17 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    @if (Context.User.Identity.IsAuthenticated)
+                    {
+                        <br />
+                        <h3>Welcome @User.Identity.Name</h3>
+                        <br />
+                        <a asp-controller="Login" asp-action="Logout">Logout</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Login" asp-action="Login">Sign-In</a>
+                    }
                 </div>
             </div>
         </nav>
@@ -36,11 +47,11 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    @* <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - realTimePolls - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
+    </footer> *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

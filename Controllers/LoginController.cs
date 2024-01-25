@@ -112,7 +112,7 @@ namespace realTimePolls.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            return View("../Login/index");
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
     }

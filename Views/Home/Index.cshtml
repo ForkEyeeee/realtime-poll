@@ -3,28 +3,25 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <a asp-controller="Login" asp-action="Login">Sign-In</a>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <div>
         <h2>Polls:</h2>
     </div>
     <br />
-    @if (Context.User.Identity.IsAuthenticated)
+@*     @if (Context.User.Identity.IsAuthenticated)
     {
     <br />
     <h3>Welcome @User.Identity.Name</h3>
     <br />
-   /* <ul>
-        @foreach (var poll in Model)
-            {
-        <li>@poll.Name</li>
-            }
-    </ul> */
     <a asp-controller="Login" asp-action="Logout">Logout</a>
-    }
-
+    } *@
 </div>
 <script>
     console.log(@Html.Raw(Json.Serialize(Model)));
 </script>
+ 
+@* <ul>
+    @foreach (var poll in Model)
+    {
+        <li>@poll.Name</li>
+    }
+</ul>  *@
