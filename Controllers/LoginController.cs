@@ -97,10 +97,13 @@ namespace realTimePolls.Controllers
                     Debug.WriteLine("Google id === null");
                     return View();
                 }
-                return RedirectToAction("Index", "Home", newUser);
+                _context.SaveChanges();
 
-/*                return View("../Login/index", newUser);
-*/
+                //return RedirectToAction("Index", "Home", newUser);
+                return RedirectToAction("Index", "Home", new { area = "" });
+
+                //return View("../Login/index", newUser);
+
             }
             Debug.WriteLine("No claims found after logging in");
             return View("../Home/index");
