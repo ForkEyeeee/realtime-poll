@@ -8,13 +8,21 @@
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <div>
         <h2>Polls:</h2>
-        <ul>
-            @foreach (var poll in Model)
-            {
-                <li>@poll.Name</li>
-            }
-        </ul>
     </div>
+    <br />
+    @if (Context.User.Identity.IsAuthenticated)
+    {
+    <br />
+    <h3>Welcome @User.Identity.Name</h3>
+    <br />
+   /* <ul>
+        @foreach (var poll in Model)
+            {
+        <li>@poll.Name</li>
+            }
+    </ul> */
+    <a asp-controller="Login" asp-action="Logout">Logout</a>
+    }
 
 </div>
 <script>

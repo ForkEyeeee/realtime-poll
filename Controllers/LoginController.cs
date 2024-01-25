@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Diagnostics;
 using realTimePolls.Models;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace realTimePolls.Controllers
 {
@@ -87,7 +88,8 @@ namespace realTimePolls.Controllers
                             Name = existingUser.UserName,
                             Email = existingUser.UserEmail
                         };
-                        return View("../Login/index", viewModel);
+                        return RedirectToAction("Index", "Home", new { area = "" });
+                       // return View("../Login/index", viewModel);
                     }
                 }
                 else
@@ -95,13 +97,21 @@ namespace realTimePolls.Controllers
                     Debug.WriteLine("Google id === null");
                     return View();
                 }
-                return View("../Login/index", newUser);
+                return RedirectToAction("Index", "Home", newUser);
 
+/*                return View("../Login/index", newUser);
+*/
             }
             Debug.WriteLine("No claims found after logging in");
             return View("../Home/index");
 
         }
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return View("../Login/index");
+        }
+
     }
 }
   
