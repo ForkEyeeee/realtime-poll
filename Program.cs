@@ -1,8 +1,21 @@
 using Microsoft.EntityFrameworkCore;
-using realTimePolls.Models; // this is the namespace where RealTimePollsContext is located
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using realTimePolls.Models; 
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(options =>
+{
+options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+    options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+});
 
 // This adds services to the container
 builder.Services.AddControllersWithViews();
