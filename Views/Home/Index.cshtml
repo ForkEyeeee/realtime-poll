@@ -7,13 +7,18 @@
         <h2>Polls:</h2>
     </div>
     <br />
-@*     @if (Context.User.Identity.IsAuthenticated)
-    {
-    <br />
-    <h3>Welcome @User.Identity.Name</h3>
-    <br />
-    <a asp-controller="Login" asp-action="Logout">Logout</a>
-    } *@
+    <form>
+        <label for="cars">Choose a poll:</label>
+        @*Onchange, a GET request will be made, to retrieve the poll name being passed.
+            The PollController will then return the necessary data to display the poll data to this view
+        *@
+        <select name="cars" id="cars">
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="mercedes">Mercedes</option>
+            <option value="audi">Audi</option>
+        </select>
+    </form>
 </div>
 <script>
     console.log(@Html.Raw(Json.Serialize(Model)));
