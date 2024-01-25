@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using realTimePolls.Models;
 using System.Diagnostics;
+using System.Linq;
 
 namespace realTimePolls.Controllers
 {
@@ -21,8 +22,14 @@ namespace realTimePolls.Controllers
         public IActionResult Index()
         {
             var polls = _context.Polls.ToList();
+            //foreach (Poll poll in polls)
+            //{
+            //   var ages = people.Select(person => person.Age).ToArray();
+            //}
+            var pollNames = polls.ConvertAll<string>(poll => poll.Name);
+
             // Pass the polls to the view
-            return View(polls);
+            return View(pollNames);
         }
 
         public IActionResult Privacy()

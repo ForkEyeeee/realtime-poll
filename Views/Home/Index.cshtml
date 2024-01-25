@@ -11,12 +11,15 @@
         <label for="cars">Choose a poll:</label>
         @*Onchange, a GET request will be made, to retrieve the poll name being passed.
             The PollController will then return the necessary data to display the poll data to this view
+
+            The option values should also be dynamically generated based on how many rows are in the database
+            to do this, when the view loads, a GET request has to be made. we can do this in the Index
         *@
-        <select name="cars" id="cars">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
+        <select name="polls" id="polls">
+            @foreach (var poll in Model)
+            {
+                <option value="@poll">@poll</option>
+            }
         </select>
     </form>
 </div>
