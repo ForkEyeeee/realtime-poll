@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using realTimePolls.Models;
+using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 
 namespace realTimePolls.Controllers
 {
@@ -29,14 +31,45 @@ namespace realTimePolls.Controllers
             //}
 
             var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
-            //var pollOptions = polls.ConvertAll<string>(poll => poll.FirstOption)
+            //var pollOptions = polls.ConvertAll<string>(poll => poll.Name )
             // Pass the polls to the view
+
+
             var viewModel = new PollsViewModel
             {
                 Polls = polls,
                 PollTitles = pollTitles
             };
             return View(viewModel);
+        }
+
+        public IActionResult Poll(string pollName)
+        {
+            //var polls = _context.Polls.Find(pollName);
+            //Poll poll = polls.Where(p => p.PollName == pollName).FirstOrDefault();
+            //Poll poll = polls.
+            //    (c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+
+            var polls = _context.Polls.ToList();
+
+            var poll = polls.FirstOrDefault(u => u.Title == pollName);
+            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+
+            if (poll != null)
+            {
+                //Poll viewModel = poll;
+                PollsViewModel viewModel = new PollsViewModel
+                {
+                    Polls = polls,
+                    PollTitles = pollTitles
+
+                };
+                return View("index", viewModel);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
         }
 
         public IActionResult Privacy()
