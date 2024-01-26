@@ -61,9 +61,13 @@ namespace realTimePolls.Controllers
                 PollsViewModel viewModel = new PollsViewModel
                 {
                     Polls = polls,
-                    PollTitles = pollTitles
+                    PollTitles = pollTitles,
+                    FirstOption = poll.FirstOption,
+                    SecondOption = poll.SecondOption
 
                 };
+                //return PartialView("index");
+
                 return View("index", viewModel);
             }
             else

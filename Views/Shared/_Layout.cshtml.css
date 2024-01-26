@@ -1,7 +1,113 @@
 ﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
+
+/*@media screen and (min-width: 320px) {
+   .navbar {
+       width: 20%
+   }
+}*/
+
+.navbar {
+/*    width: 1440px;*/
+    height: 84px;
+    background-color: #0E0E0E;
+    padding-left: 10px;
+    padding-right: 10px
+}
+
+#sign-in {
+    color: rgb(35, 148, 253);
+    text-decoration-color: initial;
+    font-family: 'Inter';
+    text-decoration: 0;
+    /* font-weight: 900 !important; */
+    color: white;
+    border-style: solid;
+    padding: 7px;
+    border-radius: 10px;
+}
+
+div#sign-in > * {
+    color: initial;
+    text-decoration: initial;
+}
+
+.star-icon {
+    filter: brightness(0) saturate(100%) invert(64%) sepia(54%) saturate(6274%) hue-rotate(181deg) brightness(100%) contrast(98%);
+}
+
+.logo {
+    color: var(--White, #FFF);
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    text-transform: capitalize;
+    margin-bottom: 0;
+    text-decoration: initial
+}
+
+.icon-flex {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-container {
+    display: flex;
+    width: 336px;
+    padding: 12px 56px 12px 40px;
+    align-items: center;
+    gap: 12px;
+    background-color: #373737;
+}
+
+.search-box {
+    display: flex;
+    width: 336px;
+    padding: 12px 56px 12px 40px;
+    align-items: center;
+    gap: 12px;
+    background-color: #373737;
+
+}
+
+.nav-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.home {
+    color: var(--White, #FFF);
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: capitalize;
+}
+
+
+
+
+.products-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropdown-icon {
+    width: 12px;
+    height: 12px;
+}
+
+
+/*a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
@@ -45,4 +151,4 @@ button.accept-policy {
   width: 100%;
   white-space: nowrap;
   line-height: 60px;
-}
+}*/

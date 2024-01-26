@@ -1,40 +1,47 @@
 ﻿@model realTimePolls.Models.PollsViewModel
 
-<div class="text-center">
+<div class="text-center" >
+
     <div>
         <h2>Polls:</h2>
     </div>
     <br />
 
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
-        <label for="cars">Choose a poll:</label>
-        @*Onchange, a GET request will be made, to retrieve the poll name being passed.
+        <div >
+            <label for="cars">Choose a poll:</label>
+            @*Onchange, a GET request will be made, to retrieve the poll name being passed.
             The PollController will then return the necessary data to display the poll data to this view
 
             The option values should also be dynamically generated based on how many rows are in the database
             to do this, when the view loads, a GET request has to be made. we can do this in the Index
-        *@
-        <select name="pollName" id="polls" >
-            @foreach (var poll in Model.PollTitles)
-            {
-                <option value="@poll">@poll</option>
-            }
-        </select>
-        <button type="submit">Submit</button>
+            *@
+            <select name="pollName" id="polls">
+                @foreach (var poll in Model.PollTitles)
+                {
+                    <option value="@poll">@poll</option>
+                }
+            </select>
+            <button type="submit">Submit</button>
+            <div>@Model.FirstOption</div>
+            <div>@Model.SecondOption</div>
+
+       </div> 
     </form>
   
 </div>
 <script>
-    const dropdown = document.getElementById("polls");
-
-    dropdown.addEventListener("change", function () {
-
-        document.getElementById("form").submit();
-    });
-    console.log(Model)
-    console.log(@Html.Raw(Json.Serialize(Model)));
+    // const dropdown = document.getElementById("polls");
+    // const form = document.getElementById("form")
+    // form.addEventListener(onsubmit, (e) => {
+    //     e.preventDefault()
+    // })
+    // dropdown.addEventListener("change", function () {
+    //     form.submit()
+    // });
+    console.log(@Html.Raw(Json.Serialize(Model)))
 </script>
- 
+
 @* <ul>
     @foreach (var poll in Model)
     {
