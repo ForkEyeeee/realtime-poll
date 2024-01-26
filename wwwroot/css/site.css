@@ -1,23 +1,71 @@
-/*html {
-  font-size: 14px;
+.navbar {
+    height: 84px;
+    background-color: #0E0E0E;
+    padding-left: 10px;
+    padding-right: 10px
 }
 
 
-@media (min-width: 768px) {
-  html {
+
+.sign-in-link {
+    color: white;
+    text-decoration: none color: rgb(35, 148, 253);
+    text-decoration-color: initial;
+    font-family: 'Inter';
+    text-decoration: 0;
+    color: white;
+    border-style: solid;
+    padding: 7px;
+    border-radius: 10px;
+}
+
+.star-icon {
+    filter: brightness(0) saturate(100%) invert(64%) sepia(54%) saturate(6274%) hue-rotate(181deg) brightness(100%) contrast(98%);
+}
+
+
+
+.welcome {
+    font-size: 12px;
+    color: white;
+    padding-top: 10px;
+    margin-bottom: 10px !important
+}
+
+
+.logo {
+    color: var(--White, #FFF);
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    text-transform: capitalize;
+    margin-bottom: 0;
+    text-decoration: initial
+}
+
+.icon-flex {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+
+
+.nav-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.home {
+    color: var(--White, #FFF);
+    font-family: Inter;
     font-size: 16px;
-  }
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: capitalize;
 }
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}*/

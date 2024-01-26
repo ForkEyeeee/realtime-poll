@@ -1,11 +1,12 @@
 ﻿@model realTimePolls.Models.PollsViewModel
 
 <div class="text-center" >
-
     <div>
-        <h2>Polls:</h2>
+        @if (Context.User.Identity.IsAuthenticated)
+        {
+            <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>            
+        }
     </div>
-    <br />
 
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
         <div >
