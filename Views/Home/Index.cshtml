@@ -1,15 +1,52 @@
 ﻿@model realTimePolls.Models.PollsViewModel
 
-<div class="text-center" >
+<div class="text-center">
+    <button id="myBtn">Create Poll</button>
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Create Poll</h2>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("CreatePoll", "Poll", FormMethod.Post))
+                {   <div>
+                        <label for="title">Poll Title</label>
+                        <input id="title" name="title" type="text" value="" />
+
+                    </div>
+                    <div>
+                        <label for="first-option">First Option</label>
+                        <input id="first-option" name="first-option" type="text" value="" />
+                    </div>
+                    <div>
+                        <label for="second-option">Second Option</label>
+                        <input id="second-option" name="second-option" type="text" value="" />
+                    </div>
+                    <div>
+                        <input type="submit" value="Create Poll" class="btn btn-primary" />
+                    </div>
+                }
+
+
+            </div>
+            <div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div>
+        </div>
+
+    </div>
+
     <div>
         @if (Context.User.Identity.IsAuthenticated)
         {
-            <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>            
+            <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>
         }
     </div>
 
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
-        <div >
+        <div>
             <label for="cars">Choose a poll:</label>
             @*Onchange, a GET request will be made, to retrieve the poll name being passed.
             The PollController will then return the necessary data to display the poll data to this view
@@ -27,20 +64,31 @@
             <div>@Model.FirstOption</div>
             <div>@Model.SecondOption</div>
 
-       </div> 
+        </div>
     </form>
-  
+
 </div>
 <script>
-    // const dropdown = document.getElementById("polls");
-    // const form = document.getElementById("form")
-    // form.addEventListener(onsubmit, (e) => {
-    //     e.preventDefault()
-    // })
-    // dropdown.addEventListener("change", function () {
-    //     form.submit()
-    // });
     console.log(@Html.Raw(Json.Serialize(Model)))
+    var modal = document.getElementById("myModal");
+
+    var btn = document.getElementById("myBtn");
+
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 </script>
 
 @* <ul>
