@@ -1,14 +1,37 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using realTimePolls.Models;
 
 namespace realTimePolls.Controllers
 {
     public class PollController : Controller
     {
-        // GET: PollController
-        public ActionResult Index()
+
+        private readonly ILogger<PollController> _logger;
+
+        private readonly RealTimePollsContext _context; // Declare the DbContext variable
+
+        public PollController(ILogger<PollController> logger, RealTimePollsContext context)
         {
-            return View();
+            _logger = logger;
+            _context = context;
+        }
+
+
+        // GET: PollController
+        public ActionResult Index(string data)
+        {
+            var polls = _context.Polls.ToList();
+            var poll = polls.FirstOrDefault(u => u.Title == data);
+            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+            
+            var viewModel = new PollsViewModel
+            {
+                Poll = poll,
+                PollTitles = pollTitles
+            };
+            return View(viewModel);
         }
 
         // GET: PollController/Details/5

@@ -44,6 +44,14 @@
             <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>
         }
     </div>
+    <ol>
+        @foreach (var poll in Model.Polls)
+        {
+            @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title }, null)
+            <li>@poll.FirstOption</li>    
+            <li>@poll.SecondOption</li>
+        }
+    </ol>
 
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
         <div>
@@ -70,6 +78,8 @@
 </div>
 <script>
     console.log(@Html.Raw(Json.Serialize(Model)))
+    console.log(@Html.Raw(Json.Serialize(Model.Polls)))
+
     var modal = document.getElementById("myModal");
 
     var btn = document.getElementById("myBtn");
