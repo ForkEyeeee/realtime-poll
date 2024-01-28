@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using realTimePolls.Models;
+using System.Diagnostics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace realTimePolls.Controllers
 {
@@ -40,67 +42,37 @@ namespace realTimePolls.Controllers
             return View();
         }
 
-        // GET: PollController/Create
-        public ActionResult Create()
+       public ActionResult Vote (string vote, string hidden)
         {
+            Debug.WriteLine(vote);
+            var pollId = Int32.Parse(hidden);
+            var polls = _context.Polls.ToList();
+            var poll = polls.FirstOrDefault(u => u.Id == pollId);
+            if(vote == "Vote First")
+            {
+                if (poll.FirstVotes == null)
+                {
+                    poll.FirstVotes = 1;
+                }
+                else
+                {
+                    poll.FirstVotes += 1;
+                }
+            }
+            else
+            {
+                if (poll.SecondVotes == null)
+                {
+                    poll.SecondVotes = 1;
+                }
+                else
+                {
+                    poll.SecondVotes += 1;
+                }
+            }
+            _context.SaveChanges();
+
             return View();
-        }
-
-        // POST: PollController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PollController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PollController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PollController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: PollController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }

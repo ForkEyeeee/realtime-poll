@@ -1,11 +1,36 @@
 ﻿@model realTimePolls.Models.PollsViewModel
 
-<ol> 
+@* @if (Model != null) 
+{
+   <ol> 
     <li>@Model.Poll.Title</li>
     <li>@Model.Poll.FirstOption</li>
     <li>@Model.Poll.SecondOption</li>
     <li>FirstVotes: @Model.Poll.FirstVotes</li>
     <li>SecondVotes: @Model.Poll.SecondVotes</li>
-</ol>
-<button>Vote First</button>
-<button>Vote Second</button>
+   </ol>
+} *@
+<form asp-controller="Poll" asp-action="Vote" method="post" id="form">
+    <div class="vote-flex">
+        <label for="VoteFirst">Vote First Option</label><br>
+        <input type="radio" id="vote-first" name="vote" value="Vote First">
+        <br/>
+        <label for="VoteSecond">Vote Second Option</label><br>
+        <input type="radio" id="vote-second" name="vote" value="Vote Second">
+        <br />
+
+        <input type="hidden" name="hidden" value="@Model.Poll.Id" />
+        <button type="submit"> Submit Vote</button>
+    </div>
+</form>
+<script>
+    function getFormValue(e) {
+        e.preventDefault();
+        const voteFirst = document.getElementById("vote-first").value;
+        const voteSecond = document.getElementById("vote-second").value;
+        const hiddenInput = document.getElementById("hidden-input").value
+        console.log(voteFirst)
+        console.log(voteSecond);
+        console.log(hiddenInput)
+    }
+</script>

@@ -198,3 +198,7 @@ table {
     }
 }
 
+.vote-flex {
+    display: flex;
+    flex-direction: column
+}
