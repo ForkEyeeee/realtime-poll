@@ -1,6 +1,4 @@
-# Real-time Poll
-
-## Overview
+# Real-time Poll App
 
 Real-time poll application built with ASP.NET MVC & SQL Server, featuring user-created polls, account management, and data display.
 
