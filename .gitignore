@@ -11,6 +11,7 @@
 *.userosscache
 *.sln.docstates
 appsettings.json
+wwwroot/js/signalr
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
