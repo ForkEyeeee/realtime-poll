@@ -1,15 +1,16 @@
 using Microsoft.EntityFrameworkCore;
-using realTimePolls.Models; 
+using realTimePolls.Models;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
+using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(options =>
 {
-options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
 .AddCookie()
 .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
@@ -25,6 +26,7 @@ builder.Services.AddDbContext<RealTimePollsContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
+builder.Services.AddSignalR();
 
 
 var app = builder.Build();
@@ -47,5 +49,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
