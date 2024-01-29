@@ -33,8 +33,7 @@ namespace realTimePolls.Controllers
             //var pollOptions = polls.ConvertAll<string>(poll => poll.Name )
             // Pass the polls to the view
 
-
-            var viewModel = new PollsViewModel { Polls = polls, PollTitles = pollTitles };
+            var viewModel = new PollsViewModel { Polls = polls, PollTitles = pollTitles, };
             return View(viewModel);
         }
 
@@ -58,7 +57,7 @@ namespace realTimePolls.Controllers
                     Polls = polls,
                     PollTitles = pollTitles,
                     FirstOption = poll.FirstOption,
-                    SecondOption = poll.SecondOption
+                    SecondOption = poll.SecondOption,
                 };
                 //return PartialView("index");
 
