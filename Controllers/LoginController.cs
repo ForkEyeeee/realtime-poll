@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Diagnostics;
-using realTimePolls.Models;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Mvc;
+using realTimePolls.Models;
 
 namespace realTimePolls.Controllers
 {
@@ -26,26 +26,29 @@ namespace realTimePolls.Controllers
             return View();
         }
 
-
         public async Task Login() //redirects user to google login page
         {
-            await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme,
-                new AuthenticationProperties
-                {
-                    RedirectUri = Url.Action("GoogleResponse")
-                });
+            await HttpContext.ChallengeAsync(
+                GoogleDefaults.AuthenticationScheme,
+                new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponse") }
+            );
         }
 
         public async Task<IActionResult> GoogleResponse() //authentication
         {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var claims = result.Principal.Identities.FirstOrDefault()?.Claims.Select(claim => new
-            {
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            }).ToList();
+            var result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+            var claims = result
+                .Principal.Identities.FirstOrDefault()
+                ?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                })
+                .ToList();
 
             User newUser = null;
             string userName = null;
@@ -53,17 +56,31 @@ namespace realTimePolls.Controllers
 
             if (claims.Count != 0)
             {
-                var googleIdClaim = claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+                var googleIdClaim = claims.FirstOrDefault(c =>
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                );
 
                 if (googleIdClaim != null)
                 {
                     var googleId = googleIdClaim.Value;
-                    var userWithGoogleId = _context.User.SingleOrDefault(user => user.GoogleId == googleId);
+                    var userWithGoogleId = _context.User.SingleOrDefault(user =>
+                        user.GoogleId == googleId
+                    );
 
                     if (userWithGoogleId == null)
                     {
-                        userName = claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
-                        userEmail = claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+                        userName = claims
+                            .FirstOrDefault(c =>
+                                c.Type
+                                == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+                            )
+                            ?.Value;
+                        userEmail = claims
+                            .FirstOrDefault(c =>
+                                c.Type
+                                == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+                            )
+                            ?.Value;
 
                         newUser = new User
                         {
@@ -75,10 +92,9 @@ namespace realTimePolls.Controllers
                     }
                     else
                     {
-                        
                         var existingUser = new
                         {
-                            UserName = userWithGoogleId.Name,  
+                            UserName = userWithGoogleId.Name,
                             UserEmail = userWithGoogleId.Email
                         };
                         _context.SaveChanges();
@@ -89,7 +105,7 @@ namespace realTimePolls.Controllers
                             Email = existingUser.UserEmail
                         };
                         return RedirectToAction("Index", "Home", new { area = "" });
-                       // return View("../Login/index", viewModel);
+                        // return View("../Login/index", viewModel);
                     }
                 }
                 else
@@ -103,19 +119,15 @@ namespace realTimePolls.Controllers
                 return RedirectToAction("Index", "Home", new { area = "" });
 
                 //return View("../Login/index", newUser);
-
             }
             Debug.WriteLine("No claims found after logging in");
             return View("../Home/index");
-
         }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home", new { area = "" });
         }
-
     }
 }
-  
-

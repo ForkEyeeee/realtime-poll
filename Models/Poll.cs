@@ -6,10 +6,9 @@
         public int UserId { get; set; } //User fk
         public string Title { get; set; }
 
-        public string FirstOption { get; set; } 
-        public string SecondOption { get; set; } 
+        public string FirstOption { get; set; }
+        public string SecondOption { get; set; }
         public int? FirstVotes { get; set; }
         public int? SecondVotes { get; set; }
-
     }
 }

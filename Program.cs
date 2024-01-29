@@ -1,23 +1,29 @@
-using Microsoft.EntityFrameworkCore;
-using realTimePolls.Models;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using realTimePolls.Models;
 using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-{
-    options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
-    options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
-});
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddGoogle(
+        GoogleDefaults.AuthenticationScheme,
+        options =>
+        {
+            options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+            options.ClientSecret = builder
+                .Configuration.GetSection("GoogleKeys:ClientSecret")
+                .Value;
+        }
+    );
 
 // This adds services to the container
 builder.Services.AddControllersWithViews();
@@ -27,7 +33,6 @@ builder.Services.AddDbContext<RealTimePollsContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 builder.Services.AddSignalR();
-
 
 var app = builder.Build();
 
@@ -46,9 +51,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

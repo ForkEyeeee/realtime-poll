@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using realTimePolls.Models;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using realTimePolls.Models;
 
 namespace realTimePolls.Controllers
 {
@@ -20,7 +20,6 @@ namespace realTimePolls.Controllers
             _context = context; // Initialize the _context variable. This is my DbContext instance.
         }
 
-
         public IActionResult Index()
         {
             var polls = _context.Polls.ToList();
@@ -35,11 +34,7 @@ namespace realTimePolls.Controllers
             // Pass the polls to the view
 
 
-            var viewModel = new PollsViewModel
-            {
-                Polls = polls,
-                PollTitles = pollTitles
-            };
+            var viewModel = new PollsViewModel { Polls = polls, PollTitles = pollTitles };
             return View(viewModel);
         }
 
@@ -64,7 +59,6 @@ namespace realTimePolls.Controllers
                     PollTitles = pollTitles,
                     FirstOption = poll.FirstOption,
                     SecondOption = poll.SecondOption
-
                 };
                 //return PartialView("index");
 
@@ -76,12 +70,15 @@ namespace realTimePolls.Controllers
             }
         }
 
-
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(
+                new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                }
+            );
         }
     }
 }
