@@ -20,13 +20,25 @@ namespace realTimePolls.Controllers
         }
 
         // GET: PollController
-        public ActionResult Index(string data)
+        public ActionResult Index(string data, string pollid)
         {
+            var pollId = Int32.Parse(pollid);
+
             var polls = _context.Polls.ToList();
+
             var poll = polls.FirstOrDefault(u => u.Title == data);
             var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+            var userPolls = _context.UserPoll.ToList();
+            var userPoll = userPolls.FirstOrDefault(userPoll =>
+                userPoll.Poll == pollId && userPoll.UserId == pollId
+            );
 
-            var viewModel = new PollsViewModel { Poll = poll, PollTitles = pollTitles };
+            var viewModel = new PollsViewModel
+            {
+                Poll = poll,
+                PollTitles = pollTitles,
+                UserPoll = userPoll
+            };
             return View(viewModel);
         }
 
@@ -51,18 +63,13 @@ namespace realTimePolls.Controllers
                 userPoll.Poll == pollId && userPoll.UserId == pollId
             ); // get the current userPoll
 
-            if (vote == "Vote First" && poll.FirstVotes <= 0)
+            if (userPoll != null)
             {
-                poll.FirstVotes += 1;
+                return View("../Home/Index");
             }
-            else if (vote == "Vote Second" && poll.SecondVotes <= 0)
-            {
-                poll.FirstVotes -= 1;
-            }
-            else
-            {
-                Debug.WriteLine("Cannot update");
-            }
+
+            var UserPoll = new UserPoll { UserId = userId, Poll = poll.Id };
+            _context.UserPoll.Add(UserPoll);
             _context.SaveChanges();
 
             //var existingPollId = userPoll.Poll;

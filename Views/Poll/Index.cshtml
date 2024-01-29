@@ -1,5 +1,4 @@
 ﻿@model realTimePolls.Models.PollsViewModel
-
 @* @if (Model != null) 
 {
    <ol> 
@@ -9,14 +8,18 @@
     <li>FirstVotes: @Model.Poll.FirstVotes</li>
     <li>SecondVotes: @Model.Poll.SecondVotes</li>
    </ol>
-} *@
+} 
+If userPoll Id is null. if so, then have nothing checked
+//dont have an int for first and second votes, just have a map table and use COUNT
+elif the 
+*@
 <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
     <div class="vote-flex">
         <label for="VoteFirst">Vote First Option</label><br>
-        <input type="radio" id="vote-first" name="vote" value="Vote First">
+        <input type="radio" id="vote-first" name="vote" value="Vote First" checked=true>
         <br/>
         <label for="VoteSecond">Vote Second Option</label><br>
-        <input type="radio" id="vote-second" name="vote" value="Vote Second">
+        <input type="radio" id="vote-second" name="vote" value="Vote Second" >
         <br />
 
         <input type="hidden" name="pollid" value="@Model.Poll.Id" />
@@ -26,6 +29,9 @@
     </div>
 </form>
 <script>
+    console.log(@Html.Raw(Json.Serialize(Model)))
+    console.log(test)
+
     function getFormValue(e) {
         e.preventDefault();
         const voteFirst = document.getElementById("vote-first").value;

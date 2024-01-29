@@ -47,7 +47,7 @@
     <ol>
         @foreach (var poll in Model.Polls)
         {
-            @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title }, null)
+            @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id }, null)
             <li>@poll.FirstOption</li>    
             <li>@poll.SecondOption</li>
         }
