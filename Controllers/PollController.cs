@@ -62,10 +62,18 @@ namespace realTimePolls.Controllers
             var userPoll = userPolls.FirstOrDefault(userPoll =>
                 userPoll.Poll == pollId && userPoll.UserId == pollId
             ); // get the current userPoll
+            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
 
+            PollsViewModel viewModel = new PollsViewModel
+            {
+                Polls = polls,
+                PollTitles = pollTitles,
+                FirstOption = poll.FirstOption,
+                SecondOption = poll.SecondOption,
+            };
             if (userPoll != null)
             {
-                return View("../Home/Index");
+                return View("../Home/Index", viewModel);
             }
 
             var UserPoll = new UserPoll { UserId = userId, Poll = poll.Id };
@@ -100,13 +108,13 @@ namespace realTimePolls.Controllers
             //_context.SaveChanges();
 
 
-
             //var userPoll =
             // when the user votes, check if there is a record in UserPolls that has
             // combination of the current userId and pollid.
             // ^ if so, then reject the vote. if not, then allow it
             //when a user votes, add the poll id to the users poll column. like an array
-            return View();
+
+            return View("../Home/Index", viewModel);
         }
     }
 }
