@@ -64,6 +64,7 @@ namespace realTimePolls.Controllers
             ); // get the current userPoll
             var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
 
+<<<<<<< HEAD
             PollsViewModel viewModel = new PollsViewModel
             {
                 Polls = polls,
@@ -74,6 +75,11 @@ namespace realTimePolls.Controllers
             if (userPoll != null)
             {
                 return View("../Home/Index", viewModel);
+=======
+            if (userPoll != null)
+            {
+                return View("../Home/Index");
+>>>>>>> 8d10f1ab398bd2535bad777930e8e22e6a320e76
             }
 
             var UserPoll = new UserPoll { UserId = userId, Poll = poll.Id };
