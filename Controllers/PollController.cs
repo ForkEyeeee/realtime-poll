@@ -42,10 +42,13 @@ namespace realTimePolls.Controllers
             return View(viewModel);
         }
 
-        // GET: PollController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Create(IFormCollection collection)
         {
-            return View();
+            var formValues = collection.ToList();
+            var title = formValues[0].Value;
+            var firstOption = formValues[1].Value;
+            var secondOption = formValues[2].Value;
+            return View("../Home/index");
         }
 
         public ActionResult Vote(string vote, string pollid, string userid)

@@ -10,19 +10,19 @@
                 <h2>Create Poll</h2>
             </div>
             <div class="modal-body">
-                @using (Html.BeginForm("CreatePoll", "Poll", FormMethod.Post))
+                @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
                 {   <div>
-                        <label for="title">Poll Title</label>
-                        <input id="title" name="title" type="text" value="" />
+                        @Html.LabelFor(model => model.Poll.Title)
 
+                         @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class"})
                     </div>
                     <div>
-                        <label for="first-option">First Option</label>
-                        <input id="first-option" name="first-option" type="text" value="" />
+                        @Html.LabelFor(model => model.Poll.FirstOption)
+                        @Html.TextBoxFor(model => model.Poll.FirstOption, new { @class = "input-class" })
                     </div>
                     <div>
-                        <label for="second-option">Second Option</label>
-                        <input id="second-option" name="second-option" type="text" value="" />
+                        @Html.LabelFor(model => model.Poll.SecondOption)
+                        @Html.TextBoxFor(model => model.Poll.SecondOption, new { @class = "input-class" })
                     </div>
                     <div>
                         <input type="submit" value="Create Poll" class="btn btn-primary" />
@@ -45,12 +45,18 @@
         }
     </div>
     <ol>
-        @foreach (var poll in Model.Polls)
+        @if (Model != null)
         {
-            @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
-            <li>@poll.FirstOption</li>    
-            <li>@poll.SecondOption</li>
+         foreach (var poll in Model.Polls)
+            {
+             @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
+             <li>@poll.FirstOption</li>
+             <li>@poll.SecondOption</li>
+            }
         }
+        
+        
+  
     </ol>
 
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
@@ -63,14 +69,19 @@
             to do this, when the view loads, a GET request has to be made. we can do this in the Index
             *@
             <select name="pollName" id="polls">
-                @foreach (var poll in Model.PollTitles)
+                @if(Model != null) 
+                {
+                    @foreach (var poll in Model.PollTitles)
                 {
                     <option value="@poll">@poll</option>
                 }
+                    <button type="submit">Submit</button>
+                    <div>@Model.FirstOption</div>
+                    <div>@Model.SecondOption</div>
+                }
+
             </select>
-            <button type="submit">Submit</button>
-            <div>@Model.FirstOption</div>
-            <div>@Model.SecondOption</div>
+    
 
         </div>
     </form>
@@ -82,8 +93,7 @@
 
 <script>
 
-    console.log(@Html.Raw(Json.Serialize(Model)))
-    console.log(@Html.Raw(Json.Serialize(Model.Polls)))
+
 
     var modal = document.getElementById("myModal");
 
