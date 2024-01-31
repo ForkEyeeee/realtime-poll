@@ -6,5 +6,7 @@
         public int UserId { get; set; }
 
         public int Poll { get; set; }
+        public bool? FirstVote { get; set; }
+        public bool? SecondVote { get; set; }
     }
 }
