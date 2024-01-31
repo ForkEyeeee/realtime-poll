@@ -6,7 +6,5 @@
         public string? Email { get; set; }
         public string? Name { get; set; }
         public string? GoogleId { get; set; }
-
-        public int? Polls { get; set; }
     }
 }

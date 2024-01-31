@@ -48,7 +48,24 @@ namespace realTimePolls.Controllers
             var title = formValues[0].Value;
             var firstOption = formValues[1].Value;
             var secondOption = formValues[2].Value;
-            return View("../Home/index");
+            var googleId = HttpContext.User.Claims.ToList()[0].Value;
+            var userId = _context
+                .User.FirstOrDefault(u => u.GoogleId == "104644268712316812762")
+                .Id;
+
+            Poll poll = new Poll
+            {
+                UserId = userId,
+                Title = title,
+                FirstOption = firstOption,
+                SecondOption = secondOption
+            };
+
+            _context.Polls.Add(poll);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Home", new { area = "" });
+
+            //return View("../Home/Index");
         }
 
         public ActionResult Vote(string vote, string pollid, string userid)
