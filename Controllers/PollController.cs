@@ -68,6 +68,27 @@ namespace realTimePolls.Controllers
             //return View("../Home/Index");
         }
 
+        public ActionResult Delete(string pollid)
+        {
+            try
+            {
+                var pollId = Int32.Parse(pollid);
+                var poll = _context.Polls.FirstOrDefault(poll => poll.Id == pollId);
+                if (poll == null)
+                {
+                    throw new Exception("Could not find pollId");
+                }
+                _context.Polls.Remove(poll);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e, "Shape processing failed.");
+                throw;
+            }
+        }
+
         public ActionResult Vote(string vote, string pollid, string userid)
         {
             var pollId = Int32.Parse(pollid);
