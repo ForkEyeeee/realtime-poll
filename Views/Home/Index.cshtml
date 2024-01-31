@@ -13,8 +13,7 @@
                 @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
                 {   <div>
                         @Html.LabelFor(model => model.Poll.Title)
-
-                         @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class"})
+                        @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class"})
                     </div>
                     <div>
                         @Html.LabelFor(model => model.Poll.FirstOption)
