@@ -44,7 +44,7 @@ namespace HomeUnitTests
             //Act
             var result = _HomeController.Index();
 
-            //Assert - Object check actions
+            //Assert - check the object
             result.Should().BeOfType<ViewResult>();
         }
     }
