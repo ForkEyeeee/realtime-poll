@@ -1,29 +1,51 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Moq;
+using Microsoft.Extensions.Options;
 using realTimePolls.Controllers;
 using realTimePolls.Models;
 using Xunit;
 
-namespace ControllerUnitTests
+namespace HomeUnitTests
 {
-    public class TestParty
+    public class HomeControllerTests
     {
-        [Fact]
-        public void Test_Entry_GET_ReturnsViewResultNullModel()
+        private HomeController _HomeController;
+        private ILogger<HomeController> _logger;
+        private RealTimePollsContext _context; //declare variables
+
+        public HomeControllerTests() //constructor
         {
-            // Arrange
-            var loggerMock = new Mock<ILogger<HomeController>>();
-            var contextMock = new Mock<RealTimePollsContext>();
+            //Dependencies
+            _logger = A.Fake<ILogger<HomeController>>();
+            var options = new DbContextOptionsBuilder<RealTimePollsContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
 
-            var controller = new HomeController(loggerMock.Object, contextMock.Object);
+            _context = new RealTimePollsContext(options);
 
-            // Act
-            var result = controller.Index();
+            //SUT
+            _HomeController = new HomeController(_logger, _context);
+        }
 
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.Null(viewResult.ViewData.Model);
+        [Fact]
+        public void HomeController_Index_ReturnsSuccess()
+        {
+            //Arrange - What do i need to bring in?
+
+            //Act
+            var result = _HomeController.Index();
+
+            //Assert - Object check actions
+            result.Should().BeOfType<ViewResult>();
         }
     }
 }
