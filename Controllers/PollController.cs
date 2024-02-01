@@ -49,9 +49,7 @@ namespace realTimePolls.Controllers
             var firstOption = formValues[1].Value;
             var secondOption = formValues[2].Value;
             var googleId = HttpContext.User.Claims.ToList()[0].Value;
-            var userId = _context
-                .User.FirstOrDefault(u => u.GoogleId == "104644268712316812762")
-                .Id;
+            var userId = _context.User.FirstOrDefault(u => u.GoogleId == googleId).Id;
 
             Poll poll = new Poll
             {
