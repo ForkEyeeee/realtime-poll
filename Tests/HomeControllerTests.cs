@@ -47,5 +47,28 @@ namespace HomeUnitTests
             //Assert - check the object
             result.Should().BeOfType<ViewResult>();
         }
+
+        [Fact]
+        public void HomeController_Poll_ReturnsSuccess()
+        {
+            //Arrange - What do i need to bring in?
+
+            var poll = new Poll
+            {
+                UserId = 1,
+                Title = "Title",
+                FirstOption = "FirstOption",
+                SecondOption = "SecondOption"
+            };
+
+            //Act
+            _context.Polls.Add(poll);
+            _context.SaveChanges();
+
+            var result = _HomeController.Poll(poll.Title);
+
+            //Assert - check the object
+            result.Should().BeOfType<ViewResult>();
+        }
     }
 }

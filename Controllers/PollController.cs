@@ -44,26 +44,37 @@ namespace realTimePolls.Controllers
 
         public ActionResult Create(IFormCollection collection)
         {
-            var formValues = collection.ToList();
-            var title = formValues[0].Value;
-            var firstOption = formValues[1].Value;
-            var secondOption = formValues[2].Value;
-            var googleId = HttpContext.User.Claims.ToList()[0].Value;
-            var userId = _context.User.FirstOrDefault(u => u.GoogleId == googleId).Id;
-
-            Poll poll = new Poll
+            try
             {
-                UserId = userId,
-                Title = title,
-                FirstOption = firstOption,
-                SecondOption = secondOption
-            };
+                Debug.WriteLine(collection);
 
-            _context.Polls.Add(poll);
-            _context.SaveChanges();
-            return RedirectToAction("Index", "Home", new { area = "" });
+                var formValues = collection.ToList();
+                var title = formValues[0].Value;
+                var firstOption = formValues[1].Value;
+                var secondOption = formValues[2].Value;
 
-            //return View("../Home/Index");
+                var googleId =
+                    HttpContext != null ? HttpContext.User.Claims.ToList()[0].Value : string.Empty;
+                var userId = _context.User.FirstOrDefault(u => u.GoogleId == googleId).Id;
+
+                Poll poll = new Poll
+                {
+                    UserId = userId,
+                    Title = title,
+                    FirstOption = firstOption,
+                    SecondOption = secondOption
+                };
+
+                _context.Polls.Add(poll);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e, "Shape processing failed.");
+                throw;
+            }
         }
 
         public ActionResult Delete(string pollid)
