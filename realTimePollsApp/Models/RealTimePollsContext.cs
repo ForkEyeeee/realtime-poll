@@ -16,7 +16,7 @@ namespace realTimePolls.Models
         {
             modelBuilder.Entity<Poll>().ToTable("poll"); // Maps the Poll entity to the "poll" table
             modelBuilder.Entity<User>().ToTable("user"); // Maps the User entity to the "user" table
-            modelBuilder.Entity<UserPoll>().ToTable("userpoll"); // Maps the User entity to the "user" table
+            modelBuilder.Entity<UserPoll>().ToTable("userpoll"); // Maps the UserPoll entity to the "userpoll" table
         }
     }
 }

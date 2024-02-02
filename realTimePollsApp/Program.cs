@@ -30,7 +30,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RealTimePollsContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    options.UseNpgsql(connectionString);
 });
 builder.Services.AddSignalR();
 

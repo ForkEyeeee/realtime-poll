@@ -30,7 +30,7 @@ namespace realTimePolls.Controllers
             var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
             var userPolls = _context.UserPoll.ToList();
             var userPoll = userPolls.FirstOrDefault(userPoll =>
-                userPoll.Poll == pollId && userPoll.UserId == userId
+                userPoll.PollId == pollId && userPoll.UserId == userId
             );
 
             var viewModel = new PollsViewModel
@@ -110,7 +110,7 @@ namespace realTimePolls.Controllers
             var poll = polls.FirstOrDefault(u => u.Id == pollId); //get the current poll
             var user = users.FirstOrDefault(user => user.Id == userId); //get the current user
             var userPoll = userPolls.FirstOrDefault(userPoll =>
-                userPoll.Poll == pollId && userPoll.UserId == userId
+                userPoll.PollId == pollId && userPoll.UserId == userId
             ); // get the current userPoll
             var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
             // fix return model
@@ -125,7 +125,7 @@ namespace realTimePolls.Controllers
             var UserPoll = new UserPoll
             {
                 UserId = userId,
-                Poll = poll.Id,
+                PollId = poll.Id,
                 FirstVote = vote == "Vote First" ? true : false,
                 SecondVote = vote == "Vote Second" ? true : false
             };
