@@ -29,4 +29,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="realTimePolls.Test" />
+	</ItemGroup>
+
 </Project>

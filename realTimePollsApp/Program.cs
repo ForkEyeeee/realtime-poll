@@ -55,3 +55,5 @@ app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Inde
 app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
+
+public partial class Program { }
