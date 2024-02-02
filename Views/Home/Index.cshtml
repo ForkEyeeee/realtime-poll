@@ -1,0 +1,123 @@
+﻿@model realTimePolls.Models.PollsViewModel
+
+<div class="text-center">
+    <button id="myBtn">Create Poll</button>
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Create Poll</h2>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
+                {   <div>
+                        @Html.LabelFor(model => model.Poll.Title)
+                        @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class"})
+                    </div>
+                    <div>
+                        @Html.LabelFor(model => model.Poll.FirstOption)
+                        @Html.TextBoxFor(model => model.Poll.FirstOption, new { @class = "input-class" })
+                    </div>
+                    <div>
+                        @Html.LabelFor(model => model.Poll.SecondOption)
+                        @Html.TextBoxFor(model => model.Poll.SecondOption, new { @class = "input-class" })
+                    </div>
+                    <div>
+                        <input type="submit" value="Create Poll" class="btn btn-primary" />
+                    </div>
+                }
+
+
+            </div>
+            <div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <div>
+        @if (Context.User.Identity.IsAuthenticated)
+        {
+            <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>
+        }
+    </div>
+    <ol>
+        @if (Model != null)
+        {
+         foreach (var poll in Model.Polls)
+            {
+             @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
+             <li>@poll.FirstOption</li>
+             <li>@poll.SecondOption</li>
+            }
+        }
+        
+        
+  
+    </ol>
+
+    <form asp-controller="Home" asp-action="Poll" method="post" id="form">
+        <div>
+            <label for="cars">Choose a poll:</label>
+            @*Onchange, a GET request will be made, to retrieve the poll name being passed.
+            The PollController will then return the necessary data to display the poll data to this view
+
+            The option values should also be dynamically generated based on how many rows are in the database
+            to do this, when the view loads, a GET request has to be made. we can do this in the Index
+            *@
+            <select name="pollName" id="polls">
+                @if(Model != null) 
+                {
+                    @foreach (var poll in Model.PollTitles)
+                {
+                    <option value="@poll">@poll</option>
+                }
+                    <button type="submit">Submit</button>
+                    <div>@Model.FirstOption</div>
+                    <div>@Model.SecondOption</div>
+                }
+
+            </select>
+    
+
+        </div>
+    </form>
+
+</div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+
+<script>
+
+
+
+    var modal = document.getElementById("myModal");
+
+    var btn = document.getElementById("myBtn");
+
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+@* <ul>
+    @foreach (var poll in Model)
+    {
+        <li>@poll.Name</li>
+    }
+</ul>  *@
