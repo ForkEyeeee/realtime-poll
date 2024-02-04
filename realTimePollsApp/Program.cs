@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using realTimePolls.Models;
@@ -33,6 +35,14 @@ builder.Services.AddDbContext<RealTimePollsContext>(options =>
     options.UseNpgsql(connectionString);
 });
 builder.Services.AddSignalR();
+
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
+{
+    builder.Services.AddDbContext<RealTimePollsContext>(options =>
+    {
+        options.UseInMemoryDatabase("InMemoryDbForTesting");
+    });
+}
 
 var app = builder.Build();
 
