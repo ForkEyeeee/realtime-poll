@@ -21,7 +21,14 @@ namespace SignalRChat.Hubs
 
             // This console.WriteLine does print when I bring up the component in the front end.
             Debug.WriteLine("Test");
+            // what needs to happen is when the user is at the home screen:
+            // every single user needs to be placed into the same group
+            // if they are all in the same group, the server can emit messages to every connected client.
 
+            //The server needs to tell all the clients about the current vote state,
+            // This should happen whenever a user votes. Whenever a user votes, they will send a request to the server
+            // and then the server will broadcast to the entire group with the new vote state
+            // the client will receive that number and display that, not the one from the database
             await base.OnConnectedAsync();
         }
     }

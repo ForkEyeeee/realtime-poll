@@ -49,8 +49,11 @@
          foreach (var poll in Model.Polls)
             {
              @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
-             <li>@poll.FirstOption</li>
-             <li>@poll.SecondOption</li>
+             <li>First Option: @poll.FirstOption</li>
+             <li>Second Option: @poll.SecondOption</li>
+             <li>First Votes: @poll.FirstVotes</li>
+             <li>Second Votes: @poll.SecondVotes</li>
+
             }
         }
         

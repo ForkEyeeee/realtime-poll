@@ -141,7 +141,7 @@ namespace realTimePolls.Controllers
             }
 
             _context.SaveChanges();
-            return View("../Home/Index", viewModel);
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
     }
 }

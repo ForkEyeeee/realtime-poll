@@ -32,7 +32,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="realTimePolls.Test" />
+		<InternalsVisibleTo Include="realTimePolls.Tests" />
 	</ItemGroup>
 
 </Project>
