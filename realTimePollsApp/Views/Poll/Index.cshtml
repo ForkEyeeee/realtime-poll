@@ -1,18 +1,5 @@
 ﻿@model realTimePolls.Models.PollsViewModel
-@* @if (Model != null) 
-{
-   <ol> 
-    <li>@Model.Poll.Title</li>
-    <li>@Model.Poll.FirstOption</li>
-    <li>@Model.Poll.SecondOption</li>
-    <li>FirstVotes: @Model.Poll.FirstVotes</li>
-    <li>SecondVotes: @Model.Poll.SecondVotes</li>
-   </ol>
-} 
-If userPoll Id is null. if so, then have nothing checked
-//dont have an int for first and second votes, just have a map table and use COUNT
-elif the 
-*@
+
 <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
     <div class="vote-flex">
         <label for="VoteFirst">@Model.Poll.FirstOption</label><br>
@@ -55,7 +42,7 @@ elif the
 
     const testBtn = document.getElementById("vote-btn")
     testBtn.addEventListener('click', async (e) => {
-        e.preventDefault()
+        // e.preventDefault()
         try {
             await hubConnection.invoke("SendMessage", "fork", "HEY!!!!!");
         } catch (err) {
@@ -63,28 +50,22 @@ elif the
         }
     })
 
-    hubConnection.on("ReceiveMessage", function (user, message) {
-
-        // We can assign user-supplied strings to an element's textContent because it
-        // is not interpreted as markup. If you're assigning in any other way, you
-        // should be aware of possible script injection concerns.
-        console.log(`${user} says ${message}`);
+    hubConnection.on("ReceiveMessage", function  (user, message) {
+        const getData = async () => {
+            const url = "https://localhost:44378/Home/RefreshData"
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            const body = await response.json()
+            console.log(body)
+        }
+        console.log(`${user} says ${message}`); 
+        getData();
     });
 
 </script>
 <script>
     console.log(@Html.Raw(Json.Serialize(Model)))
-
-
-
-
-    // function getFormValue(e) {
-    //     e.preventDefault();
-    //     const voteFirst = document.getElementById("vote-first").value;
-    //     const voteSecond = document.getElementById("vote-second").value;
-    //     const hiddenInput = document.getElementById("hidden-input").value
-    //     console.log(voteFirst)
-    //     console.log(voteSecond);
-    //     console.log(hiddenInput)
-    // }
 </script>

@@ -55,6 +55,41 @@ namespace realTimePolls.Controllers
             return View(viewModel);
         }
 
+        public List<Poll> RefreshData()
+        {
+            var polls = _context.Polls.ToList();
+
+            foreach (var poll in polls)
+            {
+                var count = _context
+                    .UserPoll.Where(userPoll =>
+                        userPoll.PollId == poll.Id && userPoll.FirstVote == true
+                    )
+                    .Count();
+                poll.FirstVotes = count;
+                count = _context
+                    .UserPoll.Where(userPoll =>
+                        userPoll.PollId == poll.Id && userPoll.SecondVote == true
+                    )
+                    .Count();
+                poll.SecondVotes = count;
+            }
+
+            //foreach (Poll poll in polls)
+            //{
+            //   var ages = people.Select(person => person.Age).ToArray();
+            //}
+
+            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+            //var pollOptions = polls.ConvertAll<string>(poll => poll.Name )
+            // Pass the polls to the view
+
+
+            // just send a list of Poll
+            var viewModel = new PollsViewModel { Polls = polls, PollTitles = pollTitles, };
+            return viewModel.Polls;
+        }
+
         public IActionResult Poll(string pollName)
         {
             //var polls = _context.Polls.Find(pollName);

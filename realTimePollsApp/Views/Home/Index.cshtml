@@ -51,8 +51,8 @@
              @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
              <li>First Option: @poll.FirstOption</li>
              <li>Second Option: @poll.SecondOption</li>
-             <li>First Votes: @poll.FirstVotes</li>
-             <li>Second Votes: @poll.SecondVotes</li>
+             <li class="first-votes">@poll.FirstVotes</li>
+             <li class="second-votes">@poll.SecondVotes</li>
 
             }
         }
@@ -116,22 +116,39 @@
     // Start the connection.
     start();
 
-    const testBtn = document.getElementById("test-btn")
-    testBtn.addEventListener('click', async () => {
-        try {
-            await hubConnection.invoke("SendMessage", "fork", "HEY!!!!!");
-        } catch (err) {
-            console.error(err.toString());
-        }
-    })
+    const getData = async () => {
+        const url = "https://localhost:44378/Home/RefreshData"
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        const body = await response.json()
+        console.log(body)
+        return body
+    }
 
-    hubConnection.on("ReceiveMessage", function (user, message) {
-       
-       // We can assign user-supplied strings to an element's textContent because it
-       // is not interpreted as markup. If you're assigning in any other way, you
-       // should be aware of possible script injection concerns.
-       console.log(`${user} says ${message}`);
+    hubConnection.on("ReceiveMessage", async function (user, message) {
+        let newData = getData();
+
+        newData = await getData()
+        const firstVotes = document.querySelectorAll(".first-votes")
+        const secondVotes = document.querySelectorAll(".second-votes")
+
+        for (let i = 0; i <= newData.length; i++) {
+            if (firstVotes[i].innerHTML != newData[i].firstVotes) {
+                firstVotes[i].innerHTML = newData[i].firstVotes
+            }
+            if (secondVotes[i].innerHTML != newData[i].secondVotes) {
+                secondVotes[i].innerHTML = newData[i].secondVotes
+            }
+        }
+        console.log(`${user} says ${message}`);
     });
+
+
+
+
 
 </script>
 <script>
