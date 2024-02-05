@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using realTimePolls.Models;
+using SignalRChat.Hubs;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace realTimePolls.Controllers
@@ -98,7 +99,7 @@ namespace realTimePolls.Controllers
             }
         }
 
-        public ActionResult Vote(string vote, string pollid, string userid)
+        public async Task Vote(string vote, string pollid, string userid)
         {
             var pollId = Int32.Parse(pollid);
             var userId = Int32.Parse(userid);
@@ -145,8 +146,25 @@ namespace realTimePolls.Controllers
             // broadcast to entire group
 
 
+            //await SendAll();
 
-            return RedirectToAction("Index", "Home", new { area = "" });
+            //return RedirectToAction("Index", "Home", new { area = "" });
+        }
+
+        //public async Task<int> SendAll()
+        //{
+        //    var test = new ChildClass();
+        //    await test.SendAll();
+        //    return 1;
+        //}
+    }
+
+    public class ChildClass : PollHub
+    {
+        public async Task SendAll()
+        {
+            var mc = new PollHub();
+            await mc.SendMessage("fork", "HEY THERE!!");
         }
     }
 }

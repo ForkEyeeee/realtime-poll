@@ -39,5 +39,8 @@ namespace SignalRChat.Hubs
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
+        // 1. user loads the app and is connected to PollHub
+        // 2. user votes and this tells every client in the group to refresh its data
+        // 3. views are updated to reflect the latest changes
     }
 }
