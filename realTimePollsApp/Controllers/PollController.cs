@@ -141,6 +141,11 @@ namespace realTimePolls.Controllers
             }
 
             _context.SaveChanges();
+
+            // broadcast to entire group
+
+
+
             return RedirectToAction("Index", "Home", new { area = "" });
         }
     }

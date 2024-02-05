@@ -23,21 +23,23 @@ elif the
         <br />
         <input type="hidden" name="pollid" value="@Model.Poll.Id" />
         <input type="hidden" name="userid" value="@Model.Poll.UserId"  />
-        <button type="submit"> Submit Vote</button>
+        <button type="submit" id="vote-btn"> Submit Vote</button>
         <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
     </div>
 </form>
 <script>
     console.log(@Html.Raw(Json.Serialize(Model)))
-    console.log(test)
 
-    function getFormValue(e) {
-        e.preventDefault();
-        const voteFirst = document.getElementById("vote-first").value;
-        const voteSecond = document.getElementById("vote-second").value;
-        const hiddenInput = document.getElementById("hidden-input").value
-        console.log(voteFirst)
-        console.log(voteSecond);
-        console.log(hiddenInput)
-    }
+
+
+
+    // function getFormValue(e) {
+    //     e.preventDefault();
+    //     const voteFirst = document.getElementById("vote-first").value;
+    //     const voteSecond = document.getElementById("vote-second").value;
+    //     const hiddenInput = document.getElementById("hidden-input").value
+    //     console.log(voteFirst)
+    //     console.log(voteSecond);
+    //     console.log(hiddenInput)
+    // }
 </script>

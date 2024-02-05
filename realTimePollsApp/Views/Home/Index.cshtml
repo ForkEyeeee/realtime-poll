@@ -87,15 +87,54 @@
 
         </div>
     </form>
-
+    <button id="test-btn">SEND TO ALL USERS</button>
 </div>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
 
 <script>
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/pollHub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
 
+    async function start() {
+        try {
+            await hubConnection.start();
+            console.log("SignalR Connected.");
+        } catch (err) {
+            console.log(err);
+            setTimeout(start, 5000);
+        }
+    };
 
+    hubConnection.onclose(async () => {
+        await start();
+    });
+
+    // Start the connection.
+    start();
+
+    const testBtn = document.getElementById("test-btn")
+    testBtn.addEventListener('click', async () => {
+        try {
+            await hubConnection.invoke("SendMessage", "fork", "HEY!!!!!");
+        } catch (err) {
+            console.error(err.toString());
+        }
+    })
+
+    hubConnection.on("ReceiveMessage", function (user, message) {
+       
+       // We can assign user-supplied strings to an element's textContent because it
+       // is not interpreted as markup. If you're assigning in any other way, you
+       // should be aware of possible script injection concerns.
+       console.log(`${user} says ${message}`);
+    });
+
+</script>
+<script>
 
     var modal = document.getElementById("myModal");
 
