@@ -1,9 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using realTimePolls.Models;
 
 namespace realTimePolls.Controllers
@@ -17,41 +13,34 @@ namespace realTimePolls.Controllers
         public HomeController(ILogger<HomeController> logger, RealTimePollsContext context) // Inject DbContext in the constructor
         {
             _logger = logger;
-            _context = context; // Initialize the _context variable. This is my DbContext instance.
+            _context = context; // Initialize the _context variable. This the DbContext instance.
         }
 
         public IActionResult Index()
         {
             var polls = _context.Polls.ToList();
 
+            // Add vote counts to list of polls
             foreach (var poll in polls)
             {
-                var count = _context
-                    .UserPoll.Where(userPoll =>
-                        userPoll.PollId == poll.Id && userPoll.FirstVote == true
-                    )
-                    .Count();
-                poll.FirstVotes = count;
-                count = _context
-                    .UserPoll.Where(userPoll =>
-                        userPoll.PollId == poll.Id && userPoll.SecondVote == true
-                    )
-                    .Count();
-                poll.SecondVotes = count;
+                int firstOptionCount = _context
+                        .UserPoll.Where(userPoll =>
+                            userPoll.PollId == poll.Id && userPoll.FirstVote == true
+                        )
+                        .Count(),
+                    secondOptionCount = _context
+                        .UserPoll.Where(userPoll =>
+                            userPoll.PollId == poll.Id && userPoll.SecondVote == true
+                        )
+                        .Count();
+
+                poll.FirstVotes = firstOptionCount;
+                poll.SecondVotes = secondOptionCount;
             }
 
-            //foreach (Poll poll in polls)
-            //{
-            //   var ages = people.Select(person => person.Age).ToArray();
-            //}
+            var pollTitles = polls.ConvertAll(poll => poll.Title);
 
-            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
-            //var pollOptions = polls.ConvertAll<string>(poll => poll.Name )
-            // Pass the polls to the view
-
-
-            // just send a list of Poll
-            var viewModel = new PollsViewModel { Polls = polls, PollTitles = pollTitles, };
+            var viewModel = new PollsList { Polls = polls, PollTitles = pollTitles, };
             return View(viewModel);
         }
 
@@ -61,58 +50,42 @@ namespace realTimePolls.Controllers
 
             foreach (var poll in polls)
             {
-                var count = _context
-                    .UserPoll.Where(userPoll =>
-                        userPoll.PollId == poll.Id && userPoll.FirstVote == true
-                    )
-                    .Count();
-                poll.FirstVotes = count;
-                count = _context
-                    .UserPoll.Where(userPoll =>
-                        userPoll.PollId == poll.Id && userPoll.SecondVote == true
-                    )
-                    .Count();
-                poll.SecondVotes = count;
+                int firstOptionCount = _context
+                        .UserPoll.Where(userPoll =>
+                            userPoll.PollId == poll.Id && userPoll.FirstVote == true
+                        )
+                        .Count(),
+                    secondOptionCount = _context
+                        .UserPoll.Where(userPoll =>
+                            userPoll.PollId == poll.Id && userPoll.SecondVote == true
+                        )
+                        .Count();
+
+                poll.FirstVotes = firstOptionCount;
+                poll.SecondVotes = secondOptionCount;
             }
 
-            //foreach (Poll poll in polls)
-            //{
-            //   var ages = people.Select(person => person.Age).ToArray();
-            //}
+            var pollTitles = polls.ConvertAll(poll => poll.Title);
 
-            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
-            //var pollOptions = polls.ConvertAll<string>(poll => poll.Name )
-            // Pass the polls to the view
-
-
-            // just send a list of Poll
-            var viewModel = new PollsViewModel { Polls = polls, PollTitles = pollTitles, };
-            return viewModel.Polls;
+            return polls;
         }
 
         public IActionResult Poll(string pollName)
         {
-            //var polls = _context.Polls.Find(pollName);
-            //Poll poll = polls.Where(p => p.PollName == pollName).FirstOrDefault();
-            //Poll poll = polls.
-            //    (c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
-
             var polls = _context.Polls.ToList();
 
             var poll = polls.FirstOrDefault(u => u.Title == pollName);
-            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+            var pollTitles = polls.ConvertAll(poll => poll.Title);
 
             if (poll != null)
             {
-                //Poll viewModel = poll;
-                PollsViewModel viewModel = new PollsViewModel
+                PollsList viewModel = new PollsList
                 {
                     Polls = polls,
                     PollTitles = pollTitles,
                     FirstOption = poll.FirstOption,
                     SecondOption = poll.SecondOption,
                 };
-                //return PartialView("index");
 
                 return View("index", viewModel);
             }

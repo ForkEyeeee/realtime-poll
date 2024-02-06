@@ -34,7 +34,7 @@ namespace realTimePolls.Controllers
                 userPoll.PollId == pollId && userPoll.UserId == userId
             );
 
-            var viewModel = new PollsViewModel
+            var viewModel = new PollsList
             {
                 Poll = poll,
                 PollTitles = pollTitles,
@@ -99,7 +99,7 @@ namespace realTimePolls.Controllers
             }
         }
 
-        public async Task Vote(string vote, string pollid, string userid)
+        public ActionResult Vote(string vote, string pollid, string userid)
         {
             var pollId = Int32.Parse(pollid);
             var userId = Int32.Parse(userid);
@@ -115,9 +115,10 @@ namespace realTimePolls.Controllers
             ); // get the current userPoll
             var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
             // fix return model
-            PollsViewModel viewModel = new PollsViewModel
+            PollsList viewModel = new PollsList
             {
                 Polls = polls,
+                Poll = poll,
                 PollTitles = pollTitles,
                 FirstOption = poll.FirstOption,
                 SecondOption = poll.SecondOption,
@@ -148,7 +149,7 @@ namespace realTimePolls.Controllers
 
             //await SendAll();
 
-            //return RedirectToAction("Index", "Home", new { area = "" });
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
         //public async Task<int> SendAll()

@@ -1,4 +1,4 @@
-﻿@model realTimePolls.Models.PollsViewModel
+﻿@model realTimePolls.Models.PollsList
 
 <div class="text-center">
     <button id="myBtn">Create Poll</button>
@@ -44,6 +44,8 @@
         }
     </div>
     <ol>
+        @*Displays list of polls*@
+
         @if (Model != null)
         {
          foreach (var poll in Model.Polls)
@@ -122,6 +124,10 @@
             headers: {
                 'Accept': 'application/json'
             }
+            body: {
+                message: "refreshing"
+            }
+   
         })
         const body = await response.json()
         console.log(body)
