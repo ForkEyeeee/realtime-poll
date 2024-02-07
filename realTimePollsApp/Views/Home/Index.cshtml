@@ -12,30 +12,27 @@
             <div class="modal-body">
                 @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
                 {
-                       <div>
+                    <div>
                         @Html.LabelFor(model => model.Poll.Title)
-                        @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class" })
+                        @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class", @required="required" })
                     </div>
                     <div>
                         @Html.LabelFor(model => model.Poll.FirstOption)
-                        @Html.TextBoxFor(model => model.Poll.FirstOption, new { @class = "input-class" })
+                        @Html.TextBoxFor(model => model.Poll.FirstOption, new { @class = "input-class", @required = "required" })
                     </div>
                     <div>
                         @Html.LabelFor(model => model.Poll.SecondOption)
-                        @Html.TextBoxFor(model => model.Poll.SecondOption, new { @class = "input-class" })
+                        @Html.TextBoxFor(model => model.Poll.SecondOption, new { @class = "input-class", @required = "required" })
                     </div>
                     <div>
                         <input type="submit" value="Create Poll" class="btn btn-primary" />
                     </div>
                 }
-
-
             </div>
             <div class="modal-footer">
                 <h3>Modal Footer</h3>
             </div>
         </div>
-
     </div>
 
     <div>
@@ -44,25 +41,25 @@
             <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>
         }
     </div>
-    <ol>
-        @*Displays list of polls*@
 
+   
+
+        @*Displays list of polls*@
+      
         @if (Model != null)
-        {
+        { 
             foreach (var poll in Model.Polls)
-            {
+            {   <ol>
                 @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
                 <li>First Option: @poll.FirstOption</li>
                 <li>Second Option: @poll.SecondOption</li>
                 <li class="first-votes">@poll.FirstVotes</li>
                 <li class="second-votes">@poll.SecondVotes</li>
+                </ol>
 
-            }
+           }    
+
         }
-
-
-
-    </ol>
 
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
         <div>
@@ -91,30 +88,6 @@
 <script src="~/js/chat.js"></script>
 
 <script>
-    var oldData = @Html.Raw(Json.Serialize(@Model));
-
-    const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("/pollHub")
-        .configureLogging(signalR.LogLevel.Information)
-        .build();
-
-    async function start() {
-        try {
-            await hubConnection.start();
-            console.log("SignalR Connected.");
-        } catch (err) {
-            console.log(err);
-            setTimeout(start, 5000);
-        }
-    };
-
-    hubConnection.onclose(async () => {
-        await start();
-    });
-
-    // Start the connection.
-    start();
-
     const getData = async () => {
         const url = "https://localhost:44378/Home/Index"
         const userId = {
@@ -135,7 +108,37 @@
         return polls
     }
 
-    hubConnection.on("ReceiveMessage", async function (user, message) {
+    try {
+        var oldData = @Html.Raw(Json.Serialize(@Model));
+
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/pollHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        async function start() {
+            try {
+                await hubConnection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
+
+        hubConnection.onclose(async () => {
+            await start();
+        });
+
+        // Start the connection.
+        start();
+
+    }
+    catch (e) {
+        console.error(e)
+    }
+    
+    hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
             const newData = await getData();
 
@@ -158,9 +161,7 @@
 <script>
 
     var modal = document.getElementById("myModal");
-
     var btn = document.getElementById("myBtn");
-
     var span = document.getElementsByClassName("close")[0];
 
     btn.onclick = function () {

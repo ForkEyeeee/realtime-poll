@@ -12,7 +12,7 @@ namespace realTimePolls.Models
 
         [ForeignKey("User")]
         [Column("userid")]
-        public User? UserId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [Column("title")]

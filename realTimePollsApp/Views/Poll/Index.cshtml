@@ -18,54 +18,39 @@
 <script src="~/js/chat.js"></script>
 
 <script>
-    const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("/pollHub")
-        .configureLogging(signalR.LogLevel.Information)
-        .build();
+    try {
+        var oldData = @Html.Raw(Json.Serialize(@Model));
 
-    async function start() {
-        try {
-            await hubConnection.start();
-            console.log("SignalR Connected.");
-        } catch (err) {
-            console.log(err);
-            setTimeout(start, 5000);
-        }
-    };
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/pollHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
 
-    hubConnection.onclose(async () => {
-        await start();
-    });
+        async function start() {
+            try {
+                await hubConnection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
 
-    // Start the connection.
-    start();
+        hubConnection.onclose(async () => {
+            await start();
+        });
 
-    const testBtn = document.getElementById("vote-btn")
-    testBtn.addEventListener('click', async (e) => {
-        // e.preventDefault()
-        try {
-            await hubConnection.invoke("SendMessage", "fork", "HEY!!!!!");
-        } catch (err) {
-            console.error(err.toString());
-        }
+        // Start the connection.
+        start();
+
+    }
+    catch (e) {
+        console.error(e)
+    }
+
+    const voteBtn = document.getElementById("vote-btn")
+    
+    voteBtn.addEventListener('click', async () => {
+          await hubConnection.invoke("SendMessage"); 
     })
-
-    hubConnection.on("ReceiveMessage", function  (user, message) {
-        const getData = async () => {
-            const url = "https://localhost:44378/Home/RefreshData"
-            const response = await fetch(url, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            const body = await response.json()
-            console.log(body)
-        }
-        console.log(`${user} says ${message}`); 
-        getData();
-    });
-
-</script>
-<script>
-    console.log(@Html.Raw(Json.Serialize(Model)))
 </script>
