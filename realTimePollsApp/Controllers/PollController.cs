@@ -1,10 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using realTimePolls.Models;
-using SignalRChat.Hubs;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace realTimePolls.Controllers
 {
@@ -20,7 +15,7 @@ namespace realTimePolls.Controllers
             _context = context;
         }
 
-        // GET: PollController
+        [HttpGet]
         public ActionResult Index(string data, string pollid, string userid)
         {
             var pollId = Int32.Parse(pollid);
@@ -43,25 +38,28 @@ namespace realTimePolls.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
         public ActionResult Create(IFormCollection collection)
         {
             try
             {
-                Debug.WriteLine(collection);
-
                 var formValues = collection.ToList();
-                var title = formValues[0].Value;
+                var pollTitle = formValues[0].Value;
                 var firstOption = formValues[1].Value;
                 var secondOption = formValues[2].Value;
 
                 var googleId =
                     HttpContext != null ? HttpContext.User.Claims.ToList()[0].Value : string.Empty;
-                var userId = _context.User.FirstOrDefault(u => u.GoogleId == googleId).Id;
+
+                if (googleId == string.Empty)
+                    throw new Exception("Could not find googleId");
+
+                int userId = _context.User.FirstOrDefault(u => u.GoogleId == googleId).Id;
 
                 Poll poll = new Poll
                 {
                     UserId = userId,
-                    Title = title,
+                    Title = pollTitle,
                     FirstOption = firstOption,
                     SecondOption = secondOption
                 };
@@ -73,11 +71,12 @@ namespace realTimePolls.Controllers
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e, "Shape processing failed.");
-                throw;
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
             }
         }
 
+        [HttpPost]
         public ActionResult Delete(string pollid)
         {
             try
@@ -94,78 +93,67 @@ namespace realTimePolls.Controllers
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e, "Shape processing failed.");
-                throw;
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
             }
         }
 
+        [HttpPost]
         public ActionResult Vote(string vote, string pollid, string userid)
         {
-            var pollId = Int32.Parse(pollid);
-            var userId = Int32.Parse(userid);
-
-            var polls = _context.Polls.ToList();
-            var users = _context.User.ToList();
-            var userPolls = _context.UserPoll.ToList();
-
-            var poll = polls.FirstOrDefault(u => u.Id == pollId); //get the current poll
-            var user = users.FirstOrDefault(user => user.Id == userId); //get the current user
-            var userPoll = userPolls.FirstOrDefault(userPoll =>
-                userPoll.PollId == pollId && userPoll.UserId == userId
-            ); // get the current userPoll
-            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
-            // fix return model
-            PollsList viewModel = new PollsList
+            try
             {
-                Polls = polls,
-                Poll = poll,
-                PollTitles = pollTitles,
-                FirstOption = poll.FirstOption,
-                SecondOption = poll.SecondOption,
-            };
+                var pollId = Int32.Parse(pollid);
+                var userId = Int32.Parse(userid);
 
-            var UserPoll = new UserPoll
-            {
-                UserId = userId,
-                PollId = poll.Id,
-                FirstVote = vote == "Vote First" ? true : false,
-                SecondVote = vote == "Vote Second" ? true : false
-            };
+                var polls = _context.Polls.ToList();
+                var users = _context.User.ToList();
+                var userPolls = _context.UserPoll.ToList();
 
-            if (userPoll == null)
-            {
-                _context.UserPoll.Add(UserPoll);
+                var poll = polls.FirstOrDefault(u => u.Id == pollId); //get the current poll
+                var user = users.FirstOrDefault(user => user.Id == userId); //get the current user
+                var userPoll = userPolls.FirstOrDefault(userPoll =>
+                    userPoll.PollId == pollId && userPoll.UserId == userId
+                ); // get the current userPoll
+
+                var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+
+                PollsList viewModel = new PollsList
+                {
+                    Polls = polls,
+                    Poll = poll,
+                    PollTitles = pollTitles,
+                    FirstOption = poll.FirstOption,
+                    SecondOption = poll.SecondOption,
+                };
+
+                var UserPoll = new UserPoll
+                {
+                    UserId = userId,
+                    PollId = poll.Id,
+                    FirstVote = vote == "Vote First" ? true : false,
+                    SecondVote = vote == "Vote Second" ? true : false
+                };
+
+                if (userPoll == null)
+                {
+                    _context.UserPoll.Add(UserPoll);
+                }
+                else
+                {
+                    userPoll.FirstVote = UserPoll.FirstVote;
+                    userPoll.SecondVote = UserPoll.SecondVote;
+                }
+
+                _context.SaveChanges();
+
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
-            else
+            catch (Exception e)
             {
-                userPoll.FirstVote = UserPoll.FirstVote;
-                userPoll.SecondVote = UserPoll.SecondVote;
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
             }
-
-            _context.SaveChanges();
-
-            // broadcast to entire group
-
-
-            //await SendAll();
-
-            return RedirectToAction("Index", "Home", new { area = "" });
-        }
-
-        //public async Task<int> SendAll()
-        //{
-        //    var test = new ChildClass();
-        //    await test.SendAll();
-        //    return 1;
-        //}
-    }
-
-    public class ChildClass : PollHub
-    {
-        public async Task SendAll()
-        {
-            var mc = new PollHub();
-            await mc.SendMessage("fork", "HEY THERE!!");
         }
     }
 }
