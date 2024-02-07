@@ -11,9 +11,10 @@
             </div>
             <div class="modal-body">
                 @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
-                {   <div>
+                {
+                       <div>
                         @Html.LabelFor(model => model.Poll.Title)
-                        @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class"})
+                        @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class" })
                     </div>
                     <div>
                         @Html.LabelFor(model => model.Poll.FirstOption)
@@ -48,19 +49,19 @@
 
         @if (Model != null)
         {
-         foreach (var poll in Model.Polls)
+            foreach (var poll in Model.Polls)
             {
-             @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
-             <li>First Option: @poll.FirstOption</li>
-             <li>Second Option: @poll.SecondOption</li>
-             <li class="first-votes">@poll.FirstVotes</li>
-             <li class="second-votes">@poll.SecondVotes</li>
+                @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
+                <li>First Option: @poll.FirstOption</li>
+                <li>Second Option: @poll.SecondOption</li>
+                <li class="first-votes">@poll.FirstVotes</li>
+                <li class="second-votes">@poll.SecondVotes</li>
 
             }
         }
-        
-        
-  
+
+
+
     </ol>
 
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
@@ -73,19 +74,19 @@
             to do this, when the view loads, a GET request has to be made. we can do this in the Index
             *@
             <select name="pollName" id="polls">
-                @if(Model != null) 
+                @if (Model != null)
                 {
                     @foreach (var poll in Model.PollTitles)
-                {
-                    <option value="@poll">@poll</option>
-                }
+                    {
+                        <option value="@poll">@poll</option>
+                    }
                     <button type="submit">Submit</button>
                     <div>@Model.FirstOption</div>
                     <div>@Model.SecondOption</div>
                 }
 
             </select>
-    
+
 
         </div>
     </form>
@@ -131,43 +132,33 @@
                 'Accept': 'application/json'
             },
             body: JSON.stringify(userId)
-   
+
         })
-        const polls = await response.json(userId)
-        console.log(polls)
-        console.log(hubConnection)
+
+        if (!response.ok) throw new Error("Failed to fetch polls")
+
+        const polls = await response.json()
         return polls
     }
 
     hubConnection.on("ReceiveMessage", async function (user, message) {
         try {
             const newData = await getData();
-            const firstVotes = document.querySelectorAll(".first-votes")
-            const secondVotes = document.querySelectorAll(".second-votes")
 
-            if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('Votes not found.');
+            const firstVotes = document.querySelectorAll(".first-votes");
+            const secondVotes = document.querySelectorAll(".second-votes");
 
-            for (let i = 0; i <= newData.length - 1; i++) {
+            if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
+            if (newData.length !== firstVotes.length || newData.length !== secondVotes.length) throw new Error('length does not match');
 
-         
-                    firstVotes[i].innerHTML = newData[i].firstVotes
-                    secondVotes[i].innerHTML = newData[i].secondVotes
-         
-                //revise this logic
+            newData.forEach((data, i) => {
+                firstVotes[i].innerHTML = data.firstVotes;
+                secondVotes[i].innerHTML = data.secondVotes;
+            });
 
-                // if (firstVotes[i].innerHTML != newData[i].firstVotes) {
-                // }
-                // if (secondVotes[i].innerHTML != newData[i].secondVotes) {
-                // }
-            }
-            console.log(`${user} says ${message}`);
-            // you coudl also try just completelyt replacing all the values, no checks needed
+        } catch (e) {
+            console.error(e.message);
         }
-        catch (e) {
-            console.error(e)
-        }
-        // let newData = getData();
-        
     });
 
 
