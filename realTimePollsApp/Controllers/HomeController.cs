@@ -54,7 +54,7 @@ namespace realTimePolls.Controllers
                 if (HttpContext.Request.Method == "POST")
                     return Json(polls);
                 else
-                    View(viewModel);
+                    return View(viewModel);
             }
             catch (Exception e)
             {
