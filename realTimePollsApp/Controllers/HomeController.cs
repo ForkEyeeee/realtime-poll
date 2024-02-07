@@ -1,6 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using realTimePolls.Models;
+
+//using Newtonsoft.Json;
 
 namespace realTimePolls.Controllers
 {
@@ -16,23 +23,30 @@ namespace realTimePolls.Controllers
             _context = context; // Initialize the _context variable. This the DbContext instance.
         }
 
+        [HttpGet]
+        [HttpPost]
         public IActionResult Index()
         {
+            var body = GetRawContent();
+
+            string json = JsonConvert.SerializeObject(body);
+
             var polls = _context.Polls.ToList();
 
             // Add vote counts to list of polls
             foreach (var poll in polls)
             {
                 int firstOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.FirstVote == true
-                        )
-                        .Count(),
-                    secondOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.SecondVote == true
-                        )
-                        .Count();
+                    .UserPoll.Where(userPoll =>
+                        userPoll.PollId == poll.Id && userPoll.FirstVote == true
+                    )
+                    .Count();
+
+                int secondOptionCount = _context
+                    .UserPoll.Where(userPoll =>
+                        userPoll.PollId == poll.Id && userPoll.SecondVote == true
+                    )
+                    .Count();
 
                 poll.FirstVotes = firstOptionCount;
                 poll.SecondVotes = secondOptionCount;
@@ -40,36 +54,33 @@ namespace realTimePolls.Controllers
 
             var pollTitles = polls.ConvertAll(poll => poll.Title);
 
-            var viewModel = new PollsList { Polls = polls, PollTitles = pollTitles, };
-            return View(viewModel);
+            var viewModel = new PollsList { Polls = polls, PollTitles = pollTitles };
+
+            if (HttpContext.Request.Method == "POST")
+                return Json(polls);
+            else
+                return View(viewModel);
         }
 
-        public List<Poll> RefreshData()
+        [HttpPost]
+        public async Task<IActionResult> GetRawContent()
         {
-            var polls = _context.Polls.ToList();
-
-            foreach (var poll in polls)
+            string rawContent = string.Empty;
+            using (
+                var reader = new StreamReader(
+                    Request.Body,
+                    encoding: Encoding.UTF8,
+                    detectEncodingFromByteOrderMarks: false
+                )
+            )
             {
-                int firstOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.FirstVote == true
-                        )
-                        .Count(),
-                    secondOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.SecondVote == true
-                        )
-                        .Count();
-
-                poll.FirstVotes = firstOptionCount;
-                poll.SecondVotes = secondOptionCount;
+                rawContent = await reader.ReadToEndAsync();
             }
 
-            var pollTitles = polls.ConvertAll(poll => poll.Title);
-
-            return polls;
+            return Ok(rawContent);
         }
 
+        [HttpPost]
         public IActionResult Poll(string pollName)
         {
             var polls = _context.Polls.ToList();

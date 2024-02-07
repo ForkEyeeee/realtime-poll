@@ -96,6 +96,8 @@
 <script src="~/js/chat.js"></script>
 
 <script>
+    var oldData = @Html.Raw(Json.Serialize(@Model));
+
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
         .configureLogging(signalR.LogLevel.Information)
@@ -119,37 +121,53 @@
     start();
 
     const getData = async () => {
-        const url = "https://localhost:44378/Home/RefreshData"
+        const url = "https://localhost:44378/Home/Index"
+        const userId = {
+            Id: hubConnection.connection.connectionId
+        }
         const response = await fetch(url, {
+            method: 'POST',
             headers: {
                 'Accept': 'application/json'
-            }
-            body: {
-                message: "refreshing"
-            }
+            },
+            body: JSON.stringify(userId)
    
         })
-        const body = await response.json()
-        console.log(body)
-        return body
+        const polls = await response.json(userId)
+        console.log(polls)
+        console.log(hubConnection)
+        return polls
     }
 
     hubConnection.on("ReceiveMessage", async function (user, message) {
-        let newData = getData();
+        try {
+            const newData = await getData();
+            const firstVotes = document.querySelectorAll(".first-votes")
+            const secondVotes = document.querySelectorAll(".second-votes")
 
-        newData = await getData()
-        const firstVotes = document.querySelectorAll(".first-votes")
-        const secondVotes = document.querySelectorAll(".second-votes")
+            if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('Votes not found.');
 
-        for (let i = 0; i <= newData.length; i++) {
-            if (firstVotes[i].innerHTML != newData[i].firstVotes) {
-                firstVotes[i].innerHTML = newData[i].firstVotes
+            for (let i = 0; i <= newData.length - 1; i++) {
+
+         
+                    firstVotes[i].innerHTML = newData[i].firstVotes
+                    secondVotes[i].innerHTML = newData[i].secondVotes
+         
+                //revise this logic
+
+                // if (firstVotes[i].innerHTML != newData[i].firstVotes) {
+                // }
+                // if (secondVotes[i].innerHTML != newData[i].secondVotes) {
+                // }
             }
-            if (secondVotes[i].innerHTML != newData[i].secondVotes) {
-                secondVotes[i].innerHTML = newData[i].secondVotes
-            }
+            console.log(`${user} says ${message}`);
+            // you coudl also try just completelyt replacing all the values, no checks needed
         }
-        console.log(`${user} says ${message}`);
+        catch (e) {
+            console.error(e)
+        }
+        // let newData = getData();
+        
     });
 
 
