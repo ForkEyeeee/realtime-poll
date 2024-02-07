@@ -67,12 +67,6 @@
     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
         <div>
             <label for="cars">Choose a poll:</label>
-            @*Onchange, a GET request will be made, to retrieve the poll name being passed.
-            The PollController will then return the necessary data to display the poll data to this view
-
-            The option values should also be dynamically generated based on how many rows are in the database
-            to do this, when the view loads, a GET request has to be made. we can do this in the Index
-            *@
             <select name="pollName" id="polls">
                 @if (Model != null)
                 {
@@ -160,11 +154,6 @@
             console.error(e.message);
         }
     });
-
-
-
-
-
 </script>
 <script>
 
@@ -188,10 +177,3 @@
         }
     }
 </script>
-
-@* <ul>
-    @foreach (var poll in Model)
-    {
-        <li>@poll.Name</li>
-    }
-</ul>  *@

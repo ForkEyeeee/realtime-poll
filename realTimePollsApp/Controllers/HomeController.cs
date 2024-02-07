@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using realTimePolls.Models;
 
-//using Newtonsoft.Json;
-
 namespace realTimePolls.Controllers
 {
     public class HomeController : Controller
@@ -27,82 +25,100 @@ namespace realTimePolls.Controllers
         [HttpPost]
         public IActionResult Index()
         {
-            var body = GetRawContent();
-
-            string json = JsonConvert.SerializeObject(body);
-
-            var polls = _context.Polls.ToList();
-
-            // Add vote counts to list of polls
-            foreach (var poll in polls)
+            try
             {
-                int firstOptionCount = _context
-                    .UserPoll.Where(userPoll =>
-                        userPoll.PollId == poll.Id && userPoll.FirstVote == true
-                    )
-                    .Count();
+                var polls = _context.Polls.ToList();
+                // Add vote counts to list of polls
+                foreach (var poll in polls)
+                {
+                    int firstOptionCount = _context
+                        .UserPoll.Where(userPoll =>
+                            userPoll.PollId == poll.Id && userPoll.FirstVote == true
+                        )
+                        .Count();
 
-                int secondOptionCount = _context
-                    .UserPoll.Where(userPoll =>
-                        userPoll.PollId == poll.Id && userPoll.SecondVote == true
-                    )
-                    .Count();
+                    int secondOptionCount = _context
+                        .UserPoll.Where(userPoll =>
+                            userPoll.PollId == poll.Id && userPoll.SecondVote == true
+                        )
+                        .Count();
 
-                poll.FirstVotes = firstOptionCount;
-                poll.SecondVotes = secondOptionCount;
+                    poll.FirstVotes = firstOptionCount;
+                    poll.SecondVotes = secondOptionCount;
+                }
+
+                var pollTitles = polls.ConvertAll(poll => poll.Title);
+
+                var viewModel = new PollsList { Polls = polls, PollTitles = pollTitles };
+
+                if (HttpContext.Request.Method == "POST")
+                    return Json(polls);
+                else
+                    View(viewModel);
             }
-
-            var pollTitles = polls.ConvertAll(poll => poll.Title);
-
-            var viewModel = new PollsList { Polls = polls, PollTitles = pollTitles };
-
-            if (HttpContext.Request.Method == "POST")
-                return Json(polls);
-            else
-                return View(viewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetRawContent()
-        {
-            string rawContent = string.Empty;
-            using (
-                var reader = new StreamReader(
-                    Request.Body,
-                    encoding: Encoding.UTF8,
-                    detectEncodingFromByteOrderMarks: false
-                )
-            )
+            catch (Exception e)
             {
-                rawContent = await reader.ReadToEndAsync();
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
             }
-
-            return Ok(rawContent);
         }
 
         [HttpPost]
         public IActionResult Poll(string pollName)
         {
-            var polls = _context.Polls.ToList();
-
-            var poll = polls.FirstOrDefault(u => u.Title == pollName);
-            var pollTitles = polls.ConvertAll(poll => poll.Title);
-
-            if (poll != null)
+            try
             {
-                PollsList viewModel = new PollsList
+                var polls = _context.Polls.ToList();
+
+                var poll = polls.FirstOrDefault(u => u.Title == pollName);
+                var pollTitles = polls.ConvertAll(poll => poll.Title);
+
+                if (poll != null)
                 {
-                    Polls = polls,
-                    PollTitles = pollTitles,
-                    FirstOption = poll.FirstOption,
-                    SecondOption = poll.SecondOption,
-                };
+                    PollsList viewModel = new PollsList
+                    {
+                        Polls = polls,
+                        PollTitles = pollTitles,
+                        FirstOption = poll.FirstOption,
+                        SecondOption = poll.SecondOption,
+                    };
 
-                return View("index", viewModel);
+                    return View("index", viewModel);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home", new { area = "" });
+                }
             }
-            else
+            catch (Exception e)
             {
-                return RedirectToAction("Index", "Home", new { area = "" });
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetRawContent()
+        {
+            try
+            {
+                string rawContent = string.Empty;
+                using (
+                    var reader = new StreamReader(
+                        Request.Body,
+                        encoding: Encoding.UTF8,
+                        detectEncodingFromByteOrderMarks: false
+                    )
+                )
+                {
+                    rawContent = await reader.ReadToEndAsync();
+                }
+                return Ok(rawContent);
+            }
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
             }
         }
 

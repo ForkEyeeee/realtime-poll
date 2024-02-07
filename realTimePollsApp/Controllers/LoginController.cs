@@ -21,41 +21,52 @@ namespace realTimePolls.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public async Task Login() //redirects user to google login page
         {
-            await HttpContext.ChallengeAsync(
-                GoogleDefaults.AuthenticationScheme,
-                new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponse") }
-            );
+            try
+            {
+                await HttpContext.ChallengeAsync(
+                    GoogleDefaults.AuthenticationScheme,
+                    new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponse") }
+                );
+            }
+            catch
+            {
+                RedirectToAction("Index", "Home", new { area = "" });
+            }
         }
 
         public async Task<IActionResult> GoogleResponse() //authentication
         {
-            var result = await HttpContext.AuthenticateAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
-            var claims = result
-                .Principal.Identities.FirstOrDefault()
-                ?.Claims.Select(claim => new
-                {
-                    claim.Issuer,
-                    claim.OriginalIssuer,
-                    claim.Type,
-                    claim.Value
-                })
-                .ToList();
-
-            User newUser = null;
-            string userName = null;
-            string userEmail = null;
-
-            if (claims.Count != 0)
+            try
             {
+                var result = await HttpContext.AuthenticateAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme
+                );
+
+                if (result.Principal == null)
+                    throw new Exception("Could not authenticate");
+
+                var claims = result
+                    .Principal.Identities.FirstOrDefault()
+                    ?.Claims.Select(claim => new
+                    {
+                        claim.Issuer,
+                        claim.OriginalIssuer,
+                        claim.Type,
+                        claim.Value
+                    })
+                    .ToList();
+
+                User newUser;
+                string? userName = null;
+                string? userEmail = null;
+
+                if (claims == null || claims.Count == 0)
+                {
+                    throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+                }
+
                 var googleIdClaim = claims.FirstOrDefault(c =>
                     c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
                 );
@@ -97,37 +108,47 @@ namespace realTimePolls.Controllers
                             UserName = userWithGoogleId.Name,
                             UserEmail = userWithGoogleId.Email
                         };
+
                         _context.SaveChanges();
-                        var viewModel = new User()
-                        {
-                            GoogleId = googleId,
-                            Name = existingUser.UserName,
-                            Email = existingUser.UserEmail
-                        };
+
+                        User viewModel =
+                            new()
+                            {
+                                GoogleId = googleId,
+                                Name = existingUser.UserName,
+                                Email = existingUser.UserEmail
+                            };
+
                         return RedirectToAction("Index", "Home", new { area = "" });
-                        // return View("../Login/index", viewModel);
                     }
                 }
                 else
                 {
-                    Debug.WriteLine("Google id === null");
-                    return View();
+                    throw new Exception("GoogleId cannot be found");
                 }
+
                 _context.SaveChanges();
-
-                //return RedirectToAction("Index", "Home", newUser);
                 return RedirectToAction("Index", "Home", new { area = "" });
-
-                //return View("../Login/index", newUser);
             }
-            Debug.WriteLine("No claims found after logging in");
-            return View("../Home/index");
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            }
         }
 
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home", new { area = "" });
+            try
+            {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            }
         }
     }
 }
