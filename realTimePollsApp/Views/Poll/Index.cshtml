@@ -18,7 +18,8 @@
 <script src="~/js/chat.js"></script>
 
 <script>
-    try {
+        console.log('test')
+
         var oldData = @Html.Raw(Json.Serialize(@Model));
 
         const hubConnection = new signalR.HubConnectionBuilder()
@@ -43,14 +44,17 @@
         // Start the connection.
         start();
 
-    }
-    catch (e) {
-        console.error(e)
-    }
+        const voteBtn = document.getElementById("vote-btn")
+        const userId = hubConnection.connection.connectionId
 
-    const voteBtn = document.getElementById("vote-btn")
-    
-    voteBtn.addEventListener('click', async () => {
-          await hubConnection.invoke("SendMessage"); 
+    voteBtn.addEventListener('click', async (e) => {
+        // e.preventDefault()
+        try {
+            await hubConnection.invoke("SendMessage", "fork", "HEY!!!!!");
+        } catch (err) {
+            console.error(err.toString());
+        }
     })
+    
+  
 </script>

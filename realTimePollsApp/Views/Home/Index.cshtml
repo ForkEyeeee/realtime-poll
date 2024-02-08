@@ -42,22 +42,20 @@
         }
     </div>
 
-   
-
         @*Displays list of polls*@
       
         @if (Model != null)
         { 
             foreach (var poll in Model.Polls)
             {   <ol>
-                @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
-                <li>First Option: @poll.FirstOption</li>
-                <li>Second Option: @poll.SecondOption</li>
-                <li class="first-votes">@poll.FirstVotes</li>
-                <li class="second-votes">@poll.SecondVotes</li>
+                    @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
+                    <li>First Option: @poll.FirstOption</li>
+                    <li>Second Option: @poll.SecondOption</li>
+                    <li class="first-votes">@poll.FirstVotes</li>
+                    <li class="second-votes">@poll.SecondVotes</li>
                 </ol>
 
-           }    
+            }    
 
         }
 
@@ -108,38 +106,32 @@
         return polls
     }
 
-    try {
-        var oldData = @Html.Raw(Json.Serialize(@Model));
+    const oldData = @Html.Raw(Json.Serialize(@Model));
 
-        const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("/pollHub")
-            .configureLogging(signalR.LogLevel.Information)
-            .build();
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/pollHub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
 
-        async function start() {
-            try {
-                await hubConnection.start();
-                console.log("SignalR Connected.");
-            } catch (err) {
-                console.log(err);
-                setTimeout(start, 5000);
-            }
-        };
-
-        hubConnection.onclose(async () => {
-            await start();
-        });
-
-        // Start the connection.
-        start();
-
+    async function start() {
+        try {
+            await hubConnection.start();
+            console.log("SignalR Connected.");
+        } catch (e) {
+            console.error("Failed to connect with SignalR", e);
+        }
     }
-    catch (e) {
-        console.error(e)
-    }
-    
+
+    hubConnection.onclose(async () => {
+        await start();
+    });
+
+    // Start the connection.
+    start();
+
     hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
+            console.log('received')
             const newData = await getData();
 
             const firstVotes = document.querySelectorAll(".first-votes");
@@ -152,11 +144,11 @@
                 firstVotes[i].innerHTML = data.firstVotes;
                 secondVotes[i].innerHTML = data.secondVotes;
             });
-
         } catch (e) {
-            console.error(e.message);
+            console.error(e);
         }
     });
+
 </script>
 <script>
 

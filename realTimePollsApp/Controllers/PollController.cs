@@ -127,7 +127,7 @@ namespace realTimePolls.Controllers
                     SecondOption = poll.SecondOption,
                 };
 
-                var UserPoll = new UserPoll
+                UserPoll UserPoll = new UserPoll()
                 {
                     UserId = userId,
                     PollId = poll.Id,

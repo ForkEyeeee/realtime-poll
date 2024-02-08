@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using realTimePolls.Models;
 
@@ -27,9 +29,18 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                var polls = _context.Polls.ToList();
+                var polls = _context.Polls;
+
+                var pollList = polls.ToList();
+
+                //if (HttpContext.Request.Method == "POST")
+                //{
+                //    var entry = _context.Entry(Polls);
+                //    entry.Reload();
+                //}
+
                 // Add vote counts to list of polls
-                foreach (var poll in polls)
+                foreach (var poll in pollList)
                 {
                     int firstOptionCount = _context
                         .UserPoll.Where(userPoll =>
@@ -47,12 +58,12 @@ namespace realTimePolls.Controllers
                     poll.SecondVotes = secondOptionCount;
                 }
 
-                var pollTitles = polls.ConvertAll(poll => poll.Title);
+                var pollTitles = pollList.ConvertAll(poll => poll.Title);
 
-                var viewModel = new PollsList { Polls = polls, PollTitles = pollTitles };
+                var viewModel = new PollsList { Polls = pollList, PollTitles = pollTitles };
 
                 if (HttpContext.Request.Method == "POST")
-                    return Json(polls);
+                    return Json(pollList);
                 else
                     return View(viewModel);
             }
