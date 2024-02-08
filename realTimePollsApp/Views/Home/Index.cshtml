@@ -87,22 +87,20 @@
 
 <script>
     const getData = async () => {
-        const url = "https://localhost:44378/Home/Index"
+        const url = "https://localhost:44378/Polls/Index"
         const userId = {
             Id: hubConnection.connection.connectionId
         }
         const response = await fetch(url, {
-            method: 'POST',
             headers: {
                 'Accept': 'application/json'
-            },
-            body: JSON.stringify(userId)
-
+            }
         })
 
         if (!response.ok) throw new Error("Failed to fetch polls")
 
         const polls = await response.json()
+        console.log(polls)
         return polls
     }
 

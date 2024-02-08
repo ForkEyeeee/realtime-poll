@@ -24,7 +24,6 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        [HttpPost]
         public IActionResult Index()
         {
             try
@@ -33,13 +32,6 @@ namespace realTimePolls.Controllers
 
                 var pollList = polls.ToList();
 
-                //if (HttpContext.Request.Method == "POST")
-                //{
-                //    var entry = _context.Entry(Polls);
-                //    entry.Reload();
-                //}
-
-                // Add vote counts to list of polls
                 foreach (var poll in pollList)
                 {
                     int firstOptionCount = _context
@@ -62,10 +54,7 @@ namespace realTimePolls.Controllers
 
                 var viewModel = new PollsList { Polls = pollList, PollTitles = pollTitles };
 
-                if (HttpContext.Request.Method == "POST")
-                    return Json(pollList);
-                else
-                    return View(viewModel);
+                return View(viewModel);
             }
             catch (Exception e)
             {
