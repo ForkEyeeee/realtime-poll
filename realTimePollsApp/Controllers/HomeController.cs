@@ -28,31 +28,20 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                var polls = _context.Polls;
+                var polls = _context
+                    .Polls.Select(p => new PollItem
+                    {
+                        Poll = p,
+                        FirstVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
+                            .Count(),
+                        SecondVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
+                            .Count()
+                    })
+                    .ToList();
 
-                var pollList = polls.ToList();
-
-                foreach (var poll in pollList)
-                {
-                    int firstOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.FirstVote == true
-                        )
-                        .Count();
-
-                    int secondOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.SecondVote == true
-                        )
-                        .Count();
-
-                    poll.FirstVotes = firstOptionCount;
-                    poll.SecondVotes = secondOptionCount;
-                }
-
-                var pollTitles = pollList.ConvertAll(poll => poll.Title);
-
-                var viewModel = new PollsList { Polls = pollList, PollTitles = pollTitles };
+                var viewModel = new PollsList { Polls = polls };
 
                 return View(viewModel);
             }
@@ -68,27 +57,28 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                var polls = _context.Polls.ToList();
+                Poll poll = _context.Polls.FirstOrDefault(u => u.Title == pollName);
 
-                var poll = polls.FirstOrDefault(u => u.Title == pollName);
-                var pollTitles = polls.ConvertAll(poll => poll.Title);
+                if (poll == null)
+                    throw new Exception("Poll cannot be found");
 
-                if (poll != null)
-                {
-                    PollsList viewModel = new PollsList
+                int firstVoteCount = _context.UserPoll.Count(up =>
+                        up.PollId == poll.Id && up.Vote == true
+                    ),
+                    secondVoteCount = _context.UserPoll.Count(up =>
+                        up.PollId == poll.Id && up.Vote == true
+                    );
+
+                var viewModel = _context
+                    .Polls.Select(p => new PollItem
                     {
-                        Polls = polls,
-                        PollTitles = pollTitles,
-                        FirstOption = poll.FirstOption,
-                        SecondOption = poll.SecondOption,
-                    };
+                        Poll = poll,
+                        FirstVoteCount = firstVoteCount,
+                        SecondVoteCount = secondVoteCount
+                    })
+                    .ToList();
 
-                    return View("index", viewModel);
-                }
-                else
-                {
-                    return RedirectToAction("Index", "Home", new { area = "" });
-                }
+                return View("index", viewModel);
             }
             catch (Exception e)
             {

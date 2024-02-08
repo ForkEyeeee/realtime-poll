@@ -1,15 +1,16 @@
-﻿@model realTimePolls.Models.PollsList
+﻿@model realTimePolls.Models.PollItem
 
 <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
     <div class="vote-flex">
         <label for="VoteFirst">@Model.Poll.FirstOption</label><br>
-        <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.UserPoll != null && Model.UserPoll.FirstVote == true ? "checked" : "")>
+        <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.Poll != null && Model.Vote == true ? "checked" : "")>
         <br />
         <label for="vote-second">@Model.Poll.SecondOption</label><br>
-        <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.UserPoll != null && Model.UserPoll.SecondVote == true ? "checked" : "")>
+        <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.Poll != null && Model.Vote == false ? "checked" : "")>
         <br />
-        <input type="hidden" name="pollid" value="@Model.Poll.Id" />
-        <input type="hidden" name="userid" value="@Model.Poll.UserId"  />
+@* @        <input type="hidden" name="pollid" value="@Model.Polls" />
+        <input type="hidden" name="userid" value="@Model.Polls"  />
+        <input type="hidden" name="polltitle" value="@Model.Polls" />  *@
         <button type="submit" id="vote-btn"> Submit Vote</button>
         <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
     </div>

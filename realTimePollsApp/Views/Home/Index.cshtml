@@ -13,16 +13,16 @@
                 @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
                 {
                     <div>
-                        @Html.LabelFor(model => model.Poll.Title)
-                        @Html.TextBoxFor(model => model.Poll.Title, new { @class = "input-class", @required="required" })
+                        @Html.LabelFor(model => model.Polls)
+                        @Html.TextBoxFor(model => model.Polls, new { @class = "input-class", @required="required" })
                     </div>
                     <div>
-                        @Html.LabelFor(model => model.Poll.FirstOption)
-                        @Html.TextBoxFor(model => model.Poll.FirstOption, new { @class = "input-class", @required = "required" })
+                        @Html.LabelFor(model => model.Polls)
+                        @Html.TextBoxFor(model => model.Polls, new { @class = "input-class", @required = "required" })
                     </div>
                     <div>
-                        @Html.LabelFor(model => model.Poll.SecondOption)
-                        @Html.TextBoxFor(model => model.Poll.SecondOption, new { @class = "input-class", @required = "required" })
+                        @Html.LabelFor(model => model.Polls)
+                        @Html.TextBoxFor(model => model.Polls, new { @class = "input-class", @required = "required" })
                     </div>
                     <div>
                         <input type="submit" value="Create Poll" class="btn btn-primary" />
@@ -48,30 +48,31 @@
         { 
             foreach (var poll in Model.Polls)
             {   <ol>
-                    @Html.ActionLink(poll.Title, "Index", "Poll", new { data = poll.Title, pollid = poll.Id, userid = poll.UserId }, null)
-                    <li>First Option: @poll.FirstOption</li>
-                    <li>Second Option: @poll.SecondOption</li>
-                    <li class="first-votes">@poll.FirstVotes</li>
-                    <li class="second-votes">@poll.SecondVotes</li>
+                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
+                    <li>First Option: @poll.Poll.FirstOption</li>
+                <li>Second Option: @poll.Poll.FirstOption</li>
+                    <li class="first-votes">@poll.FirstVoteCount</li>
+                    <li class="second-votes">@poll.SecondVoteCount</li>
                 </ol>
 
             }    
 
         }
 
-    <form asp-controller="Home" asp-action="Poll" method="post" id="form">
+@*     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
         <div>
             <label for="cars">Choose a poll:</label>
             <select name="pollName" id="polls">
                 @if (Model != null)
                 {
-                    @foreach (var poll in Model.PollTitles)
+                    @foreach (var poll in Model.Polls)
                     {
                         <option value="@poll">@poll</option>
                     }
                     <button type="submit">Submit</button>
-                    <div>@Model.FirstOption</div>
+                    <div>@poll</div>
                     <div>@Model.SecondOption</div>
+
                 }
 
             </select>
@@ -79,7 +80,7 @@
 
         </div>
     </form>
-    <button id="test-btn">SEND TO ALL USERS</button>
+    <button id="test-btn">SEND TO ALL USERS</button> *@
 </div>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
@@ -126,7 +127,7 @@
 
     // Start the connection.
     start();
-
+    // when you press ubmit, it is not updating the database until after the stuff below runs
     hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
             console.log('received')

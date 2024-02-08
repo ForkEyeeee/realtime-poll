@@ -21,27 +21,22 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                var polls = _context.Polls;
+                var polls = _context
+                    .Polls.Select(p => new
+                    {
+                        Poll = p,
+                        FirstVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
+                            .Count(),
+                        SecondVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
+                            .Count()
+                    })
+                    .ToList();
 
-                var pollList = polls.ToList();
+                var pollTitles = polls.ConvertAll(poll => poll.Poll.Title);
 
-                foreach (var poll in pollList)
-                {
-                    int firstOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.FirstVote == true
-                        )
-                        .Count();
-
-                    int secondOptionCount = _context
-                        .UserPoll.Where(userPoll =>
-                            userPoll.PollId == poll.Id && userPoll.SecondVote == true
-                        )
-                        .Count();
-
-                    poll.FirstVotes = firstOptionCount;
-                    poll.SecondVotes = secondOptionCount;
-                }
+                var pollList = new { Polls = polls, PollTitles = pollTitles };
 
                 return Json(pollList);
             }

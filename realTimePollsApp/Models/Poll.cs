@@ -25,14 +25,5 @@ namespace realTimePolls.Models
         [Required]
         [Column("secondoption")]
         public string SecondOption { get; set; }
-
-        [NotMapped]
-        public virtual int FirstVotes { get; set; }
-
-        [NotMapped]
-        public virtual int SecondVotes { get; set; }
-
-        [NotMapped]
-        public virtual User User { get; set; }
     }
 }

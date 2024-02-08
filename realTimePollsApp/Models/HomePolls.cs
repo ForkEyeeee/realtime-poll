@@ -1,6 +1,6 @@
 ﻿namespace realTimePolls.Models
 {
-    public class PollsList
+    public class HomePolls
     {
         public List<Poll> Polls { get; set; }
 

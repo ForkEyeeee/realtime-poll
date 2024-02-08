@@ -10,18 +10,23 @@ namespace realTimePolls.Models
         [Column("id")]
         public int Id { get; set; }
 
-        [ForeignKey("User")]
-        [Column("userid")]
+        [Column("userid")] //fk
         public int UserId { get; set; }
 
-        [ForeignKey("Poll")]
-        [Column("poll")]
+        [NotMapped]
+        [ForeignKey("UserId")] //navigation property
+        [Column("userid")]
+        public User User { get; set; }
+
+        [Column("pollid")] //fk
         public int PollId { get; set; }
 
-        [Column("firstvote")]
-        public bool? FirstVote { get; set; }
+        [NotMapped]
+        [ForeignKey("PollId")] //navigation property
+        [Column("pollid")]
+        public Poll Poll { get; set; }
 
-        [Column("secondvote")]
-        public bool? SecondVote { get; set; }
+        [Column("vote")]
+        public bool? Vote { get; set; }
     }
 }

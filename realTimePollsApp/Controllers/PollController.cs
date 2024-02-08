@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using realTimePolls.Models;
 
 namespace realTimePolls.Controllers
@@ -15,26 +16,42 @@ namespace realTimePolls.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public ActionResult Index(string data, string pollid, string userid)
+        public class JsonRequestItem
         {
-            var pollId = Int32.Parse(pollid);
-            var userId = Int32.Parse(userid);
-            var polls = _context.Polls.ToList();
+            public string jsonRequest { get; set; }
+        }
 
-            var poll = polls.FirstOrDefault(u => u.Title == data);
-            var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
-            var userPolls = _context.UserPoll.ToList();
-            var userPoll = userPolls.FirstOrDefault(userPoll =>
-                userPoll.PollId == pollId && userPoll.UserId == userId
+        [HttpGet]
+        public IActionResult Index([FromQuery] string polltitle, int pollid, int userid)
+        {
+            Poll poll = _context.Polls.FirstOrDefault(u =>
+                u.Id == pollid && u.UserId == userid && u.Title == polltitle
             );
 
-            var viewModel = new PollsList
-            {
-                Poll = poll,
-                PollTitles = pollTitles,
-                UserPoll = userPoll
-            };
+            if (poll == null)
+                throw new Exception("Poll cannot be found");
+
+            int firstVoteCount = _context.UserPoll.Count(up =>
+                    up.PollId == poll.Id && up.Vote == true
+                ),
+                secondVoteCount = _context.UserPoll.Count(up =>
+                    up.PollId == poll.Id && up.Vote == true
+                );
+
+            var vote = _context
+                .UserPoll.FirstOrDefault(up => up.UserId == userid && up.PollId == pollid)
+                .Vote;
+
+            var viewModel = _context
+                .Polls.Select(p => new PollItem
+                {
+                    Poll = poll,
+                    FirstVoteCount = firstVoteCount,
+                    SecondVoteCount = secondVoteCount,
+                    Vote = vote
+                })
+                .FirstOrDefault();
+
             return View(viewModel);
         }
 
@@ -103,47 +120,48 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                var pollId = Int32.Parse(pollid);
-                var userId = Int32.Parse(userid);
+                //var pollId = Int32.Parse(pollid);
+                //var userId = Int32.Parse(userid);
 
-                var polls = _context.Polls.ToList();
-                var users = _context.User.ToList();
-                var userPolls = _context.UserPoll.ToList();
+                //var polls = _context.Polls.ToList();
+                //var users = _context.User.ToList();
+                //var userPolls = _context.UserPoll.ToList();
 
-                var poll = polls.FirstOrDefault(u => u.Id == pollId); //get the current poll
-                var user = users.FirstOrDefault(user => user.Id == userId); //get the current user
-                var userPoll = userPolls.FirstOrDefault(userPoll =>
-                    userPoll.PollId == pollId && userPoll.UserId == userId
-                ); // get the current userPoll
+                //var poll = polls.FirstOrDefault(u => u.Id == pollId); //get the current poll
+                //var user = users.FirstOrDefault(user => user.Id == userId); //get the current user
+                //var userPoll = userPolls.FirstOrDefault(userPoll =>
+                //    userPoll.PollId == pollId && userPoll.UserId == userId
+                //);
+                // get the current userPoll
 
-                var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+                //var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
 
-                PollsList viewModel = new PollsList
-                {
-                    Polls = polls,
-                    Poll = poll,
-                    PollTitles = pollTitles,
-                    FirstOption = poll.FirstOption,
-                    SecondOption = poll.SecondOption,
-                };
+                //PollsList viewModel = new PollsList
+                //{
+                //    Polls = polls,
+                //    Poll = poll,
+                //    PollTitles = pollTitles,
+                //    FirstOption = poll.FirstOption,
+                //    SecondOption = poll.SecondOption,
+                //};
 
-                UserPoll UserPoll = new UserPoll()
-                {
-                    UserId = userId,
-                    PollId = poll.Id,
-                    FirstVote = vote == "Vote First" ? true : false,
-                    SecondVote = vote == "Vote Second" ? true : false
-                };
+                //UserPoll UserPoll = new UserPoll()
+                //{
+                //    UserId = userId,
+                //    PollId = poll.Id,
+                //    FirstVote = vote == "Vote First" ? true : false,
+                //    SecondVote = vote == "Vote Second" ? true : false
+                //};
 
-                if (userPoll == null)
-                {
-                    _context.UserPoll.Add(UserPoll);
-                }
-                else
-                {
-                    userPoll.FirstVote = UserPoll.FirstVote;
-                    userPoll.SecondVote = UserPoll.SecondVote;
-                }
+                //if (userPoll == null)
+                //{
+                //    _context.UserPoll.Add(UserPoll);
+                //}
+                //else
+                //{
+                //    userPoll.FirstVote = UserPoll.FirstVote;
+                //    userPoll.SecondVote = UserPoll.SecondVote;
+                //}
 
                 _context.SaveChanges();
 
