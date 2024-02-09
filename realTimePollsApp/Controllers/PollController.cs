@@ -38,9 +38,9 @@ namespace realTimePolls.Controllers
                     up.PollId == poll.Id && up.Vote == true
                 );
 
-            var vote = _context
-                .UserPoll.FirstOrDefault(up => up.UserId == userid && up.PollId == pollid)
-                .Vote;
+            UserPoll userPoll =
+                _context.UserPoll.FirstOrDefault(up => up.UserId == userid && up.PollId == pollid)
+                ?? null;
 
             var viewModel = _context
                 .Polls.Select(p => new PollItem
@@ -48,7 +48,7 @@ namespace realTimePolls.Controllers
                     Poll = poll,
                     FirstVoteCount = firstVoteCount,
                     SecondVoteCount = secondVoteCount,
-                    Vote = vote
+                    Vote = userPoll == null ? false : userPoll.Vote,
                 })
                 .FirstOrDefault();
 
@@ -56,27 +56,26 @@ namespace realTimePolls.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(
+            [FromForm] string title,
+            [FromForm] string firstOption,
+            [FromForm] string secondOption
+        )
         {
             try
             {
-                var formValues = collection.ToList();
-                var pollTitle = formValues[0].Value;
-                var firstOption = formValues[1].Value;
-                var secondOption = formValues[2].Value;
-
                 var googleId =
                     HttpContext != null ? HttpContext.User.Claims.ToList()[0].Value : string.Empty;
 
                 if (googleId == string.Empty)
                     throw new Exception("Could not find googleId");
 
-                int userId = _context.User.FirstOrDefault(u => u.GoogleId == googleId).Id;
+                int userId = _context.User.SingleOrDefault(u => u.GoogleId == googleId).Id;
 
                 Poll poll = new Poll
                 {
                     UserId = userId,
-                    Title = pollTitle,
+                    Title = title,
                     FirstOption = firstOption,
                     SecondOption = secondOption
                 };

@@ -1,5 +1,6 @@
 ﻿@model realTimePolls.Models.PollsList
 
+
 <div class="text-center">
     <button id="myBtn">Create Poll</button>
     <div id="myModal" class="modal">
@@ -13,22 +14,24 @@
                 @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
                 {
                     <div>
-                        @Html.LabelFor(model => model.Polls)
-                        @Html.TextBoxFor(model => model.Polls, new { @class = "input-class", @required="required" })
+                        @Html.Label("Title", "Poll Title") @*first param is for, second is label text*@
+                        @Html.TextBox("Title", string.Empty, new { @class = "input-class", @required = "required" }) @*first param is name, secodn is value*@
                     </div>
                     <div>
-                        @Html.LabelFor(model => model.Polls)
-                        @Html.TextBoxFor(model => model.Polls, new { @class = "input-class", @required = "required" })
+                        @Html.Label("FirstOption", "First Option")
+                        @Html.TextBox("FirstOption", string.Empty, new { @class = "input-class", @required = "required" })
                     </div>
                     <div>
-                        @Html.LabelFor(model => model.Polls)
-                        @Html.TextBoxFor(model => model.Polls, new { @class = "input-class", @required = "required" })
+                        @Html.Label("SecondOption", "Second Option")
+                        @Html.TextBox("SecondOption", string.Empty, new { @class = "input-class", @required = "required" })
                     </div>
+                    
                     <div>
                         <input type="submit" value="Create Poll" class="btn btn-primary" />
                     </div>
                 }
             </div>
+
             <div class="modal-footer">
                 <h3>Modal Footer</h3>
             </div>
@@ -50,7 +53,7 @@
             {   <ol>
                 @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
                     <li>First Option: @poll.Poll.FirstOption</li>
-                <li>Second Option: @poll.Poll.FirstOption</li>
+                    <li>Second Option: @poll.Poll.SecondOption</li>
                     <li class="first-votes">@poll.FirstVoteCount</li>
                     <li class="second-votes">@poll.SecondVoteCount</li>
                 </ol>
