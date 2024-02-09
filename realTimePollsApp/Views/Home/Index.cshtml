@@ -134,17 +134,17 @@
     hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
             console.log('received')
-            const newData = await getData();
+            const { polls } = await getData();
 
             const firstVotes = document.querySelectorAll(".first-votes");
             const secondVotes = document.querySelectorAll(".second-votes");
 
             if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
-            if (newData.length !== firstVotes.length || newData.length !== secondVotes.length) throw new Error('length does not match');
+            if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match');
 
-            newData.forEach((data, i) => {
-                firstVotes[i].innerHTML = data.firstVotes;
-                secondVotes[i].innerHTML = data.secondVotes;
+            polls.forEach((poll, i) => {
+                firstVotes[i].innerHTML = poll.firstVoteCount;
+                secondVotes[i].innerHTML = poll.secondVoteCount;
             });
         } catch (e) {
             console.error(e);

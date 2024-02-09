@@ -49,6 +49,7 @@
 
     voteBtn.addEventListener('click', async (e) => {
         // e.preventDefault()
+
         try {
             await hubConnection.invoke("SendMessage", "fork", "HEY!!!!!");
         } catch (err) {
