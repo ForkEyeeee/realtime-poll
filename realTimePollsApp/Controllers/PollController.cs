@@ -116,52 +116,34 @@ namespace realTimePolls.Controllers
         }
 
         [HttpPost]
-        public ActionResult Vote(string vote, string pollid, string userid)
+        public ActionResult Vote([FromForm] int userid, int pollid, string vote)
         {
             try
             {
-                //var pollId = Int32.Parse(pollid);
-                //var userId = Int32.Parse(userid);
+                bool userVoter;
 
-                //var polls = _context.Polls.ToList();
-                //var users = _context.User.ToList();
-                //var userPolls = _context.UserPoll.ToList();
+                if (vote == "Vote First")
+                    userVoter = true;
+                else if (vote == "Vote Second")
+                    userVoter = false;
+                else
+                    throw new Exception("Unable to vote");
 
-                //var poll = polls.FirstOrDefault(u => u.Id == pollId); //get the current poll
-                //var user = users.FirstOrDefault(user => user.Id == userId); //get the current user
-                //var userPoll = userPolls.FirstOrDefault(userPoll =>
-                //    userPoll.PollId == pollId && userPoll.UserId == userId
-                //);
-                // get the current userPoll
+                var userPoll = _context.UserPoll.FirstOrDefault(userPoll =>
+                    userPoll.PollId == pollid && userPoll.UserId == userid
+                );
 
-                //var pollTitles = polls.ConvertAll<string>(poll => poll.Title);
+                UserPoll UserPoll = new UserPoll()
+                {
+                    UserId = userid,
+                    PollId = pollid,
+                    Vote = userVoter
+                };
 
-                //PollsList viewModel = new PollsList
-                //{
-                //    Polls = polls,
-                //    Poll = poll,
-                //    PollTitles = pollTitles,
-                //    FirstOption = poll.FirstOption,
-                //    SecondOption = poll.SecondOption,
-                //};
-
-                //UserPoll UserPoll = new UserPoll()
-                //{
-                //    UserId = userId,
-                //    PollId = poll.Id,
-                //    FirstVote = vote == "Vote First" ? true : false,
-                //    SecondVote = vote == "Vote Second" ? true : false
-                //};
-
-                //if (userPoll == null)
-                //{
-                //    _context.UserPoll.Add(UserPoll);
-                //}
-                //else
-                //{
-                //    userPoll.FirstVote = UserPoll.FirstVote;
-                //    userPoll.SecondVote = UserPoll.SecondVote;
-                //}
+                if (userPoll == null)
+                    _context.UserPoll.Add(UserPoll);
+                else
+                    userPoll.Vote = userVoter;
 
                 _context.SaveChanges();
 

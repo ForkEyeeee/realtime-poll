@@ -26,10 +26,10 @@ namespace realTimePolls.Controllers
                     {
                         Poll = p,
                         FirstVoteCount = _context
-                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
+                            .UserPoll.Where(up => up.Poll.Id == p.Id && up.Vote == true)
                             .Count(),
                         SecondVoteCount = _context
-                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
+                            .UserPoll.Where(up => up.Poll.Id == p.Id && up.Vote == false)
                             .Count()
                     })
                     .ToList();

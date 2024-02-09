@@ -18,8 +18,5 @@ namespace realTimePolls.Models
 
         [Column("googleid")]
         public string? GoogleId { get; set; }
-
-        [ForeignKey("userpoll")]
-        public UserPoll UserPoll { get; set; }
     }
 }

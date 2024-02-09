@@ -71,7 +71,7 @@ namespace realTimePolls.Controllers
                 if (googleIdClaim != null)
                 {
                     var googleId = googleIdClaim.Value;
-                    var userWithGoogleId = _context.User.SingleOrDefault(user =>
+                    User userWithGoogleId = _context.User.SingleOrDefault(user =>
                         user.GoogleId == googleId
                     );
 
