@@ -25,7 +25,7 @@
                         @Html.Label("SecondOption", "Second Option")
                         @Html.TextBox("SecondOption", string.Empty, new { @class = "input-class", @required = "required" })
                     </div>
-                    
+
                     <div>
                         <input type="submit" value="Create Poll" class="btn btn-primary" />
                     </div>
@@ -38,53 +38,89 @@
         </div>
     </div>
 
-    <div>
-        @if (Context.User.Identity.IsAuthenticated)
-        {
-            <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>
-        }
-    </div>
-
-        @*Displays list of polls*@
+    <div class="container">
       
-        @if (Model != null)
-        { 
-            foreach (var poll in Model.Polls)
-            {   <ol>
-                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
-                    <li>First Option: @poll.Poll.FirstOption</li>
-                    <li>Second Option: @poll.Poll.SecondOption</li>
-                    <li class="first-votes">@poll.FirstVoteCount</li>
-                    <li class="second-votes">@poll.SecondVoteCount</li>
-                </ol>
+            @if (Context.User.Identity.IsAuthenticated)
+            {
+                <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>
+            }
+       
+        <table class="rwd-table">
+            <tbody>
+                <tr>
+                    <th>User</th>
+                    <th>Title</th>
+                    <th>First Option</th>
+                    <th>Second Option</th>
+                    <th>First Vote Count</th>
+                    <th>Second Vote Count</th>
+                </tr>
 
-            }    
+                @*Displays list of polls*@
 
-        }
-
-@*     <form asp-controller="Home" asp-action="Poll" method="post" id="form">
-        <div>
-            <label for="cars">Choose a poll:</label>
-            <select name="pollName" id="polls">
                 @if (Model != null)
                 {
-                    @foreach (var poll in Model.Polls)
+                    foreach (var poll in Model.Polls)
                     {
-                        <option value="@poll">@poll</option>
+
+                        <tr>
+                            <td data-th="Title">
+                                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
+
+                            </td>
+                            <td data-th="User">
+                                @poll.Poll.UserId
+                            </td>
+                            <td data-th="Title">
+                                @poll.Poll.Title
+                            </td>
+                            <td data-th="First Option">
+                                @poll.Poll.FirstOption
+                            </td>
+                            <td data-th="Second Option">
+                                @poll.Poll.SecondOption
+                            </td>
+                            <td data-th="Vote Count">
+                                @poll.Poll.FirstOption: @poll.FirstVoteCount
+                                @poll.Poll.SecondOption: @poll.SecondVoteCount
+
+                            </td>
+                        </tr>
                     }
-                    <button type="submit">Submit</button>
-                    <div>@poll</div>
-                    <div>@Model.SecondOption</div>
 
                 }
 
-            </select>
+   
+               
+            </tbody>
+        </table>
+    </div>
 
 
-        </div>
-    </form>
-    <button id="test-btn">SEND TO ALL USERS</button> *@
+
+    @*Displays list of polls*@
+
+@*     @if (Model != null)
+    {
+        foreach (var poll in Model.Polls)
+        {
+               <ol>
+                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
+                <li>First Option: @poll.Poll.FirstOption</li>
+                <li>Second Option: @poll.Poll.SecondOption</li>
+                <li class="first-votes">@poll.FirstVoteCount</li>
+                <li class="second-votes">@poll.SecondVoteCount</li>
+            </ol>
+
+        }
+
+    } *@
 </div>
+<style>
+
+</style>
+
+
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
@@ -155,21 +191,15 @@
 </script>
 <script>
 
-    var modal = document.getElementById("myModal");
-    var btn = document.getElementById("myBtn");
-    var span = document.getElementsByClassName("close")[0];
+    const modal = document.getElementById("myModal");
+    const btn = document.getElementById("myBtn");
+    const span = document.getElementsByClassName("close")[0];
 
-    btn.onclick = function () {
-        modal.style.display = "block";
-    }
+    btn.addEventListener('click', () => modal.style.display = "block") 
 
-    span.onclick = function () {
-        modal.style.display = "none";
-    }
+    span.addEventListener('click', () => modal.style.display = "none")
 
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+    window.addEventListener('click', (e) => { 
+        if (event.target == modal) modal.style.display = "none"
+    })
 </script>
