@@ -44,18 +44,4 @@
         // Start the connection.
         start();
 
-        const voteBtn = document.getElementById("vote-btn")
-        const userId = hubConnection.connection.connectionId
-
-    voteBtn.addEventListener('click', async (e) => {
-        // e.preventDefault()
-
-        try {
-            await hubConnection.invoke("SendMessage", "fork", "HEY!!!!!");
-        } catch (err) {
-            console.error(err.toString());
-        }
-    })
-    
-  
 </script>

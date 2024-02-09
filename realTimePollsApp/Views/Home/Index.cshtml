@@ -130,22 +130,23 @@
 
     // Start the connection.
     start();
+
     // when you press ubmit, it is not updating the database until after the stuff below runs
     hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
-            console.log('received')
-            const { polls } = await getData();
+                const { polls } = await getData();
 
-            const firstVotes = document.querySelectorAll(".first-votes");
-            const secondVotes = document.querySelectorAll(".second-votes");
+                const firstVotes = document.querySelectorAll(".first-votes");
+                const secondVotes = document.querySelectorAll(".second-votes");
 
-            if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
-            if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match');
+                if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
+                if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match');
 
-            polls.forEach((poll, i) => {
-                firstVotes[i].innerHTML = poll.firstVoteCount;
-                secondVotes[i].innerHTML = poll.secondVoteCount;
-            });
+                polls.forEach((poll, i) => {
+                    firstVotes[i].innerHTML = poll.firstVoteCount;
+                    secondVotes[i].innerHTML = poll.secondVoteCount;
+                });
+                console.log('here')
         } catch (e) {
             console.error(e);
         }

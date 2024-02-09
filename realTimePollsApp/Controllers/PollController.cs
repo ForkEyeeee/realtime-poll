@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using realTimePolls.Models;
+using SignalRChat.Hubs;
 
 namespace realTimePolls.Controllers
 {
@@ -9,11 +12,17 @@ namespace realTimePolls.Controllers
         private readonly ILogger<PollController> _logger;
 
         private readonly RealTimePollsContext _context; // Declare the DbContext variable
+        private readonly IHubContext<PollHub> _myHubContext;
 
-        public PollController(ILogger<PollController> logger, RealTimePollsContext context)
+        public PollController(
+            ILogger<PollController> logger,
+            RealTimePollsContext context,
+            IHubContext<PollHub> myHubContext
+        )
         {
             _logger = logger;
             _context = context;
+            _myHubContext = myHubContext;
         }
 
         public class JsonRequestItem
@@ -114,6 +123,11 @@ namespace realTimePolls.Controllers
             }
         }
 
+        public void SendMessage() //this can receive a string msg, then pass it to sendasync
+        {
+            _myHubContext.Clients.All.SendAsync("ReceiveMessage");
+        }
+
         [HttpPost]
         public ActionResult Vote([FromForm] int userid, int pollid, string vote)
         {
@@ -145,6 +159,8 @@ namespace realTimePolls.Controllers
                     userPoll.Vote = userVoter;
 
                 _context.SaveChanges();
+
+                SendMessage();
 
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
