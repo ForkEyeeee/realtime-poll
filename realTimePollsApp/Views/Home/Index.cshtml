@@ -192,7 +192,7 @@
 
     const createPaginationButtons = (polls) => {
         const pollsLength = polls.length
-
+        const baseURL = "https://localhost:44378/"
         let paginationLength;
         if (polls.length / 5 !== 0) {
             paginationLength = Math.ceil(polls.length / 5)
@@ -208,17 +208,29 @@
             } 
 
             const btn = document.createElement("a")
+            btn.classList.add("pagination-btn")
             btn.innerHTML = [i]
             paginationContainer.appendChild(btn)
             btn.addEventListener('click', (e) => {
-                e.target.classList.add("active")
+                window.location.replace(
+                    baseURL + "?page=" + btn.innerHTML,
+                );
             })
             //send a post request to get new data
 
         }
-               const next = document.createElement("a")
-                next.innerHTML = "&raquo;"
-                paginationContainer.appendChild(next)
+        const next = document.createElement("a")
+        next.innerHTML = "&raquo;"
+        paginationContainer.appendChild(next)
+        const searchParams = new URLSearchParams(window.location.search);
+        const page = searchParams.get('page')
+        const btns = document.querySelectorAll(".pagination-btn")
+        btns.forEach(btn => {
+            if (btn.innerHTML === page) btn.classList.add("active")
+
+        })
+        
+        console.log(page); 
     }
         
 
