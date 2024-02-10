@@ -44,6 +44,9 @@ namespace realTimePolls.Controllers
                 int pollCount = _context.Polls.Count();
 
                 var pollList = new PollsList { Polls = polls, PollCount = pollCount };
+                //var viewModel = new PollsList { Polls = polls, PollCount = pollCount };
+
+                //return View(viewModel);
 
                 return Json(pollList);
             }

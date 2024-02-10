@@ -63,7 +63,7 @@
                     foreach (var poll in Model.Polls)
                     {
 
-                        <tr>
+                        <tr class="table-data">
                             <td data-th="Title">
                                 @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
 
@@ -140,7 +140,7 @@
     const getData = async (page) => {
 
         const baseURL = "https://localhost:44378/Polls/Index"
-        const url = page === "" ? baseURL : baseURL + `?page=${page}`
+        const url = page === undefined ? baseURL : baseURL + `?page=${page}`
         
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -241,6 +241,50 @@
                 } 
                 const updateGrid = async () => {
                     const { polls } = await getData(page);
+                    const table = document.querySelector(".rwd-table")
+                    document.querySelectorAll(".table-data").forEach(row => row.remove())
+                    const cells = ["Title", "User", "First Option", 
+                    "Second Option", "First Vote Count", "Second Vote Count"]
+
+                    polls.forEach(poll => {
+
+
+                       const tableRow =  document.createElement("tr")
+                       tableRow.classList.add("table-data")
+                       table.appendChild(tableRow)
+                        for (let i = 0; i <= 5; i++) {
+                            const tableCell = document.createElement("td")
+                            tableCell.setAttribute("data-th", cells[i])
+                            let content;
+                             switch (cells[i]) {
+                                case "Title":
+                                        content = poll.poll.title
+                                        break;
+                                case "User":
+                                        content = poll.poll.user
+                                        break;
+                                case "First Option":
+                                        content = poll.poll.firstOption
+                                        break;
+                                case "Second Option":
+                                        content = poll.poll.secondOption
+                                        break;
+                                case "First Vote Count":
+                                        content = poll.firstVoteCount
+                                        break;
+                                case "Second Vote Count":
+                                    content = poll.secondVoteCount
+                                    break;
+                                    default:
+                                        console.log("Error getting cell content");
+                                }
+   
+                            tableRow.appendChild(tableCell)
+                            tableCell.innerHTML = content
+                        
+                        } 
+                    })
+
                     console.log('here', polls)
                 }
                     updateGrid();
