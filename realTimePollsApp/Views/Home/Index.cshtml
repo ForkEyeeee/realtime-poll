@@ -94,9 +94,7 @@
     </div>
 
     <div id="pagination-container" class="pagination">
-        <div>
-   
-        </div>
+ 
      
 @*         <a href="#">1</a>
         <a href="#" class="active">2</a>
@@ -131,9 +129,11 @@
                 background-color: #ddd;
             }
 </style>
+
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
 
+@*Connects client to signalR server*@
 <script>
     const oldData = @Html.Raw(Json.Serialize(@Model));
 
@@ -180,7 +180,10 @@
 
     // Start the connection.
     start();
+</script>
 
+@*Grid pagination*@
+<script>
     async function getPolls() {
         try {
             const { polls, pollCount } = await getData()
@@ -192,142 +195,160 @@
         }
     }
 
-    //check if pagination widget exists before making another one
+    const updateGrid = async (page) => {
+        try {
 
-    const createPaginationButtons = (polls, pollCount) => {
-        const baseURL = "https://localhost:44378/"
-        const pollsLength = pollCount
-        
-        let paginationLength;
-        
-        if (pollsLength / 5 !== 0) {
-            paginationLength = Math.ceil(pollsLength / 5)
-        } else {
-            paginationLength = pollsLength / 5
-        }
+            const { polls } = await getData(page);
+            const table = document.querySelector(".rwd-table")
 
-        const paginationContainer = document.getElementById("pagination-container")
+            document.querySelectorAll(".table-data").forEach(row => row.remove())
 
-        for (let i = 1; i <= paginationLength; i++) {
-            if (i === 1) {
-                const prev = document.createElement("a")
-                prev.innerHTML = "&laquo;"
-                paginationContainer.appendChild(prev)
-            } 
+            const cells = ["Title", "User", "First Option",
+                "Second Option", "First Vote Count", "Second Vote Count"]
 
-            const btn = document.createElement("a")
-            btn.classList.add("pagination-btn")
-            btn.innerHTML = [i]
-            paginationContainer.appendChild(btn)
+            polls.forEach(poll => {
+                const tableRow = document.createElement("tr")
+                tableRow.classList.add("table-data")
+                table.appendChild(tableRow)
 
-            btn.addEventListener('click', (e) => {
-                const nextURL = baseURL + "?page=" + btn.innerHTML;
-                const nextTitle = 'Home';
-                const nextState = { additionalInformation: 'Updated the URL with JS' };
+                for (let i = 0; i <= 5; i++) {
+                    const tableCell = document.createElement("td")
+                    tableCell.setAttribute("data-th", cells[i])
 
-                window.history.replaceState(nextState, nextTitle, nextURL);
+                    let content;
 
-                const searchParams = new URLSearchParams(window.location.search);
-                const page = searchParams.get('page')
+                    switch (cells[i]) {
+                        case "Title":
+                            content = poll.poll.title
+                            break;
+                        case "User":
+                            content = poll.poll.user
+                            break;
+                        case "First Option":
+                            content = poll.poll.firstOption
+                            break;
+                        case "Second Option":
+                            content = poll.poll.secondOption
+                            break;
+                        case "First Vote Count":
+                            content = poll.firstVoteCount
+                            break;
+                        case "Second Vote Count":
+                            content = poll.secondVoteCount
+                            break;
+                        default:
+                            throw new Error("Unable to update grid")
+                    }
 
-                if (btn.innerHTML === searchParams.get('page')) {
-                    const btns = document.querySelectorAll(".pagination-btn")
-                    btns.forEach((btn, i) => {
-                        btn.classList.remove("active")
+                    tableRow.appendChild(tableCell)
+                    tableCell.innerHTML = content
 
-                    })
-                    btn.classList.add("active")
-
-                } 
-                const updateGrid = async () => {
-                    const { polls } = await getData(page);
-                    const table = document.querySelector(".rwd-table")
-                    document.querySelectorAll(".table-data").forEach(row => row.remove())
-                    const cells = ["Title", "User", "First Option", 
-                    "Second Option", "First Vote Count", "Second Vote Count"]
-
-                    polls.forEach(poll => {
-
-
-                       const tableRow =  document.createElement("tr")
-                       tableRow.classList.add("table-data")
-                       table.appendChild(tableRow)
-                        for (let i = 0; i <= 5; i++) {
-                            const tableCell = document.createElement("td")
-                            tableCell.setAttribute("data-th", cells[i])
-                            let content;
-                             switch (cells[i]) {
-                                case "Title":
-                                        content = poll.poll.title
-                                        break;
-                                case "User":
-                                        content = poll.poll.user
-                                        break;
-                                case "First Option":
-                                        content = poll.poll.firstOption
-                                        break;
-                                case "Second Option":
-                                        content = poll.poll.secondOption
-                                        break;
-                                case "First Vote Count":
-                                        content = poll.firstVoteCount
-                                        break;
-                                case "Second Vote Count":
-                                    content = poll.secondVoteCount
-                                    break;
-                                    default:
-                                        console.log("Error getting cell content");
-                                }
-   
-                            tableRow.appendChild(tableCell)
-                            tableCell.innerHTML = content
-                        
-                        } 
-                    })
-
-                    console.log('here', polls)
                 }
-                    updateGrid();
             })
         }
-        
-        const next = document.createElement("a")
-        next.innerHTML = "&raquo;"
-        paginationContainer.appendChild(next)
-        
-        const searchParams = new URLSearchParams(window.location.search);
-        const page = searchParams.get('page')
-        const btns = document.querySelectorAll(".pagination-btn")
-        
-        btns.forEach((btn, i) => {
-            if (btn.innerHTML === page) btn.classList.add("active")
-            if (page === null && i === 0) btn.classList.add("active")
+        catch (e) {
+            console.error(e)
+        }
+    }
 
-        })
 
+    const createPaginationButtons = (polls, pollCount) => {
+        try {
+            if (document.getElementById("pagination-container").childElementCount !== 0) throw new Error("Pagination Widget already exists")
+            
+            const baseURL = "https://localhost:44378/"
+            const pollsLength = pollCount
+
+            let paginationLength;
+
+            if (pollsLength / 5 !== 0) {
+                paginationLength = Math.ceil(pollsLength / 5)
+            } else {
+                paginationLength = pollsLength / 5
+            }
+
+            const paginationContainer = document.getElementById("pagination-container")
+
+            for (let i = 1; i <= paginationLength; i++) {
+                if (i === 1) {
+                    const prev = document.createElement("a")
+                    prev.innerHTML = "&laquo;"
+                    paginationContainer.appendChild(prev)
+                }
+
+                const btn = document.createElement("a")
+                btn.classList.add("pagination-btn")
+                btn.innerHTML = [i]
+                paginationContainer.appendChild(btn)
+
+                btn.addEventListener('click', (e) => {
+                    const nextURL = baseURL + "?page=" + btn.innerHTML;
+                    const nextTitle = 'Home';
+                    const nextState = { additionalInformation: 'Updated the URL with JS' };
+
+                    window.history.replaceState(nextState, nextTitle, nextURL);
+
+                    const searchParams = new URLSearchParams(window.location.search);
+                    const page = searchParams.get('page')
+
+                    if (btn.innerHTML === searchParams.get('page')) {
+                        const btns = document.querySelectorAll(".pagination-btn")
+                        
+                        btns.forEach((btn, i) => {
+                            btn.classList.remove("active")
+                        })
+
+                        btn.classList.add("active")
+
+                    }
+                    updateGrid(page);
+                })
+            }
+
+            const next = document.createElement("a")
+            next.innerHTML = "&raquo;"
+            paginationContainer.appendChild(next)
+
+            const searchParams = new URLSearchParams(window.location.search);
+            const page = searchParams.get('page')
+            const btns = document.querySelectorAll(".pagination-btn")
+
+            btns.forEach((btn, i) => {
+                if (btn.innerHTML === page) btn.classList.add("active")
+                if (page === null && i === 0) btn.classList.add("active")
+
+            })
+        }
+
+        catch (e) {
+            console.error(e)
+        }
    }
-        
+</script>
+
+@*Updates the DOM after client receives message from the server*@
+<script>
     hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
-                const { polls } = await getData();
+            const { polls } = await getData();
 
-                const firstVotes = document.querySelectorAll(".first-votes");
-                const secondVotes = document.querySelectorAll(".second-votes");
+            const firstVotes = document.querySelectorAll(".first-votes");
+            const secondVotes = document.querySelectorAll(".second-votes");
 
-                if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
-                if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match');
+            if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
+            if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match');
 
-                polls.forEach((poll, i) => {
-                    firstVotes[i].innerHTML = poll.firstVoteCount;
-                    secondVotes[i].innerHTML = poll.secondVoteCount;
-                });
-                console.log('here')
+            polls.forEach((poll, i) => {
+                firstVotes[i].innerHTML = poll.firstVoteCount;
+                secondVotes[i].innerHTML = poll.secondVoteCount;
+            });
         } catch (e) {
             console.error(e);
         }
     });
-
 </script>
+
+@*Opens and closes modal window*@
 <script>
 
     const modal = document.getElementById("myModal");
