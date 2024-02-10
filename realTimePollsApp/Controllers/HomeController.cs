@@ -24,10 +24,18 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index([FromQuery] int page = 1)
         {
             try
             {
+                var pageQueryParam = HttpContext.Request.Query["page"].ToString();
+                bool isPage = pageQueryParam == "1";
+
+                if (page == 1 && !isPage)
+                {
+                    return RedirectToAction("Home", new { page });
+                }
+
                 var polls = _context
                     .Polls.Select(p => new PollItem
                     {
