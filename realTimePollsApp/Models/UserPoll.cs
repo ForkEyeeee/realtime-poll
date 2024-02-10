@@ -17,7 +17,7 @@ namespace realTimePolls.Models
         [NotMapped] //navigation property
         public User? User { get; set; }
 
-        [ForeignKey("PollId")] //fk
+        [ForeignKey("poll")] //fk
         [Column("pollid")]
         public int PollId { get; set; }
 

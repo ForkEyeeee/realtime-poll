@@ -101,17 +101,22 @@ namespace realTimePolls.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult Delete(string pollid)
+        public ActionResult Delete([FromQuery] int pollid)
         {
             try
             {
-                var pollId = Int32.Parse(pollid);
-                var poll = _context.Polls.FirstOrDefault(poll => poll.Id == pollId);
+                var userPolls = _context.UserPoll.Where(up => up.PollId == pollid).ToList();
+                if (userPolls.Any())
+                {
+                    _context.UserPoll.RemoveRange(userPolls);
+                }
+
+                var poll = _context.Polls.SingleOrDefault(p => p.Id == pollid);
                 if (poll == null)
                 {
                     throw new Exception("Could not find pollId");
                 }
+
                 _context.Polls.Remove(poll);
                 _context.SaveChanges();
                 return RedirectToAction("Index", "Home", new { area = "" });

@@ -8,11 +8,14 @@ namespace realTimePolls.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [ForeignKey("User")]
         [Column("userid")]
         public int UserId { get; set; }
+
+        [NotMapped] //navigation property
+        public User User { get; set; }
 
         [Required]
         [Column("title")]

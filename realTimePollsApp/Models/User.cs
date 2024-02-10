@@ -16,6 +16,9 @@ namespace realTimePolls.Models
         [Column("name")]
         public string? Name { get; set; }
 
+        [NotMapped] //navigation property
+        public Poll Poll { get; set; }
+
         [Column("googleid")]
         public string? GoogleId { get; set; }
     }

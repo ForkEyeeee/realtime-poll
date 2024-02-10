@@ -89,43 +89,53 @@
                     }
 
                 }
-
-   
-               
             </tbody>
         </table>
     </div>
 
+    <div id="pagination-container" class="pagination">
+        <div>
+   
+        </div>
+     
+@*         <a href="#">1</a>
+        <a href="#" class="active">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">6</a> *@
+      
+    </div>
+</div>
 
 
-    @*Displays list of polls*@
+<style>
+    .pagination {
+        display: inline-block;
+    }
 
-@*     @if (Model != null)
-    {
-        foreach (var poll in Model.Polls)
-        {
-               <ol>
-                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
-                <li>First Option: @poll.Poll.FirstOption</li>
-                <li>Second Option: @poll.Poll.SecondOption</li>
-                <li class="first-votes">@poll.FirstVoteCount</li>
-                <li class="second-votes">@poll.SecondVoteCount</li>
-            </ol>
-
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
         }
 
-    } *@
-</div>
-<style>
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
 
+            .pagination a:hover:not(.active) {
+                background-color: #ddd;
+            }
 </style>
-
-
-
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
 
 <script>
+    // let polls;
     const getData = async () => {
         const url = "https://localhost:44378/Polls/Index"
         const userId = {
@@ -140,11 +150,10 @@
         if (!response.ok) throw new Error("Failed to fetch polls")
 
         const polls = await response.json()
-        console.log(polls)
         return polls
     }
 
-    const oldData = @Html.Raw(Json.Serialize(@Model));
+    // const oldData = @Html.Raw(Json.Serialize(@Model));
 
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
@@ -155,6 +164,8 @@
         try {
             await hubConnection.start();
             console.log("SignalR Connected.");
+            await getPolls();
+
         } catch (e) {
             console.error("Failed to connect with SignalR", e);
         }
@@ -166,6 +177,53 @@
 
     // Start the connection.
     start();
+
+    async function getPolls() {
+        try {
+            const { polls } = await getData()
+            createPaginationButtons(polls)
+            console.log(polls)
+
+        } catch (e) {
+            console.error("Failed to get polls", e);
+        }
+    }
+
+
+    const createPaginationButtons = (polls) => {
+        const pollsLength = polls.length
+
+        let paginationLength;
+        if (polls.length / 5 !== 0) {
+            paginationLength = Math.ceil(polls.length / 5)
+        } else {
+            paginationLength = polls.length / 5
+        }
+        const paginationContainer = document.getElementById("pagination-container")
+        for (let i = 1; i <= paginationLength; i++) {
+            if (i === 1) {
+                const prev = document.createElement("a")
+                prev.innerHTML = "&laquo;"
+                paginationContainer.appendChild(prev)
+            } 
+
+            const btn = document.createElement("a")
+            btn.innerHTML = [i]
+            paginationContainer.appendChild(btn)
+            btn.addEventListener('click', (e) => {
+                e.target.classList.add("active")
+            })
+            //send a post request to get new data
+
+        }
+               const next = document.createElement("a")
+                next.innerHTML = "&raquo;"
+                paginationContainer.appendChild(next)
+    }
+        
+
+
+   
 
     // when you press ubmit, it is not updating the database until after the stuff below runs
     hubConnection.on("ReceiveMessage", async (user, message) => {
