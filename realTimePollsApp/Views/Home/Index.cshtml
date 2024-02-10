@@ -250,12 +250,31 @@
             console.error(e)
         }
     }
+    
+    const updateActivePage = (node) => {
+        console.log('update')
+        const searchParams = new URLSearchParams(window.location.search);
+        const page = searchParams.get('page')
+        // if (node.innerHTML === searchParams.get('page')) {
+            const btns = document.querySelectorAll(".pagination-btn")
+            // if(btns.length !== 5) return
+            btns.forEach((btn, i) => {
+                btn.classList.remove("active")
+            if (btn.innerHTML === page) btn.classList.add("active")
+            })
 
+
+        // }
+    }
 
     const createPaginationButtons = (polls, pollCount) => {
+
         try {
             if (document.getElementById("pagination-container").childElementCount !== 0) throw new Error("Pagination Widget already exists")
-            
+
+            const searchParams = new URLSearchParams(window.location.search);
+            let page = searchParams.get('page')
+
             const baseURL = "https://localhost:44378/"
             const pollsLength = pollCount
 
@@ -273,6 +292,19 @@
                 if (i === 1) {
                     const prev = document.createElement("a")
                     prev.innerHTML = "&laquo;"
+
+                    prev.addEventListener('click', (e, polls, pollsLength) => {
+                        if (page === null) page = 2
+                        page = parseInt(page) - 1
+                        const nextURL = baseURL + "?page=" + page.toString()
+                        const nextTitle = 'Home';
+                        const nextState = { additionalInformation: 'Updated the URL with JS' };
+
+                        window.history.replaceState(nextState, nextTitle, nextURL);
+                        updateActivePage(next)
+                        updateGrid(page);
+                    })
+
                     paginationContainer.appendChild(prev)
                 }
 
@@ -287,37 +319,46 @@
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
 
                     window.history.replaceState(nextState, nextTitle, nextURL);
-
-                    const searchParams = new URLSearchParams(window.location.search);
-                    const page = searchParams.get('page')
-
-                    if (btn.innerHTML === searchParams.get('page')) {
-                        const btns = document.querySelectorAll(".pagination-btn")
-                        
-                        btns.forEach((btn, i) => {
-                            btn.classList.remove("active")
-                        })
-
-                        btn.classList.add("active")
-
-                    }
+                    
+                    updateActivePage(btn)
+                    page = btn.innerHTML
                     updateGrid(page);
                 })
             }
 
-            const next = document.createElement("a")
-            next.innerHTML = "&raquo;"
-            paginationContainer.appendChild(next)
-
-            const searchParams = new URLSearchParams(window.location.search);
-            const page = searchParams.get('page')
+            // const searchParams = new URLSearchParams(window.location.search);
+            // let page = searchParams.get('page')
             const btns = document.querySelectorAll(".pagination-btn")
+            const test = polls;
 
             btns.forEach((btn, i) => {
                 if (btn.innerHTML === page) btn.classList.add("active")
                 if (page === null && i === 0) btn.classList.add("active")
 
             })
+
+            const next = document.createElement("a") 
+
+            next.addEventListener('click', (e, polls, pollsLength) => {
+                if (page === null) page = 2
+                // if (document.querySelectorAll(".pagination-btn").length <= 5) return
+                //check if the length of th epolls returned is 0. if so, then dont do this
+                // polls and pollsLength are undefined here, maybe make a request here instead of using func param;
+                // do the same for prev btn.
+                page = parseInt(page) + 1
+                const nextURL = baseURL + "?page=" + page.toString()
+                const nextTitle = 'Home';
+                const nextState = { additionalInformation: 'Updated the URL with JS' };
+
+                window.history.replaceState(nextState, nextTitle, nextURL);
+                updateActivePage(next)
+                updateGrid(page);
+            })
+
+            next.innerHTML = "&raquo;"
+            paginationContainer.appendChild(next)
+
+ 
         }
 
         catch (e) {
