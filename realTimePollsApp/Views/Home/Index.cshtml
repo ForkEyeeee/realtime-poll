@@ -135,12 +135,17 @@
 <script src="~/js/chat.js"></script>
 
 <script>
-    // let polls;
-    const getData = async () => {
-        const url = "https://localhost:44378/Polls/Index"
+    const oldData = @Html.Raw(Json.Serialize(@Model));
+
+    const getData = async (page) => {
+
+        const baseURL = "https://localhost:44378/Polls/Index"
+        const url = page === "" ? baseURL : baseURL + `?page=${page}`
+        
         const userId = {
             Id: hubConnection.connection.connectionId
         }
+
         const response = await fetch(url, {
             headers: {
                 'Accept': 'application/json'
@@ -152,8 +157,6 @@
         const polls = await response.json()
         return polls
     }
-
-    // const oldData = @Html.Raw(Json.Serialize(@Model));
 
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
@@ -182,41 +185,27 @@
         try {
             const { polls } = await getData()
             createPaginationButtons(polls)
-            console.log(polls)
-
         } catch (e) {
             console.error("Failed to get polls", e);
         }
     }
 
-
-    const getGridData = async (page) => {
-        const url = `https://localhost:44378/Polls/Index/?page=${page}`
-        const userId = {
-            Id: hubConnection.connection.connectionId
-        }
-        const response = await fetch(url, {
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-
-        if (!response.ok) throw new Error("Failed to fetch polls")
-
-        const polls = await response.json()
-        return polls
-   }
+    //check if pagination widget exists before making another one
 
     const createPaginationButtons = (polls) => {
-        const pollsLength = polls.length
         const baseURL = "https://localhost:44378/"
+        const pollsLength = polls.length
+        
         let paginationLength;
+        
         if (polls.length / 5 !== 0) {
             paginationLength = Math.ceil(polls.length / 5)
         } else {
             paginationLength = polls.length / 5
         }
+
         const paginationContainer = document.getElementById("pagination-container")
+
         for (let i = 1; i <= paginationLength; i++) {
             if (i === 1) {
                 const prev = document.createElement("a")
@@ -230,13 +219,12 @@
             paginationContainer.appendChild(btn)
 
             btn.addEventListener('click', (e) => {
-                // window.location.replace(
-                //     baseURL + "?page=" + btn.innerHTML,
-                // );
                 const nextURL = baseURL + "?page=" + btn.innerHTML;
                 const nextTitle = 'Home';
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
+
                 window.history.replaceState(nextState, nextTitle, nextURL);
+
                 const searchParams = new URLSearchParams(window.location.search);
                 const page = searchParams.get('page')
 
@@ -249,23 +237,22 @@
                     btn.classList.add("active")
 
                 } 
-                console.log('testing')
-                const test = async () => {
-                    const { polls } = await getGridData(page);
+                const updateGrid = async () => {
+                    const { polls } = await getData(page);
+                    console.log('here', polls)
                 }
-                test();
+                    updateGrid();
             })
-    
-
-            //send a post request to get new data
-
         }
+        
         const next = document.createElement("a")
         next.innerHTML = "&raquo;"
         paginationContainer.appendChild(next)
+        
         const searchParams = new URLSearchParams(window.location.search);
         const page = searchParams.get('page')
         const btns = document.querySelectorAll(".pagination-btn")
+        
         btns.forEach((btn, i) => {
             if (btn.innerHTML === page) btn.classList.add("active")
             if (page === null && i === 0) btn.classList.add("active")
@@ -274,11 +261,6 @@
 
    }
         
-
-
-   
-
-    // when you press ubmit, it is not updating the database until after the stuff below runs
     hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
                 const { polls } = await getData();

@@ -21,6 +21,7 @@ namespace realTimePolls.Controllers
         {
             try
             {
+                //use page param to filter the results of polls tow hat you need and return that. then updat ethe DOM
                 var polls = _context
                     .Polls.Select(p => new PollItem
                     {
