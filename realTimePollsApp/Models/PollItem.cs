@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.Tracing;
 
 namespace realTimePolls.Models
 {

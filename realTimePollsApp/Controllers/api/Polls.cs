@@ -17,13 +17,17 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index([FromQuery] int page)
+        public IActionResult Index([FromQuery] int page = 1)
         {
             try
             {
-                //use page param to filter the results of polls tow hat you need and return that. then updat ethe DOM
+                int take = 5;
+                int skip = (page - 1) * take;
+
                 var polls = _context
-                    .Polls.Select(p => new PollItem
+                    .Polls.Skip(skip)
+                    .Take(take)
+                    .Select(p => new PollItem
                     {
                         Poll = p,
                         FirstVoteCount = _context
@@ -31,11 +35,15 @@ namespace realTimePolls.Controllers
                             .Count(),
                         SecondVoteCount = _context
                             .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
-                            .Count()
+                            .Count(),
                     })
                     .ToList();
 
-                var pollList = new PollsList { Polls = polls };
+                //use page param to filter the results of polls tow hat you need and return that. then updat ethe DOM
+
+                int pollCount = _context.Polls.Count();
+
+                var pollList = new PollsList { Polls = polls, PollCount = pollCount };
 
                 return Json(pollList);
             }

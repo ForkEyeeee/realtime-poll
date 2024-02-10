@@ -183,8 +183,10 @@
 
     async function getPolls() {
         try {
-            const { polls } = await getData()
-            createPaginationButtons(polls)
+            const { polls, pollCount } = await getData()
+            console.log(polls)
+            console.log(pollCount)
+            createPaginationButtons(polls, pollCount)
         } catch (e) {
             console.error("Failed to get polls", e);
         }
@@ -192,16 +194,16 @@
 
     //check if pagination widget exists before making another one
 
-    const createPaginationButtons = (polls) => {
+    const createPaginationButtons = (polls, pollCount) => {
         const baseURL = "https://localhost:44378/"
-        const pollsLength = polls.length
+        const pollsLength = pollCount
         
         let paginationLength;
         
-        if (polls.length / 5 !== 0) {
-            paginationLength = Math.ceil(polls.length / 5)
+        if (pollsLength / 5 !== 0) {
+            paginationLength = Math.ceil(pollsLength / 5)
         } else {
-            paginationLength = polls.length / 5
+            paginationLength = pollsLength / 5
         }
 
         const paginationContainer = document.getElementById("pagination-container")
