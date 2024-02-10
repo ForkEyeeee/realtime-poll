@@ -190,8 +190,8 @@
     }
 
 
-    const getGridData = async () => {
-        const url = "https://localhost:44378/Polls/Index"
+    const getGridData = async (page) => {
+        const url = `https://localhost:44378/Polls/Index/?page=${page}`
         const userId = {
             Id: hubConnection.connection.connectionId
         }
@@ -200,9 +200,11 @@
                 'Accept': 'application/json'
             }
         })
- 
 
-    if (!response.ok) throw new Error("Failed to fetch polls")
+        if (!response.ok) throw new Error("Failed to fetch polls")
+
+        const polls = await response.json()
+        return polls
    }
 
     const createPaginationButtons = (polls) => {
@@ -249,7 +251,7 @@
                 } 
                 console.log('testing')
                 const test = async () => {
-                    const { polls } = await getData();
+                    const { polls } = await getGridData(page);
                 }
                 test();
             })

@@ -24,7 +24,7 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index([FromQuery] int page = 1)
+        public IActionResult Index([FromQuery] int page)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace realTimePolls.Controllers
 
                 if (page == 1 && !isPage)
                 {
-                    return RedirectToAction("Home", new { page });
+                    return RedirectToAction("", new { page });
                 }
 
                 var polls = _context

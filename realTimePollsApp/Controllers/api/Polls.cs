@@ -17,7 +17,7 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index([FromQuery] string page = null)
+        public IActionResult Index([FromQuery] int page)
         {
             try
             {
