@@ -57,7 +57,7 @@ namespace realTimePolls.Controllers
                     Poll = poll,
                     FirstVoteCount = firstVoteCount,
                     SecondVoteCount = secondVoteCount,
-                    Vote = userPoll == null ? false : userPoll.Vote,
+                    Vote = userPoll == null ? null : userPoll.Vote,
                 })
                 .FirstOrDefault();
 
@@ -86,13 +86,21 @@ namespace realTimePolls.Controllers
                     UserId = userId,
                     Title = title,
                     FirstOption = firstOption,
-                    SecondOption = secondOption
+                    SecondOption = secondOption,
                 };
 
                 _context.Polls.Add(poll);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index", "Home", new { area = "" });
+                return RedirectToAction(
+                    "Index",
+                    new
+                    {
+                        polltitle = poll.Title,
+                        pollid = poll.Id,
+                        userid = poll.UserId
+                    }
+                );
             }
             catch (Exception e)
             {
@@ -119,6 +127,7 @@ namespace realTimePolls.Controllers
 
                 _context.Polls.Remove(poll);
                 _context.SaveChanges();
+
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
             catch (Exception e)
