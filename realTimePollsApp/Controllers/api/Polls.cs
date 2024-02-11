@@ -39,14 +39,9 @@ namespace realTimePolls.Controllers
                     })
                     .ToList();
 
-                //use page param to filter the results of polls tow hat you need and return that. then updat ethe DOM
-
                 int pollCount = _context.Polls.Count();
 
                 var pollList = new PollsList { Polls = polls, PollCount = pollCount };
-                //var viewModel = new PollsList { Polls = polls, PollCount = pollCount };
-
-                //return View(viewModel);
 
                 return Json(pollList);
             }

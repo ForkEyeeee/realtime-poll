@@ -207,6 +207,7 @@
                 "Second Option", "First Vote Count", "Second Vote Count"]
 
             polls.forEach(poll => {
+                console.log(poll)
                 const tableRow = document.createElement("tr")
                 tableRow.classList.add("table-data")
                 table.appendChild(tableRow)
@@ -219,8 +220,14 @@
 
                     switch (cells[i]) {
                         case "Title":
+                            const link = document.createElement("a")
+                            link.setAttribute("href", `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}` )
+                            link.innerHTML = poll.poll.title
                             content = poll.poll.title
-                            break;
+
+                            tableRow.appendChild(tableCell)
+                            tableCell.append(link)
+                            continue;
                         case "User":
                             content = poll.poll.user
                             break;
@@ -252,20 +259,28 @@
     }
     
     const updateActivePage = (node) => {
-        console.log('update')
         const searchParams = new URLSearchParams(window.location.search);
         const page = searchParams.get('page')
-        // if (node.innerHTML === searchParams.get('page')) {
+
             const btns = document.querySelectorAll(".pagination-btn")
-            // if(btns.length !== 5) return
+
             btns.forEach((btn, i) => {
                 btn.classList.remove("active")
             if (btn.innerHTML === page) btn.classList.add("active")
             })
-
-
-        // }
     }
+
+    const getPaginationLength = (pollsLength) => {
+        let paginationLength;
+
+        if (pollsLength / 5 !== 0) {
+            paginationLength = Math.ceil(pollsLength / 5)
+        } else {
+            paginationLength = pollsLength / 5
+        }
+        return paginationLength
+    }
+
 
     const createPaginationButtons = (polls, pollCount) => {
 
@@ -278,13 +293,7 @@
             const baseURL = "https://localhost:44378/"
             const pollsLength = pollCount
 
-            let paginationLength;
-
-            if (pollsLength / 5 !== 0) {
-                paginationLength = Math.ceil(pollsLength / 5)
-            } else {
-                paginationLength = pollsLength / 5
-            }
+            const paginationLength = getPaginationLength(pollsLength)
 
             const paginationContainer = document.getElementById("pagination-container")
 
@@ -294,7 +303,8 @@
                     prev.innerHTML = "&laquo;"
 
                     prev.addEventListener('click', (e, polls, pollsLength) => {
-                        if (page === null) page = 2
+                        if (page === null || page == 1) return
+                        
                         page = parseInt(page) - 1
                         const nextURL = baseURL + "?page=" + page.toString()
                         const nextTitle = 'Home';
@@ -326,8 +336,6 @@
                 })
             }
 
-            // const searchParams = new URLSearchParams(window.location.search);
-            // let page = searchParams.get('page')
             const btns = document.querySelectorAll(".pagination-btn")
             const test = polls;
 
@@ -339,12 +347,14 @@
 
             const next = document.createElement("a") 
 
-            next.addEventListener('click', (e, polls, pollsLength) => {
+            next.addEventListener('click', async (e) => {
                 if (page === null) page = 2
-                // if (document.querySelectorAll(".pagination-btn").length <= 5) return
-                //check if the length of th epolls returned is 0. if so, then dont do this
-                // polls and pollsLength are undefined here, maybe make a request here instead of using func param;
-                // do the same for prev btn.
+
+                const { pollCount } = await getData(page);
+                const paginationLength = getPaginationLength(pollCount)
+
+                if (paginationLength == page) return
+
                 page = parseInt(page) + 1
                 const nextURL = baseURL + "?page=" + page.toString()
                 const nextTitle = 'Home';
@@ -357,10 +367,7 @@
 
             next.innerHTML = "&raquo;"
             paginationContainer.appendChild(next)
-
- 
         }
-
         catch (e) {
             console.error(e)
         }
@@ -383,6 +390,7 @@
                 firstVotes[i].innerHTML = poll.firstVoteCount;
                 secondVotes[i].innerHTML = poll.secondVoteCount;
             });
+
         } catch (e) {
             console.error(e);
         }

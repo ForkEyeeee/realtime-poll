@@ -28,16 +28,13 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                var pageQueryParam = HttpContext.Request.Query["page"].ToString();
-                bool isPage = pageQueryParam == "1";
-
-                if (page == 1 && !isPage)
-                {
-                    return RedirectToAction("", new { page });
-                }
+                int take = 5;
+                int skip = (page - 1) * take;
 
                 var polls = _context
-                    .Polls.Select(p => new PollItem
+                    .Polls.Skip(skip)
+                    .Take(take)
+                    .Select(p => new PollItem
                     {
                         Poll = p,
                         FirstVoteCount = _context
@@ -45,9 +42,13 @@ namespace realTimePolls.Controllers
                             .Count(),
                         SecondVoteCount = _context
                             .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
-                            .Count()
+                            .Count(),
                     })
                     .ToList();
+
+                int pollCount = _context.Polls.Count();
+
+                var pollList = new PollsList { Polls = polls, PollCount = pollCount };
 
                 var viewModel = new PollsList { Polls = polls };
 
