@@ -12,6 +12,7 @@
 	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="1.1.0" />
 		<PackageReference Include="FakeItEasy" Version="8.1.0" />
+		<PackageReference Include="HttpContextMoq" Version="1.6.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.1" />
 		<PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />
