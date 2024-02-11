@@ -62,17 +62,13 @@
                 {
                     foreach (var poll in Model.Polls)
                     {
-
                         <tr class="table-data">
-                            <td data-th="Title">
-                                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
-
-                            </td>
                             <td data-th="User">
                                 @poll.Poll.UserId
                             </td>
                             <td data-th="Title">
-                                @poll.Poll.Title
+                                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
+
                             </td>
                             <td data-th="First Option">
                                 @poll.Poll.FirstOption
@@ -80,10 +76,12 @@
                             <td data-th="Second Option">
                                 @poll.Poll.SecondOption
                             </td>
-                            <td data-th="Vote Count">
-                                @poll.Poll.FirstOption: @poll.FirstVoteCount
-                                @poll.Poll.SecondOption: @poll.SecondVoteCount
+                            <td data-th="First Vote Count">
+                                <span class="first-votes">@poll.FirstVoteCount</span>
 
+                            </td>
+                            <td data-th="Second Vote Count">
+                                <span class="second-votes">@poll.SecondVoteCount</span>
                             </td>
                         </tr>
                     }
@@ -203,8 +201,12 @@
 
             document.querySelectorAll(".table-data").forEach(row => row.remove())
 
-            const cells = ["Title", "User", "First Option",
-                "Second Option", "First Vote Count", "Second Vote Count"]
+            const cells = ["User",
+                "Title",
+                "First Option",
+                "Second Option",
+                "First Vote Count",
+                "Second Vote Count"]
 
             polls.forEach(poll => {
                 console.log(poll)
@@ -219,18 +221,18 @@
                     let content;
 
                     switch (cells[i]) {
+                        case "User":
+                            content = poll.poll.userId
+                            break;
                         case "Title":
                             const link = document.createElement("a")
-                            link.setAttribute("href", `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}` )
+                            link.setAttribute("href", `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}`)
                             link.innerHTML = poll.poll.title
                             content = poll.poll.title
 
                             tableRow.appendChild(tableCell)
                             tableCell.append(link)
                             continue;
-                        case "User":
-                            content = poll.poll.user
-                            break;
                         case "First Option":
                             content = poll.poll.firstOption
                             break;
@@ -238,9 +240,11 @@
                             content = poll.poll.secondOption
                             break;
                         case "First Vote Count":
+                            tableCell.classList.add("first-votes")
                             content = poll.firstVoteCount
                             break;
                         case "Second Vote Count":
+                            tableCell.classList.add("second-votes")
                             content = poll.secondVoteCount
                             break;
                         default:
@@ -285,7 +289,7 @@
     const createPaginationButtons = (polls, pollCount) => {
 
         try {
-            if (document.getElementById("pagination-container").childElementCount !== 0) throw new Error("Pagination Widget already exists")
+            if (document.getElementById("pagination-container").childElementCount !== 0) return
 
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
@@ -378,7 +382,10 @@
 <script>
     hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
-            const { polls } = await getData();
+            const searchParams = new URLSearchParams(window.location.search);
+            let page = searchParams.get('page')
+
+            const { polls } = await getData(page);
 
             const firstVotes = document.querySelectorAll(".first-votes");
             const secondVotes = document.querySelectorAll(".second-votes");
