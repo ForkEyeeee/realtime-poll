@@ -91,12 +91,11 @@
             </tbody>
         </table>
     </div>
-
-    <div id="pagination-container" class="pagination">
-     @*pagination styles here*@
-    </div>
 </div>
 
+<div id="pagination-container" class="pagination">
+    @*Pagination Widget created here*@
+</div>
 
 <style>
     .pagination {
@@ -210,9 +209,11 @@
                 const tableRow = document.createElement("tr")
                 tableRow.classList.add("table-data")
                 table.appendChild(tableRow)
+
                 tableRow.addEventListener('click', () => {
                     window.location.href = `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}`
                 })
+
                 for (let i = 0; i <= 5; i++) {
                     const tableCell = document.createElement("td")
                     tableCell.setAttribute("data-th", cells[i])
