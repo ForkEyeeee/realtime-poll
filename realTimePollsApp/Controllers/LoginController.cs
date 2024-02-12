@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,8 @@ namespace realTimePolls.Controllers
                     c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
                 );
 
+                var profilePicture = result.Principal.FindFirstValue("urn:google:picture");
+
                 if (googleIdClaim != null)
                 {
                     var googleId = googleIdClaim.Value;
@@ -95,6 +98,7 @@ namespace realTimePolls.Controllers
                             GoogleId = googleId,
                             Name = userName,
                             Email = userEmail,
+                            ProfilePicture = profilePicture
                         };
                         _context.User.Add(newUser);
                     }
@@ -103,7 +107,8 @@ namespace realTimePolls.Controllers
                         var existingUser = new
                         {
                             UserName = userWithGoogleId.Name,
-                            UserEmail = userWithGoogleId.Email
+                            UserEmail = userWithGoogleId.Email,
+                            UserProfilePicture = profilePicture
                         };
 
                         _context.SaveChanges();
@@ -113,7 +118,8 @@ namespace realTimePolls.Controllers
                             {
                                 GoogleId = googleId,
                                 Name = existingUser.UserName,
-                                Email = existingUser.UserEmail
+                                Email = existingUser.UserEmail,
+                                ProfilePicture = existingUser.UserProfilePicture
                             };
 
                         return RedirectToAction("Index", "Home", new { area = "" });

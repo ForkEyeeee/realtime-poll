@@ -62,9 +62,12 @@
                 {
                     foreach (var poll in Model.Polls)
                     {
-                        <tr class="table-data">
+                        <tr class="table-data" onclick="window.location.href='@Url.Action("Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId })'">
                             <td data-th="User">
-                                @poll.Poll.UserId
+                                <div class="user-flex">
+                                  <img src="@poll.ProfilePicture" alt="user-image" class="avatar"/>
+                                  @poll.UserName
+                                </div>
                             </td>
                             <td data-th="Title">
                                 @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
@@ -130,6 +133,11 @@
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
+
+
+<script>
+   
+</script>
 
 @*Connects client to signalR server*@
 <script>
@@ -289,7 +297,7 @@
     const createPaginationButtons = (polls, pollCount) => {
 
         try {
-            if (document.getElementById("pagination-container").childElementCount !== 0) return
+            if (document.getElementById("pagination-container").childElementCount !== 0 || pollCount === 0) return
 
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')

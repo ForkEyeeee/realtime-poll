@@ -21,5 +21,8 @@ namespace realTimePolls.Models
 
         [Column("googleid")]
         public string? GoogleId { get; set; }
+
+        [Column("profilepicture")]
+        public string? ProfilePicture { get; set; }
     }
 }

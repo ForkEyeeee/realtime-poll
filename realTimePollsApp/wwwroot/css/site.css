@@ -379,3 +379,16 @@ h3:after {
 }*/
 
 
+.avatar {
+    width: 20px
+}
+
+.user-flex {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.table-data {
+    cursor: pointer
+}

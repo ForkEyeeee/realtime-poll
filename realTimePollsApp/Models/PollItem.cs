@@ -11,5 +11,11 @@ namespace realTimePolls.Models
 
         [NotMapped]
         public virtual bool? Vote { get; set; }
+
+        [NotMapped]
+        public virtual string? UserName { get; set; }
+
+        [NotMapped]
+        public virtual string? ProfilePicture { get; set; }
     }
 }
