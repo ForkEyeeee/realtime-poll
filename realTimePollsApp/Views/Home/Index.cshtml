@@ -46,8 +46,8 @@
             }
        
         <table class="rwd-table">
-            <tbody>
-                <tr>
+            <tbody class="table-body">
+                <tr class=>
                     <th>User</th>
                     <th>Title</th>
                     <th>First Option</th>
@@ -57,7 +57,6 @@
                 </tr>
 
                 @*Displays list of polls*@
-
                 @if (Model != null)
                 {
                     foreach (var poll in Model.Polls)
@@ -66,12 +65,11 @@
                             <td data-th="User">
                                 <div class="user-flex">
                                   <img src="@poll.ProfilePicture" alt="user-image" class="avatar"/>
-                                  @poll.UserName
+                                    <p>@poll.UserName</p>
                                 </div>
                             </td>
                             <td data-th="Title">
-                                @Html.ActionLink(poll.Poll.Title, "Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId }, null)
-
+                                @poll.Poll.Title
                             </td>
                             <td data-th="First Option">
                                 @poll.Poll.FirstOption
@@ -95,15 +93,7 @@
     </div>
 
     <div id="pagination-container" class="pagination">
- 
-     
-@*         <a href="#">1</a>
-        <a href="#" class="active">2</a>
-        <a href="#">3</a>
-        <a href="#">4</a>
-        <a href="#">5</a>
-        <a href="#">6</a> *@
-      
+     @*pagination styles here*@
     </div>
 </div>
 
@@ -133,11 +123,6 @@
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
-
-
-<script>
-   
-</script>
 
 @*Connects client to signalR server*@
 <script>
@@ -201,11 +186,15 @@
         }
     }
 
-    const updateGrid = async (page) => {
+    const updateGrid = async (page, e) => {
         try {
+            const searchParams = new URLSearchParams(window.location.search);
+            const page = searchParams.get('page')
 
+            
             const { polls } = await getData(page);
             const table = document.querySelector(".rwd-table")
+            const tableBody = document.querySelector(".table-body")
 
             document.querySelectorAll(".table-data").forEach(row => row.remove())
 
@@ -221,7 +210,9 @@
                 const tableRow = document.createElement("tr")
                 tableRow.classList.add("table-data")
                 table.appendChild(tableRow)
-
+                tableRow.addEventListener('click', () => {
+                    window.location.href = `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}`
+                })
                 for (let i = 0; i <= 5; i++) {
                     const tableCell = document.createElement("td")
                     tableCell.setAttribute("data-th", cells[i])
@@ -230,11 +221,25 @@
 
                     switch (cells[i]) {
                         case "User":
-                            content = poll.poll.userId
-                            break;
+                            const userContainer = document.createElement('div')
+                            userContainer.classList.add('user-flex')
+                            
+                            const avatar = document.createElement('img')
+                            avatar.src = poll.profilePicture
+                            avatar.classList.add("avatar")
+                            avatar.alt = 'user image'
+                        
+                            const userName = document.createElement('p')
+                            userName.innerHTML = poll.userName
+                        
+                            userContainer.appendChild(avatar)
+                            userContainer.append(userName)
+
+                            tableCell.appendChild(userContainer)
+                            tableRow.appendChild(tableCell)
+                            continue;
                         case "Title":
                             const link = document.createElement("a")
-                            link.setAttribute("href", `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}`)
                             link.innerHTML = poll.poll.title
                             content = poll.poll.title
 
@@ -258,9 +263,10 @@
                         default:
                             throw new Error("Unable to update grid")
                     }
-
-                    tableRow.appendChild(tableCell)
+                    
                     tableCell.innerHTML = content
+                    tableRow.appendChild(tableCell)
+                    tableBody.append(tableRow)
 
                 }
             })
@@ -336,15 +342,17 @@
                 paginationContainer.appendChild(btn)
 
                 btn.addEventListener('click', (e) => {
+                    if (e.target.innerHTML === page) return
+
                     const nextURL = baseURL + "?page=" + btn.innerHTML;
                     const nextTitle = 'Home';
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
 
                     window.history.replaceState(nextState, nextTitle, nextURL);
-                    
+
                     updateActivePage(btn)
                     page = btn.innerHTML
-                    updateGrid(page);
+                    updateGrid(page, e);
                 })
             }
 

@@ -36,6 +36,10 @@ namespace realTimePolls.Controllers
                         SecondVoteCount = _context
                             .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
                             .Count(),
+                        UserName = _context.User.SingleOrDefault(user => user.Id == p.UserId).Name,
+                        ProfilePicture = _context
+                            .User.SingleOrDefault(user => user.Id == p.UserId)
+                            .ProfilePicture
                     })
                     .ToList();
 
