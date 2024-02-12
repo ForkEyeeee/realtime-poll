@@ -2,7 +2,9 @@
 
 
 <div class="text-center">
-    <button id="myBtn">Create Poll</button>
+    @if (Context.User.Identity.IsAuthenticated) {
+        <button id="myBtn">Create Poll</button>
+    }
     <div id="myModal" class="modal">
 
         <div class="modal-content">

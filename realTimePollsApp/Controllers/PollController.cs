@@ -94,12 +94,11 @@ namespace realTimePolls.Controllers
                 _context.UserPoll.FirstOrDefault(up => up.UserId == userid && up.PollId == pollid)
                 ?? null;
 
-            var userId = await GetUserId();
-
-            if (userId == null)
-                throw new Exception("Unable to get current user id");
-
-            ViewData["UserId"] = userId;
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                var userId = await GetUserId();
+                ViewData["UserId"] = userId;
+            }
 
             var viewModel = _context
                 .Polls.Select(p => new PollItem

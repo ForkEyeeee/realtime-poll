@@ -20,11 +20,11 @@
         }
     </div>
 </form>
+
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
 
 <script>
-        console.log('test')
 
         var oldData = @Html.Raw(Json.Serialize(@Model));
 
@@ -49,5 +49,4 @@
 
         // Start the connection.
         start();
-
 </script>
