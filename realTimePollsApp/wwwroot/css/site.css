@@ -380,7 +380,8 @@ h3:after {
 
 
 .avatar {
-    width: 20px
+    width: 20px;
+    border-radius: 15px
 }
 
 .user-flex {
@@ -390,5 +391,5 @@ h3:after {
 }
 
 .table-data {
-    cursor: pointer
+    cursor: pointer;
 }

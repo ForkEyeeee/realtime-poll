@@ -1,4 +1,8 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
@@ -30,8 +34,47 @@ namespace realTimePolls.Controllers
             public string jsonRequest { get; set; }
         }
 
+        public async Task<int> GetUserId()
+        {
+            var result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            if (result.Principal == null)
+                throw new Exception("Could not authenticate");
+
+            var claims = result
+                .Principal.Identities.FirstOrDefault()
+                ?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                })
+                .ToList();
+
+            User newUser;
+            string? userName = null;
+            string? userEmail = null;
+
+            if (claims == null || claims.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+            }
+
+            var googleId = claims
+                .FirstOrDefault(c =>
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                )
+                .Value;
+
+            int userId = _context.User.SingleOrDefault(user => user.GoogleId == googleId).Id;
+            return userId;
+        }
+
         [HttpGet]
-        public IActionResult Index([FromQuery] string polltitle, int pollid, int userid)
+        public async Task<ViewResult> Index([FromQuery] string polltitle, int pollid, int userid)
         {
             Poll poll = _context.Polls.FirstOrDefault(u =>
                 u.Id == pollid && u.UserId == userid && u.Title == polltitle
@@ -50,6 +93,13 @@ namespace realTimePolls.Controllers
             UserPoll userPoll =
                 _context.UserPoll.FirstOrDefault(up => up.UserId == userid && up.PollId == pollid)
                 ?? null;
+
+            var userId = await GetUserId();
+
+            if (userId == null)
+                throw new Exception("Unable to get current user id");
+
+            ViewData["UserId"] = userId;
 
             var viewModel = _context
                 .Polls.Select(p => new PollItem

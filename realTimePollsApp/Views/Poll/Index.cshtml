@@ -1,4 +1,7 @@
-﻿@model realTimePolls.Models.PollItem
+﻿@model realTimePolls.Models.PollItem;
+@{
+    var userId = ViewData["UserId"];
+} 
 
 <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
     <div class="vote-flex">
@@ -11,7 +14,10 @@
         <input type="hidden" name="pollid" value="@Model.Poll.Id" />
         <input type="hidden" name="userid" value="@Model.Poll.UserId"  />
         <button type="submit" id="vote-btn"> Submit Vote</button>
-        <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
+        @if (Model.Poll.UserId == Convert.ToInt32(userId))
+        {
+          <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
+        }
     </div>
 </form>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
