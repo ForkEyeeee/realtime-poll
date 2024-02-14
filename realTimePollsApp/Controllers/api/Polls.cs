@@ -56,6 +56,24 @@ namespace realTimePolls.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetDropdownList([FromQuery] int page = 1)
+        {
+            try
+            {
+                var dropdownList = _context.Genre.ToList();
+
+                var options = new { options = dropdownList };
+
+                return Json(options);
+            }
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

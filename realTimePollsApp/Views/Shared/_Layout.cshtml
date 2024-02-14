@@ -46,7 +46,10 @@
                                 @Html.Label("SecondOption", "Second Option")
                                 @Html.TextBox("SecondOption", string.Empty, new { @class = "input-class", @required = "required" })
                             </div>
-
+                            <div>
+                                <label for="genre">Genre</label> @*change to html helper*@
+                                <select id="genre" name="genre" class="Genre"></select>
+                            </div>
                             <div>
                                 <input type="submit" value="Create Poll" class="btn btn-primary" />
                             </div>
@@ -133,6 +136,35 @@
         }
 
     </style>
+
+@* Populates Genre Dropdown List *@
+
+<script> 
+    const getDropdownList = async () => {
+        const url = "https://localhost:44378/Polls/GetDropdownList"
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+
+        if (!response.ok) throw new Error("Failed to fetch profile picture")
+
+        const { options } = await response.json()
+        const dropdown = document.querySelector(".Genre")
+
+        for (let i = 0; i < options.length; i++) {
+            const option = document.createElement("option")
+            option.value = options[i].id
+            option.innerHTML = options[i].name
+            dropdown.appendChild(option)
+        }
+    }
+    getDropdownList();
+</script>
+
 
 @* Sets Profile Picture *@    
 

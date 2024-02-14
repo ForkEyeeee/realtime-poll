@@ -12,17 +12,14 @@ namespace realTimePolls.Models
 
         public DbSet<UserPoll> UserPoll { get; set; }
 
+        public DbSet<Genre> Genre { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Poll>().ToTable("poll"); // Maps the Poll entity to the "poll" table
             modelBuilder.Entity<User>().ToTable("user"); // Maps the User entity to the "user" table
             modelBuilder.Entity<UserPoll>().ToTable("userpoll"); // Maps the UserPoll entity to the "userpoll" table
-            modelBuilder
-                .Entity<UserPoll>()
-                .HasOne(up => up.Poll)
-                .WithMany()
-                .HasForeignKey(up => up.PollId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Genre>().ToTable("genre");
         }
     }
 }

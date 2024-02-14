@@ -1,7 +1,11 @@
 ﻿@model realTimePolls.Models.PollItem;
 @{
     var userId = ViewData["UserId"];
-} 
+}
+
+@if (Model.Poll.Genre != null) { 
+    <div>@Model.Poll.Genre.Name</div> //style this
+}
 
 <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
     <div class="vote-flex">

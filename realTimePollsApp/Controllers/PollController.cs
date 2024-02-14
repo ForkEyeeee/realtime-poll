@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using realTimePolls.Models;
 using SignalRChat.Hubs;
@@ -76,9 +77,9 @@ namespace realTimePolls.Controllers
         [HttpGet]
         public async Task<ViewResult> Index([FromQuery] string polltitle, int pollid, int userid)
         {
-            Poll poll = _context.Polls.FirstOrDefault(u =>
-                u.Id == pollid && u.UserId == userid && u.Title == polltitle
-            );
+            Poll poll = _context
+                .Polls.Include(p => p.Genre) //maybe do the same ting here for user and poll
+                .FirstOrDefault(u => u.Id == pollid && u.UserId == userid && u.Title == polltitle);
 
             if (poll == null)
                 throw new Exception("Poll cannot be found");
@@ -117,7 +118,8 @@ namespace realTimePolls.Controllers
         public ActionResult Create(
             [FromForm] string title,
             [FromForm] string firstOption,
-            [FromForm] string secondOption
+            [FromForm] string secondOption,
+            [FromForm] int genre
         )
         {
             try
@@ -130,12 +132,15 @@ namespace realTimePolls.Controllers
 
                 int userId = _context.User.SingleOrDefault(u => u.GoogleId == googleId).Id;
 
+                var pollGenre = _context.Genre.SingleOrDefault(g => g.Id == genre);
+
                 Poll poll = new Poll
                 {
                     UserId = userId,
                     Title = title,
                     FirstOption = firstOption,
                     SecondOption = secondOption,
+                    GenreId = pollGenre.Id,
                 };
 
                 _context.Polls.Add(poll);
@@ -147,7 +152,8 @@ namespace realTimePolls.Controllers
                     {
                         polltitle = poll.Title,
                         pollid = poll.Id,
-                        userid = poll.UserId
+                        userid = poll.UserId,
+                        genreName = pollGenre.Name,
                     }
                 );
             }

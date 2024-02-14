@@ -10,7 +10,7 @@ namespace realTimePolls.Models
         [Column("id")]
         public int? Id { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey("user")]
         [Column("userid")]
         public int UserId { get; set; }
 
@@ -28,5 +28,11 @@ namespace realTimePolls.Models
         [Required]
         [Column("secondoption")]
         public string SecondOption { get; set; }
+
+        [ForeignKey("genre")]
+        [Column("genreid")]
+        public int? GenreId { get; set; }
+
+        public Genre Genre { get; set; }
     }
 }
