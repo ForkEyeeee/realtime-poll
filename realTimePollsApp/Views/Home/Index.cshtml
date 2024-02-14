@@ -3,58 +3,8 @@
     ViewBag.Message = @Model.UserProfilePicture;
 }
 
-
-<style>
-  
-
-</style>
-
 <div class="text-center pt-3">
-@*                 @if (Context.User.Identity.IsAuthenticated)
-            {
-                <h2 class="">Welcome, @User.Identity.Name!</h2>
-            } *@
-    @if (Context.User.Identity.IsAuthenticated) {
-       <div class="d-flex justify-content-end"><button id="create-btn" class="btn btn-info fw-bold" role="button">+ Create Poll</button></div> 
-    }
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="close">&times;</span>
-                <h2>Create Poll</h2>
-            </div>
-            <div class="modal-body">
-                @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
-                {
-                    <div>
-                        @Html.Label("Title", "Poll Title") @*first param is for, second is label text*@
-                        @Html.TextBox("Title", string.Empty, new { @class = "input-class", @required = "required" }) @*first param is name, secodn is value*@
-                    </div>
-                    <div>
-                        @Html.Label("FirstOption", "First Option")
-                        @Html.TextBox("FirstOption", string.Empty, new { @class = "input-class", @required = "required" })
-                    </div>
-                    <div>
-                        @Html.Label("SecondOption", "Second Option")
-                        @Html.TextBox("SecondOption", string.Empty, new { @class = "input-class", @required = "required" })
-                    </div>
-
-                    <div>
-                        <input type="submit" value="Create Poll" class="btn btn-primary" />
-                    </div>
-                }
-            </div>
-
-            <div class="modal-footer">
-                <h3>Modal Footer</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-      
-
-       
+    <div class="container">    
         <table class="rwd-table">
             <tbody class="table-body">
                 <tr>
@@ -89,7 +39,6 @@
                             </td>
                             <td data-th="First Vote Count">
                                 <span class="first-votes">@poll.FirstVoteCount</span>
-
                             </td>
                             <td data-th="Second Vote Count">
                                 <span class="second-votes">@poll.SecondVoteCount</span>
@@ -406,18 +355,4 @@
     });
 </script>
 
-@*Opens and closes modal window*@
-<script>
 
-    const modal = document.getElementById("myModal");
-    const btn = document.getElementById("create-btn");
-    const span = document.getElementsByClassName("close")[0];
-
-    btn.addEventListener('click', () => modal.style.display = "block") 
-
-    span.addEventListener('click', () => modal.style.display = "none")
-
-    window.addEventListener('click', (e) => { 
-        if (event.target == modal) modal.style.display = "none"
-    })
-</script>
