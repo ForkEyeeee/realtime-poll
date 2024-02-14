@@ -10,10 +10,10 @@
 </style>
 
 <div class="text-center pt-3">
-                @if (Context.User.Identity.IsAuthenticated)
+@*                 @if (Context.User.Identity.IsAuthenticated)
             {
                 <h2 class="">Welcome, @User.Identity.Name!</h2>
-            }
+            } *@
     @if (Context.User.Identity.IsAuthenticated) {
        <div class="d-flex justify-content-end"><button id="create-btn" class="btn btn-info fw-bold" role="button">+ Create Poll</button></div> 
     }
@@ -57,7 +57,7 @@
        
         <table class="rwd-table">
             <tbody class="table-body">
-                <tr class=>
+                <tr>
                     <th>User</th>
                     <th>Title</th>
                     <th>First Option</th>
