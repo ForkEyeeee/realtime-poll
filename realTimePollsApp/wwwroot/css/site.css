@@ -25,8 +25,40 @@ footer, header, hgroup, menu, nav, section {
 }
 
 body {
+/*    background: #4B79A1;
+    background: -webkit-linear-gradient(to left, #4B79A1, #283E51);
+    background: linear-gradient(to left, #4B79A1, #283E51);*/
     line-height: 1;
+    font-family: "Global User Interface", sans-serif !important
 }
+
+h1 {
+    text-align: center;
+    font-size: 2.4em;
+    color: #f2f2f2;
+}
+
+.container {
+    display: block;
+    text-align: center;
+}
+
+
+.avatar {
+    width: 20px;
+    border-radius: 15px
+}
+
+.user-flex {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.table-data {
+    cursor: pointer;
+}
+
 
 ol, ul {
     list-style: none;
@@ -36,18 +68,16 @@ blockquote, q {
     quotes: none;
 }
 
-    blockquote:before, blockquote:after,
-    q:before, q:after {
-        content: '';
-        content: none;
-    }
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
 
 table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-
-
 
 .navbar {
     height: 84px;
@@ -98,8 +128,6 @@ table {
     align-items: center;
     gap: 10px;
 }
-
-
 
 .nav-links {
     display: inline-flex;
@@ -304,92 +332,24 @@ table {
   }
 }
 
-
-/* THE END OF THE IMPORTANT STUFF */
-
-/* Basic Styling */
-body {
-background: #4B79A1;
-background: -webkit-linear-gradient(to left, #4B79A1 , #283E51);
-background: linear-gradient(to left, #4B79A1 , #283E51);        
-}
-h1 {
-  text-align: center;
-  font-size: 2.4em;
-  color: #f2f2f2;
-}
-.container {
-  display: block;
-  text-align: center;
-}
-/*h3 {
-  display: inline-block; 
-  position: relative;
-  text-align: center;
-  font-size: 1.5em;
-  color: #cecece;
-}
-h3:before {
-  content: "\25C0";
-  position: absolute;
-  left: -50px;
-  -webkit-animation: leftRight 2s linear infinite;
-  animation: leftRight 2s linear infinite;
-} pulsing text */
-
-h3:after {
-  content: "\25b6";
-  position: absolute;
-  right: -50px;
-  -webkit-animation: leftRight 2s linear infinite reverse;
-  animation: leftRight 2s linear infinite reverse;
-}
-@-webkit-keyframes leftRight {
-  0%    { -webkit-transform: translateX(0)}
-  25%   { -webkit-transform: translateX(-10px)}
-  75%   { -webkit-transform: translateX(10px)}
-  100%  { -webkit-transform: translateX(0)}
-}
-@keyframes leftRight {
-  0%    { transform: translateX(0)}
-  25%   { transform: translateX(-10px)}
-  75%   { transform: translateX(10px)}
-  100%  { transform: translateX(0)}
+.pagination {
+    display: inline-block;
 }
 
-/*
-    Don't look at this last part. It's unnecessary. I was just playing with pixel gradients... Don't judge.
-*/
-/*
-@media screen and (max-width: 601px) {
-  .rwd-table tr {
-    background-image: -webkit-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
-    background-image: -moz-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
-    background-image: -o-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
-    background-image: -ms-linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
-    background-image: linear-gradient(left, #428bca 137px, #f5f9fc 1px, #f5f9fc 100%);
-  }
-  .rwd-table tr:nth-child(odd) {
-    background-image: -webkit-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
-    background-image: -moz-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
-    background-image: -o-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
-    background-image: -ms-linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
-    background-image: linear-gradient(left, #428bca 137px, #ebf3f9 1px, #ebf3f9 100%);
-  }
-}*/
+    .pagination a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        transition: background-color .3s;
+    }
 
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
 
-.avatar {
-    width: 20px;
-    border-radius: 15px
-}
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
 
-.user-flex {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-}
-
-.table-data {
-    cursor: pointer;
-}

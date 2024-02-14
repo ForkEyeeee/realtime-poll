@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -24,7 +26,7 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index([FromQuery] int page = 1)
+        public async Task<IActionResult> Index([FromQuery] int page = 1)
         {
             try
             {
@@ -51,8 +53,13 @@ namespace realTimePolls.Controllers
                     .ToList();
 
                 int pollCount = _context.Polls.Count();
+                var viewModel = new PollsList { Polls = polls, };
 
-                var viewModel = new PollsList { Polls = polls };
+                if (HttpContext.User.Identity.IsAuthenticated)
+                {
+                    var profilePicture = await GetUserProfilePicture();
+                    viewModel.UserProfilePicture = profilePicture;
+                }
 
                 return View(viewModel);
             }
@@ -61,6 +68,51 @@ namespace realTimePolls.Controllers
                 var errorViewModel = new ErrorViewModel { RequestId = e.Message };
                 return View("Error", errorViewModel);
             }
+        }
+
+        public async Task<string> GetUserProfilePicture()
+        {
+            var result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            if (result.Principal == null)
+                throw new Exception("Could not authenticate");
+
+            var claims = result
+                .Principal.Identities.FirstOrDefault()
+                ?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                })
+                .ToList();
+
+            User newUser;
+            string? userName = null;
+            string? userEmail = null;
+
+            if (claims == null || claims.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+            }
+
+            var googleId = claims
+                .FirstOrDefault(c =>
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                )
+                .Value;
+
+            string profilePicture = _context
+                .User.SingleOrDefault(user => user.GoogleId == googleId)
+                .ProfilePicture;
+
+            if (profilePicture != null)
+                return profilePicture;
+            else
+                return string.Empty;
         }
 
         [HttpPost]

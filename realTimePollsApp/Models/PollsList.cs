@@ -8,5 +8,8 @@ namespace realTimePolls.Models
 
         [NotMapped]
         public virtual int PollCount { get; set; }
+
+        [NotMapped]
+        public virtual string? UserProfilePicture { get; set; }
     }
 }

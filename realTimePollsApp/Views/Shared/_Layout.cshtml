@@ -26,6 +26,7 @@
             @if (Context.User.Identity.IsAuthenticated)
             {
             <a asp-controller="Login"  class="sign-in-link" asp-action="Logout">Logout</a>
+            <img src="@ViewBag.Message" class="navbar-avatar" />
             }
             else
             {
@@ -42,6 +43,17 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        console.log(@Html.Raw(Json.Serialize(@Model)))
+
+    </script>
+    <style>
+        .navbar-avatar {
+            width: 40px;
+            border-radius: 15px;
+            margin-right: 20px;
+        }
+    </style>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

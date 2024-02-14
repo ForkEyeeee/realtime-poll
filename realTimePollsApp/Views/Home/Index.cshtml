@@ -1,12 +1,23 @@
 ﻿@model realTimePolls.Models.PollsList
+@{
+    ViewBag.Message = @Model.UserProfilePicture;
+}
 
 
-<div class="text-center">
+<style>
+  
+
+</style>
+
+<div class="text-center pt-3">
+                @if (Context.User.Identity.IsAuthenticated)
+            {
+                <h2 class="">Welcome, @User.Identity.Name!</h2>
+            }
     @if (Context.User.Identity.IsAuthenticated) {
-        <button id="myBtn">Create Poll</button>
+       <div class="d-flex justify-content-end"><button id="create-btn" class="btn btn-info fw-bold" role="button">+ Create Poll</button></div> 
     }
     <div id="myModal" class="modal">
-
         <div class="modal-content">
             <div class="modal-header">
                 <span class="close">&times;</span>
@@ -42,10 +53,7 @@
 
     <div class="container">
       
-            @if (Context.User.Identity.IsAuthenticated)
-            {
-                <h2 class="logo welcome">Welcome, @User.Identity.Name</h2>
-            }
+
        
         <table class="rwd-table">
             <tbody class="table-body">
@@ -98,29 +106,6 @@
 <div id="pagination-container" class="pagination">
     @*Pagination Widget created here*@
 </div>
-
-<style>
-    .pagination {
-        display: inline-block;
-    }
-
-        .pagination a {
-            color: black;
-            float: left;
-            padding: 8px 16px;
-            text-decoration: none;
-            transition: background-color .3s;
-        }
-
-            .pagination a.active {
-                background-color: #4CAF50;
-                color: white;
-            }
-
-            .pagination a:hover:not(.active) {
-                background-color: #ddd;
-            }
-</style>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
@@ -179,8 +164,6 @@
     async function getPolls() {
         try {
             const { polls, pollCount } = await getData()
-            console.log(polls)
-            console.log(pollCount)
             createPaginationButtons(polls, pollCount)
         } catch (e) {
             console.error("Failed to get polls", e);
@@ -427,7 +410,7 @@
 <script>
 
     const modal = document.getElementById("myModal");
-    const btn = document.getElementById("myBtn");
+    const btn = document.getElementById("create-btn");
     const span = document.getElementsByClassName("close")[0];
 
     btn.addEventListener('click', () => modal.style.display = "block") 
