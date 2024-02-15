@@ -52,6 +52,9 @@
     </div>
 </div>
 
+
+
+
 <div id="pagination-container" class="pagination">
     @*Pagination Widget created here*@
 </div>
@@ -331,8 +334,9 @@
 
 @*Updates the DOM after client receives message from the server*@
 <script>
-    hubConnection.on("ReceiveMessage", async (user, message) => {
+    hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
         try {
+            console.log('received')
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
 
