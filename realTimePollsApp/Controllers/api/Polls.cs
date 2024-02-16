@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using realTimePolls.Models;
 
 namespace realTimePolls.Controllers
@@ -66,6 +68,43 @@ namespace realTimePolls.Controllers
                 var options = new { options = dropdownList };
 
                 return Json(options);
+            }
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetSearchResults([FromQuery] string search = "")
+        {
+            try
+            {
+                int take = 5;
+                int skip = (1 - 1) * take;
+
+                var polls = _context
+                    .Polls.Where(c => EF.Functions.Like(c.Title, search))
+                    .Skip(skip)
+                    .Take(take)
+                    .Select(p => new PollItem
+                    {
+                        Poll = p,
+                        FirstVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
+                            .Count(),
+                        SecondVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
+                            .Count(),
+                        UserName = _context.User.SingleOrDefault(user => user.Id == p.UserId).Name,
+                        ProfilePicture = _context
+                            .User.SingleOrDefault(user => user.Id == p.UserId)
+                            .ProfilePicture
+                    })
+                    .ToList();
+
+                return Json(polls);
             }
             catch (Exception e)
             {

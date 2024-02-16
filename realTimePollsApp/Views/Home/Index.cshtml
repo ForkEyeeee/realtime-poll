@@ -4,6 +4,7 @@
 }
 
 <div class="text-center ">
+    <input type="text" placeholder="Search by title" id="search-box"/>
     <div class="container pt-0 mt-0">    
         <table class="rwd-table">
             <tbody class="table-body">
@@ -61,6 +62,8 @@
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
+
+
 
 <style>
 
@@ -384,5 +387,57 @@
         }
     });
 </script>
+
+<script>
+    const url = "https://localhost:44378/"
+
+    const getSearchResults = async (page) => {
+
+
+        const userId = {
+            Id: hubConnection.connection.connectionId
+        }
+
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+
+        if (!response.ok) throw new Error("Failed to fetch polls")
+
+        const polls = await response.json()
+        console.log(polls)
+        updateGrid()
+
+        return polls
+    }
+
+    const updateUrl = (text) => {
+        let nextURL
+        const currentUrl = window.location.href
+        const baseUrl = "https://localhost:44378/"
+        if (text === "") {
+            nextURL = baseUrl
+        } else {
+            nextURL = baseUrl + !currentUrl.includes("search") ? "?search=" + text : "&search=" + text
+        }
+
+        const nextTitle = 'Home';
+        const nextState = { additionalInformation: 'Updated the URL with JS' };
+        window.history.replaceState(nextState, nextTitle, nextURL);
+
+    }
+
+    const searchBox = document.getElementById("search-box")
+    searchBox.addEventListener('input', async (e) => {
+        updateUrl(e.target.value)
+    })
+
+   
+
+
+</script>
+
 
 
