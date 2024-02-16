@@ -84,8 +84,10 @@ namespace realTimePolls.Controllers
                 int take = 5;
                 int skip = (1 - 1) * take;
 
+                var pattern = $"%{search}%";
+
                 var polls = _context
-                    .Polls.Where(c => EF.Functions.Like(c.Title, search))
+                    .Polls.Where(c => EF.Functions.Like(c.Title, pattern))
                     .Skip(skip)
                     .Take(take)
                     .Select(p => new PollItem
@@ -104,7 +106,11 @@ namespace realTimePolls.Controllers
                     })
                     .ToList();
 
-                return Json(polls);
+                int pollCount = _context.Polls.Count();
+
+                var pollList = new PollsList { Polls = polls, PollCount = pollCount };
+
+                return Json(pollList);
             }
             catch (Exception e)
             {

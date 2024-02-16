@@ -147,7 +147,14 @@
     hubConnection.onclose(async () => {
         await start();
     });
-
+    async function getPolls() {
+        try {
+            const { polls, pollCount } = await getData()
+            createPaginationButtons(polls, pollCount)
+        } catch (e) {
+            console.error("Failed to get polls", e);
+        }
+    }
     // Start the connection.
     start();
 </script>
@@ -163,13 +170,21 @@
         }
     }
 
-    const updateGrid = async (page, e) => {
+    const updateGrid = async (page, e, text) => {
         try {
+            let polls;
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
-
+            const currentUrl = window.location.href
             
-            const { polls } = await getData(page);
+            if (currentUrl.includes("search")) {
+                 polls  = await getSearchResults(text)
+
+            } else {
+                 polls  = await getData(page);
+            }
+
+            console.log('test')
             const table = document.querySelector(".rwd-table")
             const tableBody = document.querySelector(".table-body")
 
@@ -182,7 +197,7 @@
                 "First Count",
                 "Second Count"]
 
-            polls.forEach(poll => {
+            polls.polls.forEach(poll => {
                 console.log(poll)
                 const tableRow = document.createElement("tr")
                 tableRow.classList.add("table-data")
@@ -252,6 +267,7 @@
 
                 }
             })
+            return polls
         }
         catch (e) {
             console.error(e)
@@ -285,8 +301,14 @@
     const createPaginationButtons = (polls, pollCount) => {
 
         try {
-            if (document.getElementById("pagination-container").childElementCount !== 0 || pollCount === 0) return
+            const paginationContainer = document.getElementById("pagination-container")
 
+            while (paginationContainer.hasChildNodes()) {
+                paginationContainer.removeChild(paginationContainer.lastChild)
+            }
+
+            if (pollCount === 0) return
+            // document.getElementById("pagination-container").childElementCount !== 0 ||
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
 
@@ -295,7 +317,6 @@
 
             const paginationLength = getPaginationLength(pollsLength)
 
-            const paginationContainer = document.getElementById("pagination-container")
 
             for (let i = 1; i <= paginationLength; i++) {
                 if (i === 1) {
@@ -303,7 +324,7 @@
                     prev.innerHTML = "&laquo;"
 
                     prev.addEventListener('click', (e, polls, pollsLength) => {
-                        if (page === null || page == 1) return
+                        if (page === null || page == 1 || paginationLength == 1) return
                         
                         page = parseInt(page) - 1
                         const nextURL = baseURL + "?page=" + page.toString()
@@ -324,7 +345,7 @@
                 paginationContainer.appendChild(btn)
 
                 btn.addEventListener('click', (e) => {
-                    if (e.target.innerHTML === page) return
+                    if (e.target.innerHTML === page || paginationLength == 1) return
 
                     const nextURL = baseURL + "?page=" + btn.innerHTML;
                     const nextTitle = 'Home';
@@ -355,7 +376,7 @@
                 const { pollCount } = await getData(page);
                 const paginationLength = getPaginationLength(pollCount)
 
-                if (paginationLength == page) return
+                if (paginationLength == page || pageinationLength == 1) return
 
                 page = parseInt(page) + 1
                 const nextURL = baseURL + "?page=" + page.toString()
@@ -404,10 +425,10 @@
 </script>
 
 <script>
-    const url = "https://localhost:44378/"
+    
 
-    const getSearchResults = async (page) => {
-
+    const getSearchResults = async (text) => {
+        const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -423,7 +444,6 @@
 
         const polls = await response.json()
         console.log(polls)
-        updateGrid()
 
         return polls
     }
@@ -447,6 +467,9 @@
     const searchBox = document.getElementById("search-box")
     searchBox.addEventListener('input', async (e) => {
         updateUrl(e.target.value)
+        const { polls, pollCount } = await updateGrid(null, e, e.target.value)
+        console.log('polls here', polls)
+        createPaginationButtons(polls, polls.length)
     })
 
    
