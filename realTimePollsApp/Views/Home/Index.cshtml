@@ -173,21 +173,21 @@
         }
     }
 
-    const updateGrid = async (page, e, text) => {
+    const updateGrid = async (page, text) => {
         try {
             let polls;
+            let pollCount
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
             const currentUrl = window.location.href
-            
+
             if (currentUrl.includes("search")) {
-                 polls  = await getSearchResults(text, page)
+                ({ polls, pollCount } = await getSearchResults(text, page));
 
             } else {
-                 polls  = await getData(page);
+                ({ polls, pollCount } = await getData(page));
             }
 
-            console.log('test')
             const table = document.querySelector(".rwd-table")
             const tableBody = document.querySelector(".table-body")
 
@@ -200,8 +200,7 @@
                 "First Count",
                 "Second Count"]
 
-            polls.polls.forEach(poll => {
-                console.log(poll)
+            polls.forEach(poll => {
                 const tableRow = document.createElement("tr")
                 tableRow.classList.add("table-data")
                 table.appendChild(tableRow)
@@ -226,7 +225,7 @@
                             avatar.src = poll.profilePicture
                             avatar.classList.add("avatar")
                             avatar.alt = 'user image'
-                        
+
                             const userName = document.createElement('p')
                             userName.innerHTML = poll.userName
                             userName.classList.add("user-text")
@@ -262,7 +261,7 @@
                         default:
                             throw new Error("Unable to update grid")
                     }
-                    
+
                     tableCell.innerHTML = content
                     tableCell.classList.add("table-cell")
                     tableRow.appendChild(tableCell)
@@ -270,7 +269,10 @@
 
                 }
             })
-            return polls
+            return {
+                polls, 
+                pollCount
+            }
         }
         catch (e) {
             console.error(e)
@@ -304,14 +306,14 @@
     function createPaginationButtons  (polls, pollCount)  {
 
         try {
+            if (pollCount === 0) return
+
             const paginationContainer = document.getElementById("pagination-container")
 
             while (paginationContainer.hasChildNodes()) {
                 paginationContainer.removeChild(paginationContainer.lastChild)
             }
 
-            if (pollCount === 0) return
-            // document.getElementById("pagination-container").childElementCount !== 0 ||
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
             let search = searchParams.get("search")
@@ -320,7 +322,6 @@
             const currentUrl = window.location.href
 
             const pollsLength = pollCount
-
             const paginationLength = getPaginationLength(pollsLength)
 
 
@@ -333,14 +334,16 @@
                         if (page === null || page == 1 || paginationLength == 1) return
                         
                         page = parseInt(page) - 1
+
                         let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + page
                         nextURL = baseURL + nextURL
+
                         const nextTitle = 'Home';
                         const nextState = { additionalInformation: 'Updated the URL with JS' };
 
                         window.history.replaceState(nextState, nextTitle, nextURL);
                         updateActivePage(next)
-                        updateGrid(page, e, search);
+                        updateGrid(page, search);
                     })
 
                     paginationContainer.appendChild(prev)
@@ -352,34 +355,31 @@
                 paginationContainer.appendChild(btn)
 
                 btn.addEventListener('click', async (e) => {
-
-
+                    
                     let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + btn.innerHTML
                     nextURL = baseURL + nextURL
+                    
                     const nextTitle = 'Home';
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
 
                     if (e.target.innerHTML === page || paginationLength == 1) return
 
-                    if (currentUrl.includes("search")) {
+                    if (currentUrl.includes("search")) { //modify params directly
                         pollCount = await getSearchResults(search, btn.innerHTML);
 
                     } else {
                         pollCount = await getData(page);
                     }
 
-
-
                     window.history.replaceState(nextState, nextTitle, nextURL);
 
                     updateActivePage(btn)
                     page = btn.innerHTML
-                    updateGrid(page, e, search);
+                    updateGrid(page, search);
                 })
             }
 
             const btns = document.querySelectorAll(".pagination-btn")
-            const test = polls;
 
             btns.forEach((btn, i) => {
                 if (btn.innerHTML === page) btn.classList.add("active")
@@ -399,20 +399,21 @@
                     pollCount = await getData(page)
                 }
 
-                // const { pollCount } = await getData(page);
                 const paginationLength = getPaginationLength(pollCount.pollCount)
                 
                 if (paginationLength == page || pollCount == 1) return
 
                 page = parseInt(page) + 1
+                
                 let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + page.toString() : "?page=" + page.toString()
                 nextURL = baseURL + nextURL
+               
                 const nextTitle = 'Home';
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
 
                 window.history.replaceState(nextState, nextTitle, nextURL);
                 updateActivePage(next)
-                updateGrid(page, e, search);
+                updateGrid(page, search);
             })
 
             next.innerHTML = "&raquo;"
@@ -438,7 +439,8 @@
             const secondVotes = document.querySelectorAll(".second-votes");
 
             if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
-            if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match');
+            if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match'); 
+            //fix this function to work with search
 
             polls.forEach((poll, i) => {
                 firstVotes[i].innerHTML = poll.firstVoteCount;
@@ -451,9 +453,8 @@
     });
 </script>
 
+@* Gets search results and updates DOM *@
 <script>
-    
-
     const getSearchResults = async (text, page) => {
         const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text + "&page=" + page
 
@@ -470,8 +471,6 @@
         if (!response.ok) throw new Error("Failed to fetch polls")
 
         const polls = await response.json()
-        console.log(polls)
-
         return polls
     }
 
@@ -482,6 +481,7 @@
 
         const currentUrl = window.location.href
         const baseUrl = "https://localhost:44378/"
+
         if (text === "") {
             nextURL = baseUrl + "?page=1"
         }  else {
@@ -496,15 +496,17 @@
     }
 
     const searchBox = document.getElementById("search-box")
+
     searchBox.addEventListener('input', async (e) => {
-        updateUrl(e.target.value)
-        const { polls, pollCount } = await updateGrid(null, e, e.target.value)
-        createPaginationButtons(polls, pollCount)
+        try {
+            updateUrl(e.target.value)
+            const { polls, pollCount } = await updateGrid(null, e.target.value)
+            createPaginationButtons(polls, pollCount)
+        }
+        catch (e) {
+            console.error(e)
+        }
     })
-
-   
-
-
 </script>
 
 
