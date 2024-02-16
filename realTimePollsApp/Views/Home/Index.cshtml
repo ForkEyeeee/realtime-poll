@@ -3,8 +3,8 @@
     ViewBag.Message = @Model.UserProfilePicture;
 }
 
-<div class="text-center pt-3">
-    <div class="container">    
+<div class="text-center ">
+    <div class="container pt-0 mt-0">    
         <table class="rwd-table">
             <tbody class="table-body">
                 <tr>
@@ -22,25 +22,25 @@
                     foreach (var poll in Model.Polls)
                     {
                         <tr class="table-data" onclick="window.location.href='@Url.Action("Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId })'">
-                            <td data-th="User">
-                                <div class="user-flex">
+                            <td data-th="User" class="table-cell" >
+                                <div class="d-flex flex-column gap-2 align-items-center">
                                   <img src="@poll.ProfilePicture" alt="user-image" class="avatar"/>
-                                    <p>@poll.UserName</p>
+                                    <p class="mb-0 text-center">@poll.UserName</p>
                                 </div>
                             </td>
-                            <td data-th="Title">
+                            <td data-th="Title" class="table-cell"  >
                                 @poll.Poll.Title
                             </td>
-                            <td data-th="First Option">
+                            <td data-th="First Option" class="table-cell">
                                 @poll.Poll.FirstOption
                             </td>
-                            <td data-th="Second Option">
+                            <td data-th="Second Option" class="table-cell">
                                 @poll.Poll.SecondOption
                             </td>
-                            <td data-th="First Vote Count">
+                            <td data-th="First Count" class="table-cell" >
                                 <span class="first-votes">@poll.FirstVoteCount</span>
                             </td>
-                            <td data-th="Second Vote Count">
+                            <td data-th="Second Count" class="table-cell" >
                                 <span class="second-votes">@poll.SecondVoteCount</span>
                             </td>
                         </tr>
@@ -61,6 +61,32 @@
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
+
+<style>
+
+    .pagination {
+    display: inline-block;
+}
+
+    .pagination a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        transition: background-color .3s;
+    }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+
+</style>
+
 
 @*Connects client to signalR server*@
 <script>
@@ -138,8 +164,8 @@
                 "Title",
                 "First Option",
                 "Second Option",
-                "First Vote Count",
-                "Second Vote Count"]
+                "First Count",
+                "Second Count"]
 
             polls.forEach(poll => {
                 console.log(poll)
@@ -190,11 +216,11 @@
                         case "Second Option":
                             content = poll.poll.secondOption
                             break;
-                        case "First Vote Count":
+                        case "First Count":
                             tableCell.classList.add("first-votes")
                             content = poll.firstVoteCount
                             break;
-                        case "Second Vote Count":
+                        case "Second Count":
                             tableCell.classList.add("second-votes")
                             content = poll.secondVoteCount
                             break;

@@ -3,30 +3,63 @@
     var userId = ViewData["UserId"];
 }
 
-@if (Model.Poll.Genre != null) { 
-    <div>@Model.Poll.Genre.Name</div> //style this
-}
 
-<form asp-controller="Poll" asp-action="Vote" method="post" id="form">
-    <div class="vote-flex">
-        <label for="vote-first">@Model.Poll.FirstOption</label><br>
-        <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.Poll != null && Model.Vote == true ? "checked" : "")>
-        <br />
-        <label for="vote-second">@Model.Poll.SecondOption</label><br>
-        <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.Poll != null && Model.Vote == false ? "checked" : "")>
-        <br />
-        <input type="hidden" name="pollid" value="@Model.Poll.Id" />
-        <input type="hidden" name="userid" value="@Model.Poll.UserId"  />
-        <button type="submit" id="vote-btn"> Submit Vote</button>
-        @if (Model.Poll.UserId == Convert.ToInt32(userId))
-        {
-          <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
-        }
+<div class="main">
+    <div class="card">
+    
+
+        <div class="container">
+            @if (Model.Poll.Genre != null)
+            {
+                <h2 class="fw-bold">Genre: @Model.Poll.Genre.Name</h2>
+            }
+            <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
+                <ul>
+                    <li>
+                        <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.Poll != null && Model.Vote == true ? "checked" : "")>
+                        <label for="vote-first">@Model.Poll.FirstOption</label>
+                        <div class="check"><div class="inside"></div></div>
+                    </li>
+                    <li>
+                        <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.Poll != null && Model.Vote == false ? "checked" : "")>
+                        <label for="vote-second">@Model.Poll.SecondOption</label>
+                        <div class="check"><div class="inside"></div></div>
+                    </li>
+                </ul>
+                <input type="hidden" name="pollid" value="@Model.Poll.Id" />
+                <input type="hidden" name="userid" value="@Model.Poll.UserId" />
+               <div class="d-flex justify-content-end gap-3 pt-4 ">
+                    @if (Model.Poll.UserId == Convert.ToInt32(userId))
+                    {
+                        <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
+                    }
+                    <button type="submit" class="btn btn-success" id="vote-btn">Submit Vote</button>
+               </div> 
+            </form>
+        </div>
+
     </div>
-</form>
+</div>
+
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
+
+
+<style>
+
+
+.container{
+margin-bottom: 0
+
+}    body, html {
+        height: 100%;
+        background: #222222;
+        font-family: 'Lato', sans-serif;
+    }
+
+
+</style>
 
 <script>
 
