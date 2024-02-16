@@ -77,12 +77,12 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSearchResults([FromQuery] string search = "")
+        public IActionResult GetSearchResults([FromQuery] string search = "", int page = 1)
         {
             try
             {
                 int take = 5;
-                int skip = (1 - 1) * take;
+                int skip = (page - 1) * take;
 
                 var pattern = $"%{search}%";
 
@@ -106,9 +106,14 @@ namespace realTimePolls.Controllers
                     })
                     .ToList();
 
-                int pollCount = _context.Polls.Count();
+                int pollLength = _context
+                    .Polls.Where(c => EF.Functions.Like(c.Title, pattern))
+                    .Select(p => new PollItem { Poll = p, })
+                    .Count();
 
-                var pollList = new PollsList { Polls = polls, PollCount = pollCount };
+                //int pollCount = _context.Polls.Count();
+
+                var pollList = new PollsList { Polls = polls, PollCount = pollLength };
 
                 return Json(pollList);
             }

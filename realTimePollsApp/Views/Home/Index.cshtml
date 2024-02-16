@@ -105,6 +105,9 @@
 
 @*Connects client to signalR server*@
 <script>
+
+    if (window.location.href !== "https://localhost:44378/?page=1") window.location.replace("https://localhost:44378/?page=1");
+
     const oldData = @Html.Raw(Json.Serialize(@Model));
 
     const getData = async (page) => {
@@ -178,7 +181,7 @@
             const currentUrl = window.location.href
             
             if (currentUrl.includes("search")) {
-                 polls  = await getSearchResults(text)
+                 polls  = await getSearchResults(text, page)
 
             } else {
                  polls  = await getData(page);
@@ -298,7 +301,7 @@
     }
 
 
-    const createPaginationButtons = (polls, pollCount) => {
+    function createPaginationButtons  (polls, pollCount)  {
 
         try {
             const paginationContainer = document.getElementById("pagination-container")
@@ -311,8 +314,11 @@
             // document.getElementById("pagination-container").childElementCount !== 0 ||
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
+            let search = searchParams.get("search")
 
             const baseURL = "https://localhost:44378/"
+            const currentUrl = window.location.href
+
             const pollsLength = pollCount
 
             const paginationLength = getPaginationLength(pollsLength)
@@ -344,18 +350,29 @@
                 btn.innerHTML = [i]
                 paginationContainer.appendChild(btn)
 
-                btn.addEventListener('click', (e) => {
-                    if (e.target.innerHTML === page || paginationLength == 1) return
+                btn.addEventListener('click', async (e) => {
 
-                    const nextURL = baseURL + "?page=" + btn.innerHTML;
+
+                    const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + btn.innerHTML
                     const nextTitle = 'Home';
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
+
+                    if (e.target.innerHTML === page || paginationLength == 1) return
+
+                    if (currentUrl.includes("search")) {
+                        pollCount = await getSearchResults(search, btn.innerHTML);
+
+                    } else {
+                        pollCount = await getData(page);
+                    }
+
+
 
                     window.history.replaceState(nextState, nextTitle, nextURL);
 
                     updateActivePage(btn)
                     page = btn.innerHTML
-                    updateGrid(page, e);
+                    updateGrid(page, e, search);
                 })
             }
 
@@ -371,15 +388,22 @@
             const next = document.createElement("a") 
 
             next.addEventListener('click', async (e) => {
+                let nextU
                 if (page === null) page = 2
+
+                // if () {  
+
+                // } else {
+               
+                // }
 
                 const { pollCount } = await getData(page);
                 const paginationLength = getPaginationLength(pollCount)
-
-                if (paginationLength == page || pageinationLength == 1) return
+                
+                if (paginationLength == page || pollCount == 1) return
 
                 page = parseInt(page) + 1
-                const nextURL = baseURL + "?page=" + page.toString()
+                const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + text + "&page=" + page.toString() : "?page=" + page.toString()
                 const nextTitle = 'Home';
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
 
@@ -427,8 +451,8 @@
 <script>
     
 
-    const getSearchResults = async (text) => {
-        const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text
+    const getSearchResults = async (text, page) => {
+        const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text + "&page=" + page
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -450,12 +474,14 @@
 
     const updateUrl = (text) => {
         let nextURL
+        const searchParams = new URLSearchParams(window.location.search);
+        let page = searchParams.get('page')
         const currentUrl = window.location.href
-        const baseUrl = "https://localhost:44378/"
+        const baseUrl = "https://localhost:44378/?page=1"
         if (text === "") {
             nextURL = baseUrl
         } else {
-            nextURL = baseUrl + !currentUrl.includes("search") ? "?search=" + text : "&search=" + text
+            nextURL = baseUrl + !currentUrl.includes("search") ? "?search=" + text + "&page=" + page : "&search=" + text + "&page=1"
         }
 
         const nextTitle = 'Home';
@@ -468,8 +494,7 @@
     searchBox.addEventListener('input', async (e) => {
         updateUrl(e.target.value)
         const { polls, pollCount } = await updateGrid(null, e, e.target.value)
-        console.log('polls here', polls)
-        createPaginationButtons(polls, polls.length)
+        createPaginationButtons(polls, pollCount)
     })
 
    
