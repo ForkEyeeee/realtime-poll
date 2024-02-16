@@ -333,13 +333,13 @@
                         if (page === null || page == 1 || paginationLength == 1) return
                         
                         page = parseInt(page) - 1
-                        const nextURL = baseURL + "?page=" + page.toString()
+                        const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + btn.innerHTML
                         const nextTitle = 'Home';
                         const nextState = { additionalInformation: 'Updated the URL with JS' };
 
                         window.history.replaceState(nextState, nextTitle, nextURL);
                         updateActivePage(next)
-                        updateGrid(page);
+                        updateGrid(page, e, search);
                     })
 
                     paginationContainer.appendChild(prev)
@@ -388,28 +388,28 @@
             const next = document.createElement("a") 
 
             next.addEventListener('click', async (e) => {
-                let nextU
+                let pollCount;
                 if (page === null) page = 2
 
-                // if () {  
+                if (currentUrl.includes("search")) {
+                    pollCount = await getSearchResults(search, page)
+                } else {
+                    pollCount = await getData(page)
+                }
 
-                // } else {
-               
-                // }
-
-                const { pollCount } = await getData(page);
-                const paginationLength = getPaginationLength(pollCount)
+                // const { pollCount } = await getData(page);
+                const paginationLength = getPaginationLength(pollCount.pollCount)
                 
                 if (paginationLength == page || pollCount == 1) return
 
                 page = parseInt(page) + 1
-                const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + text + "&page=" + page.toString() : "?page=" + page.toString()
+                const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + search + "&page=" + page.toString() : "?page=" + page.toString()
                 const nextTitle = 'Home';
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
 
                 window.history.replaceState(nextState, nextTitle, nextURL);
                 updateActivePage(next)
-                updateGrid(page);
+                updateGrid(page, e, search);
             })
 
             next.innerHTML = "&raquo;"
