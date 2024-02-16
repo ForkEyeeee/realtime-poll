@@ -24,9 +24,9 @@
                     {
                         <tr class="table-data" onclick="window.location.href='@Url.Action("Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId })'">
                             <td data-th="User" class="table-cell" >
-                                <div class="d-flex flex-column gap-2 align-items-center">
+                                <div class="user-flex">
                                   <img src="@poll.ProfilePicture" alt="user-image" class="avatar"/>
-                                    <p class="mb-0 text-center">@poll.UserName</p>
+                                    <p class="user-text">@poll.UserName</p>
                                 </div>
                             </td>
                             <td data-th="Title" class="table-cell"  >
@@ -87,6 +87,18 @@
         .pagination a:hover:not(.active) {
             background-color: #ddd;
         }
+
+    .flex-column-user {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem; 
+        align-items: center
+    }
+
+    .user-text {
+        margin-bottom: 0;
+        text-align: center
+    }
 
 </style>
 
@@ -190,7 +202,8 @@
                         case "User":
                             const userContainer = document.createElement('div')
                             userContainer.classList.add('user-flex')
-                            
+                            userContainer.classList.add("flex-column-user")
+
                             const avatar = document.createElement('img')
                             avatar.src = poll.profilePicture
                             avatar.classList.add("avatar")
@@ -198,7 +211,8 @@
                         
                             const userName = document.createElement('p')
                             userName.innerHTML = poll.userName
-                        
+                            userName.classList.add("user-text")
+
                             userContainer.appendChild(avatar)
                             userContainer.append(userName)
 
@@ -232,6 +246,7 @@
                     }
                     
                     tableCell.innerHTML = content
+                    tableCell.classList.add("table-cell")
                     tableRow.appendChild(tableCell)
                     tableBody.append(tableRow)
 

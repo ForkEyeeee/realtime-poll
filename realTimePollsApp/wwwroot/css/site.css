@@ -48,8 +48,9 @@ h1 {
 
 .user-flex {
     display: flex;
-    align-items: flex-end;
-    gap: 10px;
+    align-items: center;
+    gap: 5px;
+    flex-direction: column;
 }
 
 .table-data {
@@ -276,7 +277,7 @@ table {
 
 .rwd-table th,
 .rwd-table td {
-  text-align: left;
+  text-align: center;
 }
 
 .rwd-table {
