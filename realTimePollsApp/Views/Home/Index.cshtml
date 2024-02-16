@@ -103,9 +103,9 @@
 </style>
 
 
-@*Connects client to signalR server*@
+@* Connects client to signalR server *@
 <script>
-
+    //Set the default url to the first page when refreshing
     if (window.location.href !== "https://localhost:44378/?page=1") window.location.replace("https://localhost:44378/?page=1");
 
     const oldData = @Html.Raw(Json.Serialize(@Model));
@@ -333,7 +333,8 @@
                         if (page === null || page == 1 || paginationLength == 1) return
                         
                         page = parseInt(page) - 1
-                        const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + btn.innerHTML
+                        let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + page
+                        nextURL = baseURL + nextURL
                         const nextTitle = 'Home';
                         const nextState = { additionalInformation: 'Updated the URL with JS' };
 
@@ -353,7 +354,8 @@
                 btn.addEventListener('click', async (e) => {
 
 
-                    const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + btn.innerHTML
+                    let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + btn.innerHTML
+                    nextURL = baseURL + nextURL
                     const nextTitle = 'Home';
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
 
@@ -403,7 +405,8 @@
                 if (paginationLength == page || pollCount == 1) return
 
                 page = parseInt(page) + 1
-                const nextURL = baseURL + currentUrl.includes("search") ? "?search=" + search + "&page=" + page.toString() : "?page=" + page.toString()
+                let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + page.toString() : "?page=" + page.toString()
+                nextURL = baseURL + nextURL
                 const nextTitle = 'Home';
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
 
@@ -476,12 +479,14 @@
         let nextURL
         const searchParams = new URLSearchParams(window.location.search);
         let page = searchParams.get('page')
+
         const currentUrl = window.location.href
-        const baseUrl = "https://localhost:44378/?page=1"
+        const baseUrl = "https://localhost:44378/"
         if (text === "") {
-            nextURL = baseUrl
-        } else {
-            nextURL = baseUrl + !currentUrl.includes("search") ? "?search=" + text + "&page=" + page : "&search=" + text + "&page=1"
+            nextURL = baseUrl + "?page=1"
+        }  else {
+            nextURL = !currentUrl.includes("search") ? "?search=" + text + "&page=" + 1 : "&search=" + text + "&page=1"
+            nextURL = baseUrl + nextURL
         }
 
         const nextTitle = 'Home';
