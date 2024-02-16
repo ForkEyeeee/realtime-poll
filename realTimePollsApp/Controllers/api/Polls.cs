@@ -28,6 +28,7 @@ namespace realTimePolls.Controllers
 
                 var polls = _context
                     .Polls.Skip(skip)
+                    .Include(p => p.Genre)
                     .Take(take)
                     .Select(p => new PollItem
                     {
@@ -87,7 +88,8 @@ namespace realTimePolls.Controllers
                 var pattern = $"%{search}%";
 
                 var polls = _context
-                    .Polls.Where(c => EF.Functions.Like(c.Title, pattern))
+                    .Polls.Include(p => p.Genre)
+                    .Where(c => EF.Functions.Like(c.Title, pattern))
                     .Skip(skip)
                     .Take(take)
                     .Select(p => new PollItem

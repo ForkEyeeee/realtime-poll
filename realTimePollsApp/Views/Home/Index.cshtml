@@ -15,6 +15,7 @@
                     <th>Second Option</th>
                     <th>First Vote Count</th>
                     <th>Second Vote Count</th>
+                    <th>Genre</th>
                 </tr>
 
                 @*Displays list of polls*@
@@ -43,6 +44,9 @@
                             </td>
                             <td data-th="Second Count" class="table-cell" >
                                 <span class="second-votes">@poll.SecondVoteCount</span>
+                            </td>
+                            <td data-th="Genre" class="table-cell">
+                                <span class="second-votes">@poll.Poll.Genre.Name</span>
                             </td>
                         </tr>
                     }
@@ -193,12 +197,15 @@
 
             document.querySelectorAll(".table-data").forEach(row => row.remove())
 
-            const cells = ["User",
+            const cells = [
+                "User",
                 "Title",
                 "First Option",
                 "Second Option",
                 "First Count",
-                "Second Count"]
+                "Second Count",
+                "Genre"
+            ]
 
             polls.forEach(poll => {
                 const tableRow = document.createElement("tr")
@@ -209,7 +216,7 @@
                     window.location.href = `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}`
                 })
 
-                for (let i = 0; i <= 5; i++) {
+                for (let i = 0; i <= 6; i++) {
                     const tableCell = document.createElement("td")
                     tableCell.setAttribute("data-th", cells[i])
                     if (i === 0) tableCell.setAttribute("data-id", poll.poll.id)
@@ -258,6 +265,10 @@
                         case "Second Count":
                             tableCell.classList.add("second-votes")
                             content = poll.secondVoteCount
+                            break;
+                        case "Genre":
+                        console.log(poll)
+                            content = poll.poll.genre.name
                             break;
                         default:
                             throw new Error("Unable to update grid")
@@ -392,15 +403,16 @@
 
             next.addEventListener('click', async (e) => {
                 let pollCount;
+                let polls;
                 if (page === null) page = 2
 
                 if (currentUrl.includes("search")) {
-                    pollCount = await getSearchResults(search, page)
-                } else {
-                    pollCount = await getData(page)
+                    ({ polls, pollCount } = await getSearchResults(search, page))
+            } else {
+                    ({ polls, pollCount } = await getData(page))
                 }
 
-                const paginationLength = getPaginationLength(pollCount.pollCount)
+                const paginationLength = getPaginationLength(pollCount)
                 
                 if (paginationLength == page || pollCount == 1) return
 
