@@ -23,7 +23,7 @@
                     foreach (var poll in Model.Polls)
                     {
                         <tr class="table-data" onclick="window.location.href='@Url.Action("Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId })'">
-                            <td data-th="User" class="table-cell" >
+                            <td data-th="User" data-id="@poll.Poll.Id" class="table-cell" >
                                 <div class="user-flex">
                                   <img src="@poll.ProfilePicture" alt="user-image" class="avatar"/>
                                     <p class="user-text">@poll.UserName</p>
@@ -212,6 +212,7 @@
                 for (let i = 0; i <= 5; i++) {
                     const tableCell = document.createElement("td")
                     tableCell.setAttribute("data-th", cells[i])
+                    if (i === 0) tableCell.setAttribute("data-id", poll.poll.id)
 
                     let content;
 
@@ -429,23 +430,31 @@
 <script>
     hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
         try {
+            let polls;
+            const currentUrl = window.location.href
             console.log('received')
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
+            let search = searchParams.get('search')
 
-            const { polls } = await getData(page);
+            if (currentUrl.includes("search")) {
+                ({ polls } = await getSearchResults(search, page))
+            } else {
+                ({ polls } = await getData(page))
+            }
 
             const firstVotes = document.querySelectorAll(".first-votes");
             const secondVotes = document.querySelectorAll(".second-votes");
 
-            if (firstVotes.length === 0 || secondVotes.length === 0) throw new Error('votes els not found.');
-            if (polls.length !== firstVotes.length || polls.length !== secondVotes.length) throw new Error('length does not match'); 
-            //fix this function to work with search
-
             polls.forEach((poll, i) => {
-                firstVotes[i].innerHTML = poll.firstVoteCount;
-                secondVotes[i].innerHTML = poll.secondVoteCount;
-            });
+                const currentPollId = firstVotes[i].previousElementSibling.previousElementSibling.previousSibling.previousElementSibling.dataset.id
+
+                if (poll.poll.id == currentPollId && 
+                    (poll.firstVoteCount != firstVotes.innerHTML || poll.secondVoteCount != secondVotes.innerHTML)) {
+                    firstVotes[i].innerHTML = poll.firstVoteCount
+                    secondVotes[i].innerHTML = poll.secondVoteCount
+                }
+            })
 
         } catch (e) {
             console.error(e);
@@ -485,7 +494,8 @@
         if (text === "") {
             nextURL = baseUrl + "?page=1"
         }  else {
-            nextURL = !currentUrl.includes("search") ? "?search=" + text + "&page=" + 1 : "&search=" + text + "&page=1"
+
+            nextURL = !currentUrl.includes("search") ? "?search=" + text + "&page=" + 1 : "?search=" + text + "&page=1"
             nextURL = baseUrl + nextURL
         }
 
