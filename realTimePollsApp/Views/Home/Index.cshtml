@@ -3,11 +3,16 @@
     ViewBag.Message = @Model.UserProfilePicture;
 }
 
-<div class="text-center ">
-    <input type="text" placeholder="Search by title" id="search-box"/>
-    <div >
-        <label for="genre-search" class="required">Genre</label> @*change to html helper*@
-        <select id="genre-search" name="genre-search" class="Genre"></select>
+<div class="text-center pt-0">
+    @if (Context.User.Identity.IsAuthenticated)
+    {
+        <h3 class="text-break">Welcome, @Context.User.Identity.Name</h3>    
+    }
+    <div class="d-flex flex-column ">
+        <input type="text" placeholder="Search by title" id="search-box"/>
+        <select  id="genre-search" name="genre-search" class="Genre w-100" placeholder="Test">
+            <option disabled="disabled" selected="selected">Choose a genre to sort by...</option>
+        </select>
     </div>
     <div class="container pt-0 mt-0">    
         <table class="rwd-table">

@@ -335,8 +335,8 @@ table {
 .container {
     display: block;
     position: relative;
-    margin: 40px auto;
-    height: auto;
+/*    margin: 40px auto;
+*/    height: auto;
     width: 100%;
     padding: 20px;
 }
