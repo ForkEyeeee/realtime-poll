@@ -126,6 +126,53 @@ namespace realTimePolls.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult GetGenreResults([FromBody] int genreId, [FromQuery] int page = 1)
+        {
+            try
+            {
+                int take = 5;
+                int skip = (page - 1) * take;
+
+                //var pattern = $"%{search}%";
+
+                var polls = _context
+                    .Polls.Include(p => p.Genre)
+                    .Where(p => p.GenreId == genreId)
+                    .Skip(skip)
+                    .Take(take)
+                    .Select(p => new PollItem
+                    {
+                        Poll = p,
+                        FirstVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
+                            .Count(),
+                        SecondVoteCount = _context
+                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
+                            .Count(),
+                        UserName = _context.User.SingleOrDefault(user => user.Id == p.UserId).Name,
+                        ProfilePicture = _context
+                            .User.SingleOrDefault(user => user.Id == p.UserId)
+                            .ProfilePicture
+                    })
+                    .ToList();
+
+                int pollLength = _context
+                    .Polls.Where(p => p.GenreId == genreId)
+                    .Select(p => new PollItem { Poll = p, })
+                    .Count();
+
+                var pollList = new PollsList { Polls = polls, PollCount = pollLength };
+
+                return Json(pollList);
+            }
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

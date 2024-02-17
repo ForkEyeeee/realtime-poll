@@ -5,6 +5,10 @@
 
 <div class="text-center ">
     <input type="text" placeholder="Search by title" id="search-box"/>
+    <div >
+        <label for="genre-search" class="required">Genre</label> @*change to html helper*@
+        <select id="genre-search" name="genre-search" class="Genre"></select>
+    </div>
     <div class="container pt-0 mt-0">    
         <table class="rwd-table">
             <tbody class="table-body">
@@ -72,30 +76,30 @@
 <style>
 
     .pagination {
-    display: inline-block;
-}
-
-    .pagination a {
-        color: black;
-        float: left;
-        padding: 8px 16px;
-        text-decoration: none;
-        transition: background-color .3s;
+        display: inline-block;
     }
 
-        .pagination a.active {
-            background-color: #4CAF50;
-            color: white;
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
         }
 
-        .pagination a:hover:not(.active) {
-            background-color: #ddd;
-        }
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .pagination a:hover:not(.active) {
+                background-color: #ddd;
+            }
 
     .flex-column-user {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem; 
+        gap: 0.5rem;
         align-items: center
     }
 
@@ -118,7 +122,7 @@
 
         const baseURL = "https://localhost:44378/Polls/Index"
         const url = page === undefined ? baseURL : baseURL + `?page=${page}`
-        
+
         const userId = {
             Id: hubConnection.connection.connectionId
         }
@@ -166,6 +170,50 @@
     start();
 </script>
 
+@* Filters grid by genre *@
+
+<script>
+
+    // const getGenreResults = async (page, genreId) => {
+
+    //     const url = "https://localhost:44378/Polls/GetGenreResults/" + "?page=" + page
+
+    //     const userId = {
+    //         Id: hubConnection.connection.connectionId
+    //     }
+
+    //     const response = await fetch(url, {
+    //         method: "POST",
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json'
+
+    //         },
+    //         body: JSON.stringify(genreId)
+
+    //     })
+
+    //     if (!response.ok) throw new Error("Failed to fetch polls")
+
+    //     const { polls, pollCount } = await response.json()
+    //     return { polls, pollCount }
+    // }
+
+    // const genreDropdown = document.querySelector("#genre-search")
+    // genreDropdown.addEventListener('change', async (e) => {
+    //     const genreId = e.target.value
+    //     const searchParams = new URLSearchParams(window.location.search);
+    //     const page = searchParams.get('page')
+    //     const { polls, pollCount } = await getGenreResults(page, genreId)
+    //     updateGrid(page, null, polls, pollCount)
+    //     createPaginationButtons(polls, pollCount, genreId)
+    //     updateActivePage()
+    })
+
+
+</script>
+
+
 @*Grid pagination*@
 <script>
     async function getPolls() {
@@ -197,15 +245,12 @@
 
             document.querySelectorAll(".table-data").forEach(row => row.remove())
 
-            const cells = [
-                "User",
+            const cells = ["User",
                 "Title",
                 "First Option",
                 "Second Option",
                 "First Count",
-                "Second Count",
-                "Genre"
-            ]
+                "Second Count"]
 
             polls.forEach(poll => {
                 const tableRow = document.createElement("tr")
@@ -216,7 +261,7 @@
                     window.location.href = `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}`
                 })
 
-                for (let i = 0; i <= 6; i++) {
+                for (let i = 0; i <= 5; i++) {
                     const tableCell = document.createElement("td")
                     tableCell.setAttribute("data-th", cells[i])
                     if (i === 0) tableCell.setAttribute("data-id", poll.poll.id)
@@ -266,10 +311,6 @@
                             tableCell.classList.add("second-votes")
                             content = poll.secondVoteCount
                             break;
-                        case "Genre":
-                        console.log(poll)
-                            content = poll.poll.genre.name
-                            break;
                         default:
                             throw new Error("Unable to update grid")
                     }
@@ -282,7 +323,7 @@
                 }
             })
             return {
-                polls, 
+                polls,
                 pollCount
             }
         }
@@ -290,17 +331,17 @@
             console.error(e)
         }
     }
-    
+
     const updateActivePage = (node) => {
         const searchParams = new URLSearchParams(window.location.search);
         const page = searchParams.get('page')
 
-            const btns = document.querySelectorAll(".pagination-btn")
+        const btns = document.querySelectorAll(".pagination-btn")
 
-            btns.forEach((btn, i) => {
-                btn.classList.remove("active")
+        btns.forEach((btn, i) => {
+            btn.classList.remove("active")
             if (btn.innerHTML === page) btn.classList.add("active")
-            })
+        })
     }
 
     const getPaginationLength = (pollsLength) => {
@@ -315,7 +356,7 @@
     }
 
 
-    function createPaginationButtons  (polls, pollCount)  {
+    function createPaginationButtons(polls, pollCount) {
 
         try {
             if (pollCount === 0) return
@@ -344,7 +385,7 @@
 
                     prev.addEventListener('click', (e, polls, pollsLength) => {
                         if (page === null || page == 1 || paginationLength == 1) return
-                        
+
                         page = parseInt(page) - 1
 
                         let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + page
@@ -367,10 +408,10 @@
                 paginationContainer.appendChild(btn)
 
                 btn.addEventListener('click', async (e) => {
-                    
+
                     let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + btn.innerHTML : "?page=" + btn.innerHTML
                     nextURL = baseURL + nextURL
-                    
+
                     const nextTitle = 'Home';
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
 
@@ -399,28 +440,27 @@
 
             })
 
-            const next = document.createElement("a") 
+            const next = document.createElement("a")
 
             next.addEventListener('click', async (e) => {
                 let pollCount;
-                let polls;
                 if (page === null) page = 2
 
                 if (currentUrl.includes("search")) {
-                    ({ polls, pollCount } = await getSearchResults(search, page))
-            } else {
-                    ({ polls, pollCount } = await getData(page))
+                    pollCount = await getSearchResults(search, page)
+                } else {
+                    pollCount = await getData(page)
                 }
 
-                const paginationLength = getPaginationLength(pollCount)
-                
+                const paginationLength = getPaginationLength(pollCount.pollCount)
+
                 if (paginationLength == page || pollCount == 1) return
 
                 page = parseInt(page) + 1
-                
+
                 let nextURL = currentUrl.includes("search") ? "?search=" + search + "&page=" + page.toString() : "?page=" + page.toString()
                 nextURL = baseURL + nextURL
-               
+
                 const nextTitle = 'Home';
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
 
@@ -435,7 +475,7 @@
         catch (e) {
             console.error(e)
         }
-   }
+    }
 </script>
 
 @*Updates the DOM after client receives message from the server*@
@@ -461,7 +501,7 @@
             polls.forEach((poll, i) => {
                 const currentPollId = firstVotes[i].previousElementSibling.previousElementSibling.previousSibling.previousElementSibling.dataset.id
 
-                if (poll.poll.id == currentPollId && 
+                if (poll.poll.id == currentPollId &&
                     (poll.firstVoteCount != firstVotes.innerHTML || poll.secondVoteCount != secondVotes.innerHTML)) {
                     firstVotes[i].innerHTML = poll.firstVoteCount
                     secondVotes[i].innerHTML = poll.secondVoteCount
@@ -505,7 +545,7 @@
 
         if (text === "") {
             nextURL = baseUrl + "?page=1"
-        }  else {
+        } else {
 
             nextURL = !currentUrl.includes("search") ? "?search=" + text + "&page=" + 1 : "?search=" + text + "&page=1"
             nextURL = baseUrl + nextURL
@@ -530,6 +570,3 @@
         }
     })
 </script>
-
-
-

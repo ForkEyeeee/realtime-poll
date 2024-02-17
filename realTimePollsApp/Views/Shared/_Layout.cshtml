@@ -244,14 +244,17 @@
             if (!response.ok) throw new Error("Failed to fetch profile picture")
 
             const { options } = await response.json()
-            const dropdown = document.querySelector(".Genre")
+            const dropdown = document.querySelectorAll(".Genre")
 
-            for (let i = 0; i < options.length; i++) {
-                const option = document.createElement("option")
-                option.value = options[i].id
-                option.innerHTML = options[i].name
-                dropdown.appendChild(option)
-            }
+            dropdown.forEach(element => {
+                for (let i = 0; i < options.length; i++) {
+                    const option = document.createElement("option")
+                    option.value = options[i].id
+                    option.innerHTML = options[i].name
+                    element.appendChild(option)
+                }
+            })
+   
         }
         getDropdownList();
     </script>
