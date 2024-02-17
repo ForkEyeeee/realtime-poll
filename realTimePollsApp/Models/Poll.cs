@@ -34,5 +34,8 @@ namespace realTimePolls.Models
         public int? GenreId { get; set; }
 
         public Genre Genre { get; set; }
+
+        [NotMapped]
+        public string? ErrorMsg { get; set; }
     }
 }

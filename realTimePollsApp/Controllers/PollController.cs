@@ -124,6 +124,9 @@ namespace realTimePolls.Controllers
         {
             try
             {
+                //if (_context.Polls.Count() >= 25)
+                //    return "test" as ActionResult;
+
                 var googleId =
                     HttpContext != null ? HttpContext.User.Claims.ToList()[0].Value : string.Empty;
 
@@ -141,6 +144,7 @@ namespace realTimePolls.Controllers
                     FirstOption = firstOption,
                     SecondOption = secondOption,
                     GenreId = pollGenre.Id,
+                    ErrorMsg = string.Empty
                 };
 
                 _context.Polls.Add(poll);

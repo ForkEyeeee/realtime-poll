@@ -11,7 +11,7 @@
         <div class="container">
             @if (Model.Poll.Genre != null)
             {
-                <h2 class="fw-bold">Genre: @Model.Poll.Genre.Name</h2>
+                <h2 class="fw-bold genre-heading">Genre: @Model.Poll.Genre.Name</h2>
             }
             <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
                 <ul>
@@ -28,13 +28,13 @@
                 </ul>
                 <input type="hidden" name="pollid" value="@Model.Poll.Id" />
                 <input type="hidden" name="userid" value="@Model.Poll.UserId" />
-               <div class="d-flex justify-content-end gap-3 pt-4 ">
+                <div class="d-flex justify-content-end gap-3 pt-4 ">
                     @if (Model.Poll.UserId == Convert.ToInt32(userId))
                     {
                         <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
                     }
                     <button type="submit" class="btn btn-success" id="vote-btn">Submit Vote</button>
-               </div> 
+                </div>
             </form>
         </div>
 
@@ -47,18 +47,15 @@
 
 
 <style>
+    .container {
+        margin-bottom: 0
+    }    
 
-
-.container{
-margin-bottom: 0
-
-}    body, html {
+    body, html {
         height: 100%;
         background: #222222;
         font-family: 'Lato', sans-serif;
     }
-
-
 </style>
 
 <script>
