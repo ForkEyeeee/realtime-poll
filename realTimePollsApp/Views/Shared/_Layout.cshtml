@@ -52,7 +52,9 @@
                             </div>
                             <div class="d-flex flex-column">
                                 <label for="genre" class="required">Genre</label> @*change to html helper*@
-                                <select id="genre" name="genre" class="Genre "></select>
+                                <select id="genre" name="genre" class="Genre ">
+                                    <option disabled="disabled" selected="selected">Choose a genre</option>
+                                </select>
                             </div>
                             <div class="d-flex justify-content-end gap-3">
                                 <input type="button" id="cancel-btn" value="Cancel" class="btn btn-secondary" />
@@ -249,12 +251,13 @@
             dropdown.forEach(element => {
                 for (let i = 0; i < options.length; i++) {
                     const option = document.createElement("option")
+                    
                     option.value = options[i].id
                     option.innerHTML = options[i].name
                     element.appendChild(option)
+
                 }
             })
-   
         }
         getDropdownList();
     </script>

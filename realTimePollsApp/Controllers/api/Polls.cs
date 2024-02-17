@@ -64,7 +64,7 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                var dropdownList = _context.Genre.ToList();
+                var dropdownList = _context.Genre.OrderBy(g => g.Name).ToList();
 
                 var options = new { options = dropdownList };
 
@@ -113,8 +113,6 @@ namespace realTimePolls.Controllers
                     .Select(p => new PollItem { Poll = p, })
                     .Count();
 
-                //int pollCount = _context.Polls.Count();
-
                 var pollList = new PollsList { Polls = polls, PollCount = pollLength };
 
                 return Json(pollList);
@@ -133,8 +131,6 @@ namespace realTimePolls.Controllers
             {
                 int take = 5;
                 int skip = (page - 1) * take;
-
-                //var pattern = $"%{search}%";
 
                 var polls = _context
                     .Polls.Include(p => p.Genre)

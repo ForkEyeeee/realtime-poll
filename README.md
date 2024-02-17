@@ -1,6 +1,6 @@
 # Real-time Poll App
 
-Real-time poll application built with ASP.NET MVC & PostgreSQL, featuring user-created polls, account management, and data display.
+Poll application built with ASP.NET CORE & PostgreSQL, featuring Google authentication, user-created polls, and real-time data display.
 
 ## Dependencies
 

@@ -39,7 +39,7 @@
                                     <p class="user-text">@poll.UserName</p>
                                 </div>
                             </td>
-                            <td data-th="Title" class="table-cell"  >
+                            <td data-th="Title" class="table-cell">
                                 @poll.Poll.Title
                             </td>
                             <td data-th="First Option" class="table-cell">
@@ -48,10 +48,10 @@
                             <td data-th="Second Option" class="table-cell">
                                 @poll.Poll.SecondOption
                             </td>
-                            <td data-th="First Count" class="table-cell" >
+                            <td data-th="First Count" class="table-cell">
                                 <span class="first-votes">@poll.FirstVoteCount</span>
                             </td>
-                            <td data-th="Second Count" class="table-cell" >
+                            <td data-th="Second Count" class="table-cell">
                                 <span class="second-votes">@poll.SecondVoteCount</span>
                             </td>
                             <td data-th="Genre" class="table-cell">
@@ -75,8 +75,6 @@
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
-
-
 
 <style>
 
@@ -153,7 +151,6 @@
         try {
             await hubConnection.start();
             console.log("SignalR Connected.");
-            // if (document.getElementById("pagination-container")) return
             await getPolls();
 
         } catch (e) {
@@ -177,9 +174,7 @@
 </script>
 
 @* Filters grid by genre *@
-
 <script>
-
     const getGenreResults = async (page, genreId) => {
 
         const url = "https://localhost:44378/Polls/GetGenreResults/" + "?page=" + page
@@ -205,35 +200,36 @@
 
     const searchParams = new URLSearchParams(window.location.search);
     const page = searchParams.get('page')
-
+    
     const genreDropdown = document.querySelector("#genre-search")
+    
     genreDropdown.addEventListener('change', async (e) => {
-        const baseURL = "https://localhost:44378/"
-        const currentUrl = window.location.href
-        const genreId = e.target.value
-        const genreName = e.target[genreId - 1].textContent
-        const nextState = { additionalInformation: 'Updated the URL with JS' };
-        const nextTitle = 'Home';
+        try {
+            const baseURL = "https://localhost:44378/"
+            const currentUrl = window.location.href
 
-    searchParams.set('genreId', genreId)
-    nextURL = "?genreId=" + genreId + "&page=" + page
-       
+            const genreId = e.target.value
+            const genreName = e.target[genreId - 1].textContent
 
+            const nextState = { additionalInformation: 'Updated the URL with JS' };
+            const nextTitle = 'Home';
 
-        nextURL = baseURL + nextURL
-        
-        const { polls, pollCount } = await getGenreResults(page, genreId)
+            searchParams.set('genreId', genreId)
+            nextURL = "?genreId=" + genreId + "&page=" + page
+            nextURL = baseURL + nextURL
 
-        console.log(polls, pollCount)
+            const { polls, pollCount } = await getGenreResults(page, genreId)
 
-        window.history.replaceState(nextState, nextTitle, nextURL);
+            window.history.replaceState(nextState, nextTitle, nextURL);
 
-        updateGrid(page, null, genreId)
-        createPaginationButtons(polls, pollCount, genreId)
-        updateActivePage()
+            updateGrid(page, null, genreId)
+            createPaginationButtons(polls, pollCount, genreId)
+            updateActivePage()
+        }
+        catch (e) {
+            console.error(error)
+        }   
     })
-
-
 </script>
 
 
@@ -252,18 +248,17 @@
         try {
             let polls;
             let pollCount
+            
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
             const currentUrl = window.location.href
 
             if (currentUrl.includes("search")) {
                 ({ polls, pollCount } = await getSearchResults(text, page));
-
             } else if (currentUrl.includes("genre")) {
-                ({polls, pollCount} = await getGenreResults(page, genreId ))
+                ({polls, pollCount} = await getGenreResults(page, genreId))
             } else {
                 ({ polls, pollCount } = await getData(page));
-
             }
 
             const table = document.querySelector(".rwd-table")
@@ -293,6 +288,7 @@
                 for (let i = 0; i <= 6; i++) {
                     const tableCell = document.createElement("td")
                     tableCell.setAttribute("data-th", cells[i])
+                   
                     if (i === 0) tableCell.setAttribute("data-id", poll.poll.id)
 
                     let content;
@@ -320,6 +316,7 @@
                             continue;
                         case "Title":
                             const link = document.createElement("a")
+                            
                             link.innerHTML = poll.poll.title
                             content = poll.poll.title
 
@@ -396,7 +393,7 @@
             const paginationContainer = document.getElementById("pagination-container")
 
             while (paginationContainer.hasChildNodes()) {
-                paginationContainer.removeChild(paginationContainer.lastChild)
+                paginationContainer.removeChild(paginationContainer.lastChild) //remove all pagination container children
             }
 
             const searchParams = new URLSearchParams(window.location.search);
@@ -453,6 +450,7 @@
                     page = btn.innerHTML
 
                     let nextURL;
+
                     if (currentUrl.includes("search")) {
                         nextURL = "?search=" + search + "&page=" + page.toString()
                     } else if (currentUrl.includes("genreId")) {
@@ -469,7 +467,6 @@
 
                     if (currentUrl.includes("search")) {
                         ({ polls, pollCount } = await getSearchResults(search, page));
-
                     } else if (currentUrl.includes("genre")) {
                         ({ polls, pollCount } = await getGenreResults(page, genreId))
                     } else {
@@ -495,18 +492,17 @@
 
             const next = document.createElement("a")
             let genreId = searchParams.get("genreId")
+
             next.addEventListener('click', async (e) => {
                 let pollCount;
                 if (page === null) page = 2
 
                 if (currentUrl.includes("search")) {
                     ({ polls, pollCount } = await getSearchResults(search, page));
-
                 } else if (currentUrl.includes("genre")) {
                     ({ polls, pollCount } = await getGenreResults(page, genreId))
                 } else {
                     ({ polls, pollCount } = await getData(page));
-
                 }
 
                 const paginationLength = getPaginationLength(pollCount)
@@ -516,6 +512,7 @@
                 page = parseInt(page) + 1
 
                 let nextURL;
+
                 if (currentUrl.includes("search")) {
                     nextURL = "?search=" + search + "&page=" + page.toString()
                 } else if (currentUrl.includes("genreId")) {
@@ -564,7 +561,8 @@
             const secondVotes = document.querySelectorAll(".second-votes");
 
             polls.forEach((poll, i) => {
-                const currentPollId = firstVotes[i].previousElementSibling.previousElementSibling.previousSibling.previousElementSibling.dataset.id
+                const currentPollId = firstVotes[i].previousElementSibling.previousElementSibling.
+                previousSibling.previousElementSibling.dataset.id
 
                 if (poll.poll.id == currentPollId &&
                     (poll.firstVoteCount != firstVotes.innerHTML || poll.secondVoteCount != secondVotes.innerHTML)) {
@@ -611,7 +609,6 @@
         if (text === "") {
             nextURL = baseUrl + "?page=1"
         } else {
-
             nextURL = !currentUrl.includes("search") ? "?search=" + text + "&page=" + 1 : "?search=" + text + "&page=1"
             nextURL = baseUrl + nextURL
         }
