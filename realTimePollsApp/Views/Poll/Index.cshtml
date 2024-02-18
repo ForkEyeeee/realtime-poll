@@ -18,14 +18,21 @@
                     <li>
                         <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.Poll != null && Model.Vote == true ? "checked" : "")>
                         <label for="vote-first">@Model.Poll.FirstOption</label>
+                        <div class="d-flex flex-column vote-flex">
+                            <p class="float-end">@Model.FirstVoteCount Votes</p>
+                        </div>
                         <div class="check"><div class="inside"></div></div>
                     </li>
                     <li>
                         <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.Poll != null && Model.Vote == false ? "checked" : "")>
                         <label for="vote-second">@Model.Poll.SecondOption</label>
+                        <div class="d-flex flex-column vote-flex">
+                            <p class="float-end">@Model.SecondVoteCount Votes</p>
+                        </div>
                         <div class="check"><div class="inside"></div></div>
                     </li>
                 </ul>
+
                 <input type="hidden" name="pollid" value="@Model.Poll.Id" />
                 <input type="hidden" name="userid" value="@Model.Poll.UserId" />
                 <div class="d-flex justify-content-end gap-3 pt-4 ">
@@ -47,6 +54,14 @@
 
 
 <style>
+
+    
+    .vote-flex {
+        height: 100px;
+        justify-content: flex-end;
+        align-items: flex-end;
+    }
+    
     .container {
         margin-bottom: 0
     }    

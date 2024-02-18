@@ -84,12 +84,12 @@ namespace realTimePolls.Controllers
             if (poll == null)
                 throw new Exception("Poll cannot be found");
 
-            int firstVoteCount = _context.UserPoll.Count(up =>
-                    up.PollId == poll.Id && up.Vote == true
-                ),
-                secondVoteCount = _context.UserPoll.Count(up =>
-                    up.PollId == poll.Id && up.Vote == true
-                );
+            int firstVoteCount = _context
+                    .UserPoll.Where(up => up.PollId == pollid && up.Vote == true)
+                    .Count(),
+                secondVoteCount = _context
+                    .UserPoll.Where(up => up.PollId == pollid && up.Vote == false)
+                    .Count();
 
             UserPoll userPoll =
                 _context.UserPoll.FirstOrDefault(up => up.UserId == userid && up.PollId == pollid)

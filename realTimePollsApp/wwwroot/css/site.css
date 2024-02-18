@@ -429,14 +429,11 @@ input[type=radio]:checked ~ .check::before {
     background: #0DFF92; 
 }
 
-@media (min-width: 480px) { 
-    .container {
-/*        width: 800px !important
-*/
-    }
+.genre-heading {
+    font-size: 24px;
 }
 
-.genre-heading, .vote-container, .vote-option, .vote-p, .vote-count {
+ .vote-container, .vote-option, .vote-p, .vote-count {
     font-size: 16px; 
 }
 
@@ -457,9 +454,7 @@ input[type=radio]:checked ~ .check::before {
     color: gray;
 }
 
-@media (min-width: 480px) {
-    .genre-heading {
-        font-size: 24px; 
-    }
+@media (min-width: 320px) {
+ 
  
 }
