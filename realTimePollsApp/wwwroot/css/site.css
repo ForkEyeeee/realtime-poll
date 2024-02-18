@@ -454,7 +454,67 @@ input[type=radio]:checked ~ .check::before {
     color: gray;
 }
 
-@media (min-width: 320px) {
- 
- 
+.footer {
+    display: flex;
+    background-color: #171923;
+    color: white;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 20px 5px 0px 5px;
+    flex: 0
 }
+
+.logo {
+    height: 75px;
+    width: 75px;
+    filter: brightness(0) saturate(100%) invert(98%) sepia(6%) saturate(243%) hue-rotate(199deg) brightness(116%) contrast(100%);
+    cursor: pointer
+}
+
+.logo-second{
+    height: 27px;
+    width: 27px;
+    cursor: pointer;
+}
+
+.logo, .logo-second {
+    margin-bottom: 8px
+}
+
+
+.proj-title {
+    font-family: monospace;
+    font-size: 20px
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+
+    .logo {
+        display: none
+    }
+}
+
+
+@media (min-width: 320px) and (max-width: 480px) {
+    .proj-title {
+        font-size: 14px;
+    }
+
+    .logo {
+        height: 45px;
+        width: 45px;
+    }
+
+    .home-logo {
+        display: none
+    }
+
+    .logo, .logo-second {
+        margin-bottom: 5px
+    }
+
+}
+
+

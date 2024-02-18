@@ -6,8 +6,6 @@
 
 <div class="main">
     <div class="card">
-    
-
         <div class="container">
             @if (Model.Poll.Genre != null)
             {
@@ -32,7 +30,6 @@
                         <div class="check"><div class="inside"></div></div>
                     </li>
                 </ul>
-
                 <input type="hidden" name="pollid" value="@Model.Poll.Id" />
                 <input type="hidden" name="userid" value="@Model.Poll.UserId" />
                 <div class="d-flex justify-content-end gap-3 pt-4 ">

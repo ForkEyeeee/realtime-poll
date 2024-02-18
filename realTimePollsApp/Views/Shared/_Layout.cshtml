@@ -97,15 +97,36 @@
             }
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="d-flex flex-column justify-content-between main-container mb-0">
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="footer">
+            <div class="d-flex gap-3">
+                <svg class="home-logo" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                    <path fill="white" d="M13 10h7l-9 13v-9H4l9-13z" />
+                </svg>
+                <p class="proj-title">Real Time Poll</p>
+            </div>
+            <div class=" d-flex proj-title">
+                <p>ForkEyeee</p>
+            </div>
+            <div>
+                <img src="/images/github-logo.svg" class="logo" />
+                <img src="/images/github.png" class="logo-second" />
+            </div>
+        </footer>
+
     </div>
 
-  
-
     <style>
+
+        .main-container {
+            height: 100vh
+        }
 
         .dropdown-menu {
             left: initial
