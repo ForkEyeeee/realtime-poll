@@ -17,5 +17,11 @@ namespace realTimePolls.Models
 
         [NotMapped]
         public virtual string? ProfilePicture { get; set; }
+
+        [NotMapped]
+        public string? ErrorMsg { get; set; }
+
+        [NotMapped]
+        public string? Data { get; set; }
     }
 }

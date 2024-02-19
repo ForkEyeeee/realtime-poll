@@ -67,14 +67,20 @@
 </div>
 
 
+<div id="pagination-container2" class="pagination">
+    @*Pagination Widget created here*@
+</div>
 
 
 <div id="pagination-container" class="pagination">
     @*Pagination Widget created here*@
 </div>
 
+
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
+
+
 
 <style>
 
@@ -112,6 +118,10 @@
     }
 
 </style>
+
+
+
+
 
 
 @* Connects client to signalR server *@
@@ -171,6 +181,25 @@
     }
     // Start the connection.
     start();
+</script>
+
+<script src="~/js/pagination.js"></script>
+
+<script>
+    $(document).ready(function () {
+        const populateGrid = async () => {
+            const { polls, pollCount } = await getData()
+            $('#pagination-container2').pagination({
+                dataSource: polls,
+                callback: function (data, pagination) {
+                    // template method of yourself
+                    var html = template(data);
+                    $('#data-container').html(html);
+                }
+            })
+        }
+        populateGrid();
+    });
 </script>
 
 @* Filters grid by genre *@
@@ -442,6 +471,7 @@
                 const btn = document.createElement("a")
                 btn.classList.add("pagination-btn")
                 btn.innerHTML = [i]
+ 
                 paginationContainer.appendChild(btn)
 
                 btn.addEventListener('click', async (e) => {
