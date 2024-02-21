@@ -28,8 +28,50 @@
 <script src="~/js/chat.js"></script>
 <script src="~/lib/pagination.js"></script>
 
+<style>
+
+    #pagination-container2 {
+       
+    }
+
+    .pagination {
+        display: inline-block;
+    }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+        }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .pagination a:hover:not(.active) {
+                background-color: #ddd;
+            }
+
+    .flex-column-user {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center
+    }
+
+    .user-text {
+        margin-bottom: 0;
+        text-align: center
+    }
+
+</style>
+
+@* Helper functions *@
 <script>
-    function template(polls) {
+ function template(polls) {
         let html = `<tr>
                     <th>User</th>
                     <th>Title</th>
@@ -74,34 +116,32 @@
         return html;
     }
 
+      const getSearchResults = async (text, page) => {
+        const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text + "&page=" + page
 
-    // var dataContainer = $('#data-container');
-    // $('#pagination-container2').pagination({
-    //     dataSource: 'https://localhost:44378/Polls/Index',
-    //     locator: 'polls',
-    //     totalNumberLocator: function (response) {
-    //         // you can return totalNumber by analyzing response content
-    //         console.log('here')
-    //         return response.pollCount
+        const userId = {
+            Id: hubConnection.connection.connectionId
+        }
 
-    //     },
-    //     pageSize: 5,
-    //     ajax: {
-    //         beforeSend: function () {
-    //             // template.html('Loading data from flickr.com ...');
-    //         }
-    //     },
-    //     callback: function (data, pagination) {
-    //         // template method of yourself
-    //         var html = template(data);
-    //         dataContainer.html(html);
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
 
-    //     }
-    // })
+        if (!response.ok) throw new Error("Failed to fetch polls")
+
+        const polls = await response.json()
+        return polls
+    }
 
 
+</script>
+
+
+@* Populates the grid when the page loads *@
+<script>
     $(document).ready(function () {
-        console.log('start')
         const populateGrid = async () => {
             const { polls, pollCount } = await getData();
             $('#pagination-container2').pagination({
@@ -109,81 +149,68 @@
                 pageSize: 5,
                 pageRange: 1,
 
-
-
                 callback: function (data, pagination) {
-                    // const searchParams = new URLSearchParams(window.location.search);
-                    // const page = searchParams.get('page')
-
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
                     const nextTitle = 'Home';
                     const baseURL = `https://localhost:44378/`
                     const buttonNumber = pagination.pageNumber
-                 
-
+                 console.log(pagination)
                     nextURL = `?page=${buttonNumber}`
                     nextURL = baseURL + nextURL
 
                     window.history.replaceState(nextState, nextTitle, nextURL);
 
-                    console.log(pagination)
                     var html = template(data);
                     $('#data-container').html(html);
                 }
-            
             });
         };
         populateGrid();
     });
 </script>
 
+@* Populates the grid from search results *@
+<script>
+        const searchBox = document.getElementById("search-box")
 
+        const populateGridFromSearch = async (search) => {
+            const searchParams = new URLSearchParams(window.location.search);
+            const page = searchParams.get('page')
+            
+            var dataContainer = $('#data-container');
 
-<style>
+            const { polls, pollCount } = await getSearchResults(search, page);
 
-    #pagination-container2 {
-       
-    }
+            $('#pagination-container2').pagination({
+                dataSource: polls,
+                pageSize: 5,
+                pageRange: 1,
+                callback: function (data, pagination) {
+                    const nextState = { additionalInformation: 'Updated the URL with JS' };
+                    const nextTitle = 'Home';
+                    const baseURL = `https://localhost:44378/`
+                    let nextURL;
+                   
+                    if(search === "") {
+                        nextURL = `?page=1`
+                    } else {
+                        nextURL = `?search=${search}`
+                    }
 
-    .pagination {
-        display: inline-block;
-    }
+                    nextURL = baseURL + nextURL
 
-        .pagination a {
-            color: black;
-            float: left;
-            padding: 8px 16px;
-            text-decoration: none;
-            transition: background-color .3s;
-        }
+                    window.history.replaceState(nextState, nextTitle, nextURL);
 
-            .pagination a.active {
-                background-color: #4CAF50;
-                color: white;
-            }
-
-            .pagination a:hover:not(.active) {
-                background-color: #ddd;
-            }
-
-    .flex-column-user {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: center
-    }
-
-    .user-text {
-        margin-bottom: 0;
-        text-align: center
-    }
-
-</style>
-
-
-
-
-
+                    var html = template(data);
+                    dataContainer.html(html);
+                }
+            })
+        };
+        searchBox.addEventListener('input', async (e) => {
+            
+            populateGridFromSearch(e.target.value);
+      });
+</script>
 
 @* Connects client to signalR server *@
 <script>
@@ -222,7 +249,6 @@
         try {
             await hubConnection.start();
             console.log("SignalR Connected.");
-            await getPolls();
 
         } catch (e) {
             console.error("Failed to connect with SignalR", e);
@@ -232,14 +258,7 @@
     hubConnection.onclose(async () => {
         await start();
     });
-    async function getPolls() {
-        try {
-            const { polls, pollCount } = await getData()
-            createPaginationButtons(polls, pollCount)
-        } catch (e) {
-            console.error("Failed to get polls", e);
-        }
-    }
+
     // Start the connection.
     start();
 </script>
@@ -306,313 +325,6 @@
 </script>
 
 
-@*Grid pagination*@
-<script>
-    async function getPolls() {
-        try {
-            const { polls, pollCount } = await getData()
-            createPaginationButtons(polls, pollCount)
-        } catch (e) {
-            console.error("Failed to get polls", e);
-        }
-    }
-
-    const updateGrid = async (page, text, genreId) => {
-        try {
-            let polls;
-            let pollCount
-            
-            const searchParams = new URLSearchParams(window.location.search);
-            const page = searchParams.get('page')
-            const currentUrl = window.location.href
-
-            if (currentUrl.includes("search")) {
-                ({ polls, pollCount } = await getSearchResults(text, page));
-            } else if (currentUrl.includes("genre")) {
-                ({polls, pollCount} = await getGenreResults(page, genreId))
-            } else {
-                ({ polls, pollCount } = await getData(page));
-            }
-
-            const table = document.querySelector(".rwd-table")
-            const tableBody = document.querySelector(".table-body")
-
-            document.querySelectorAll(".table-data").forEach(row => row.remove())
-
-            const cells = [
-                "User",
-                "Title",
-                "First Option",
-                "Second Option",
-                "First Count",
-                "Second Count",
-                "Genre"
-            ]
-
-            polls.forEach(poll => {
-                const tableRow = document.createElement("tr")
-                tableRow.classList.add("table-data")
-                table.appendChild(tableRow)
-
-                tableRow.addEventListener('click', () => {
-                    window.location.href = `/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}`
-                })
-
-                for (let i = 0; i <= 6; i++) {
-                    const tableCell = document.createElement("td")
-                    tableCell.setAttribute("data-th", cells[i])
-                   
-                    if (i === 0) tableCell.setAttribute("data-id", poll.poll.id)
-
-                    let content;
-
-                    switch (cells[i]) {
-                        case "User":
-                            const userContainer = document.createElement('div')
-                            userContainer.classList.add('user-flex')
-                            userContainer.classList.add("flex-column-user")
-
-                            const avatar = document.createElement('img')
-                            avatar.src = poll.profilePicture
-                            avatar.classList.add("avatar")
-                            avatar.alt = 'user image'
-
-                            const userName = document.createElement('p')
-                            userName.innerHTML = poll.userName
-                            userName.classList.add("user-text")
-
-                            userContainer.appendChild(avatar)
-                            userContainer.append(userName)
-
-                            tableCell.appendChild(userContainer)
-                            tableRow.appendChild(tableCell)
-                            continue;
-                        case "Title":
-                            const link = document.createElement("a")
-                            
-                            link.innerHTML = poll.poll.title
-                            content = poll.poll.title
-
-                            tableRow.appendChild(tableCell)
-                            tableCell.append(link)
-                            continue;
-                        case "First Option":
-                            content = poll.poll.firstOption
-                            break;
-                        case "Second Option":
-                            content = poll.poll.secondOption
-                            break;
-                        case "First Count":
-                            tableCell.classList.add("first-votes")
-                            content = poll.firstVoteCount
-                            break;
-                        case "Second Count":
-                            tableCell.classList.add("second-votes")
-                            content = poll.secondVoteCount
-                            break;
-                        case "Genre":
-                            content = poll.poll.genre.name
-                            break;
-                        default:
-                            throw new Error("Unable to update grid")
-                    }
-
-                    tableCell.innerHTML = content
-                    tableCell.classList.add("table-cell")
-                    tableRow.appendChild(tableCell)
-                    tableBody.append(tableRow)
-
-                }
-            })
-            return {
-                polls,
-                pollCount
-            }
-        }
-        catch (e) {
-            console.error(e)
-        }
-    }
-
-    const updateActivePage = (node) => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const page = searchParams.get('page')
-
-        const btns = document.querySelectorAll(".pagination-btn")
-
-        btns.forEach((btn, i) => {
-            btn.classList.remove("active")
-            if (btn.innerHTML === page) btn.classList.add("active")
-        })
-    }
-
-    const getPaginationLength = (pollsLength) => {
-        let paginationLength;
-
-        if (pollsLength / 5 !== 0) {
-            paginationLength = Math.ceil(pollsLength / 5)
-        } else {
-            paginationLength = pollsLength / 5
-        }
-        return paginationLength
-    }
-
-
-    function createPaginationButtons(polls, pollCount) {
-
-        try {
-            if (pollCount === 0) return
-
-            const paginationContainer = document.getElementById("pagination-container")
-
-            while (paginationContainer.hasChildNodes()) {
-                paginationContainer.removeChild(paginationContainer.lastChild) //remove all pagination container children
-            }
-
-            const searchParams = new URLSearchParams(window.location.search);
-            let page = searchParams.get('page')
-            let search = searchParams.get("search")
-
-            const baseURL = "https://localhost:44378/"
-            const currentUrl = window.location.href
-
-            const pollsLength = pollCount
-            const paginationLength = getPaginationLength(pollsLength)
-
-
-            for (let i = 1; i <= paginationLength; i++) {
-                if (i === 1) {
-                    const prev = document.createElement("a")
-                    prev.innerHTML = "&laquo;"
-
-                    prev.addEventListener('click', (e, polls, pollsLength) => {
-                        if (page === null || page == 1 || paginationLength == 1) return
-
-                        page = parseInt(page) - 1
-
-                        let nextURL;
-                        if (currentUrl.includes("search")) {
-                            nextURL = "?search=" + search + "&page=" + page.toString()
-                        } else if (currentUrl.includes("genreId")) {
-                            nextURL = "?genreId=" + genreId + "&page=" + page.toString()
-                        } else {
-                            nextURL = "?page=" + page.toString()
-                        }
-
-                        nextURL = baseURL + nextURL
-
-                        const nextTitle = 'Home';
-                        const nextState = { additionalInformation: 'Updated the URL with JS' };
-
-                        window.history.replaceState(nextState, nextTitle, nextURL);
-                        updateActivePage(next)
-                        updateGrid(page, search, genreId);
-                    })
-
-                    paginationContainer.appendChild(prev)
-                }
-
-                const btn = document.createElement("a")
-                btn.classList.add("pagination-btn")
-                btn.innerHTML = [i]
- 
-                paginationContainer.appendChild(btn)
-
-                btn.addEventListener('click', async (e) => {
-                    if (e.target.innerHTML === page || paginationLength == 1) return
-                   
-                    page = btn.innerHTML
-
-                    let nextURL;
-
-                    if (currentUrl.includes("search")) {
-                        nextURL = "?search=" + search + "&page=" + page.toString()
-                    } else if (currentUrl.includes("genreId")) {
-                        nextURL = "?genreId=" + genreId + "&page=" + page.toString()
-                    } else {
-                        nextURL = "?page=" + page.toString()
-                    }
-
-                    nextURL = baseURL + nextURL
-
-                    const nextTitle = 'Home';
-                    const nextState = { additionalInformation: 'Updated the URL with JS' };
-
-
-                    if (currentUrl.includes("search")) {
-                        ({ polls, pollCount } = await getSearchResults(search, page));
-                    } else if (currentUrl.includes("genre")) {
-                        ({ polls, pollCount } = await getGenreResults(page, genreId))
-                    } else {
-                        ({ polls, pollCount } = await getData(page));
-
-                    }
-
-                    window.history.replaceState(nextState, nextTitle, nextURL);
-
-                    updateActivePage(btn)
-                    page = btn.innerHTML
-                    updateGrid(page, search, genreId);
-                })
-            }
-
-            const btns = document.querySelectorAll(".pagination-btn")
-
-            btns.forEach((btn, i) => {
-                if (btn.innerHTML === page) btn.classList.add("active")
-                if (page === null && i === 0) btn.classList.add("active")
-
-            })
-
-            const next = document.createElement("a")
-            let genreId = searchParams.get("genreId")
-
-            next.addEventListener('click', async (e) => {
-                let pollCount;
-                if (page === null) page = 2
-
-                if (currentUrl.includes("search")) {
-                    ({ polls, pollCount } = await getSearchResults(search, page));
-                } else if (currentUrl.includes("genre")) {
-                    ({ polls, pollCount } = await getGenreResults(page, genreId))
-                } else {
-                    ({ polls, pollCount } = await getData(page));
-                }
-
-                const paginationLength = getPaginationLength(pollCount)
-
-                if (paginationLength == page || pollCount == 1) return
-
-                page = parseInt(page) + 1
-
-                let nextURL;
-
-                if (currentUrl.includes("search")) {
-                    nextURL = "?search=" + search + "&page=" + page.toString()
-                } else if (currentUrl.includes("genreId")) {
-                    nextURL = "?genreId=" + genreId + "&page=" + page.toString()
-                } else {
-                    nextURL = "?page=" + page.toString()
-                }
-                
-                nextURL = baseURL + nextURL
-
-                const nextTitle = 'Home';
-                const nextState = { additionalInformation: 'Updated the URL with JS' };
-
-                window.history.replaceState(nextState, nextTitle, nextURL);
-                updateActivePage(next)
-                updateGrid(page, search, genreId);
-            })
-
-            next.innerHTML = "&raquo;"
-            paginationContainer.appendChild(next)
-        }
-        catch (e) {
-            console.error(e)
-        }
-    }
-</script>
 
 @*Updates the DOM after client receives message from the server*@
 <script>
@@ -620,7 +332,6 @@
         try {
             let polls;
             const currentUrl = window.location.href
-            console.log('received')
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
             let search = searchParams.get('search')
@@ -649,60 +360,4 @@
             console.error(e);
         }
     });
-</script>
-
-@* Gets search results and updates DOM *@
-<script>
-    const getSearchResults = async (text, page) => {
-        const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text + "&page=" + page
-
-        const userId = {
-            Id: hubConnection.connection.connectionId
-        }
-
-        const response = await fetch(url, {
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-
-        if (!response.ok) throw new Error("Failed to fetch polls")
-
-        const polls = await response.json()
-        return polls
-    }
-
-    const updateUrl = (text) => {
-        let nextURL
-        const searchParams = new URLSearchParams(window.location.search);
-        let page = searchParams.get('page')
-
-        const currentUrl = window.location.href
-        const baseUrl = "https://localhost:44378/"
-
-        if (text === "") {
-            nextURL = baseUrl + "?page=1"
-        } else {
-            nextURL = !currentUrl.includes("search") ? "?search=" + text + "&page=" + 1 : "?search=" + text + "&page=1"
-            nextURL = baseUrl + nextURL
-        }
-
-        const nextTitle = 'Home';
-        const nextState = { additionalInformation: 'Updated the URL with JS' };
-        window.history.replaceState(nextState, nextTitle, nextURL);
-
-    }
-
-    const searchBox = document.getElementById("search-box")
-
-    searchBox.addEventListener('input', async (e) => {
-        try {
-            updateUrl(e.target.value)
-            const { polls, pollCount } = await updateGrid(null, e.target.value)
-            createPaginationButtons(polls, pollCount)
-        }
-        catch (e) {
-            console.error(e)
-        }
-    })
 </script>

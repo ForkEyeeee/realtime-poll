@@ -79,20 +79,21 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSearchResults([FromQuery] string search = "", int page = 1)
+        public IActionResult GetSearchResults([FromQuery] string search)
         {
             try
             {
-                int take = 5;
-                int skip = (page - 1) * take;
+                //int take = 5;
+                //int skip = (page - 1) * take;
+
 
                 var pattern = $"%{search}%";
 
                 var polls = _context
                     .Polls.Include(p => p.Genre)
                     .Where(c => EF.Functions.Like(c.Title, pattern))
-                    .Skip(skip)
-                    .Take(take)
+                    //.Skip(skip)
+                    //.Take(take)
                     .Select(p => new PollItem
                     {
                         Poll = p,
