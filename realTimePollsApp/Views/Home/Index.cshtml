@@ -83,8 +83,9 @@
                 </tr>`
         
         polls.forEach(poll => {
+            console.log(poll)
             html += `
-                <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userid}'">
+                <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
                     <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
                         <div class="user-flex">
                             <img src="${poll.profilePicture}" alt="user-image" class="avatar">
