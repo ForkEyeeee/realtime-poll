@@ -12,3 +12,4 @@ Poll application built with ASP.NET CORE & PostgreSQL, featuring Google authenti
 - [FakeItEasy](https://fakeiteasy.github.io/)
 - [FluentAssertions](https://fluentassertions.com/)
 - [Moq](https://github.com/moq/moq4)
+- [Paginationjs](https://github.com/superRaytin/paginationjs)

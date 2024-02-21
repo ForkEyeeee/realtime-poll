@@ -108,7 +108,7 @@
                         <span class="second-votes">${poll.secondVoteCount}</span>
                     </td>
                     <td data-th="Genre" class="table-cell">
-                        <span class="second-votes">${poll.poll.genre.name}</span>
+                        <span>${poll.poll.genre.name}</span>
                     </td>
                 </tr>
             `;
@@ -339,32 +339,31 @@
 <script>
     hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
         try {
-            let polls;
             const currentUrl = window.location.href
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
             let search = searchParams.get('search')
 
-            if (currentUrl.includes("search")) {
-                ({ polls } = await getSearchResults(search, page))
-            } else {
-                ({ polls } = await getData(page))
-            }
+            const { polls } = await getData();
 
             const firstVotes = document.querySelectorAll(".first-votes");
+
+            const firstVoteIds =  Array.from(firstVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
+                previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
+
             const secondVotes = document.querySelectorAll(".second-votes");
 
-            polls.forEach((poll, i) => {
-                const currentPollId = firstVotes[i].previousElementSibling.previousElementSibling.
-                previousSibling.previousElementSibling.dataset.id
+            const secondVoteIds = Array.from(secondVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
+            previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
 
-                if (poll.poll.id == currentPollId &&
-                    (poll.firstVoteCount != firstVotes.innerHTML || poll.secondVoteCount != secondVotes.innerHTML)) {
-                    firstVotes[i].innerHTML = poll.firstVoteCount
-                    secondVotes[i].innerHTML = poll.secondVoteCount
-                }
-            })
-
+            for(let i = 0; i <= polls.length - 1; i++) {
+               
+                if (firstVoteIds.includes(polls[i].poll.id) && firstVotes[i].innerHTML != polls[i].firstVoteCount ||
+                secondVoteIds.includes(polls[i].poll.id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
+                    firstVotes[i].innerHTML = polls[i].firstVoteCount
+                    secondVotes[i].innerHTML = polls[i].secondVoteCount
+                } 
+            }  
         } catch (e) {
             console.error(e);
         }
