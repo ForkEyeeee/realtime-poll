@@ -6,6 +6,5 @@
       "library": "@microsoft/signalr@latest",
       "destination": "wwwroot/js/signalr/"
     }
-  
-]
+  ]
 }

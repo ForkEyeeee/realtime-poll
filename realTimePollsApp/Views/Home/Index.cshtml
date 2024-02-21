@@ -14,10 +14,23 @@
             <option disabled="disabled" selected="selected">Choose a genre to sort by...</option>
         </select>
     </div>
-    <div class="container pt-0 mt-0">    
+    <div class="container pt-0 mt-0 gap-5 d-flex flex-column ">
         <table class="rwd-table">
-            <tbody class="table-body">
-                <tr>
+            <tbody id="data-container" class="table-body"></tbody>
+        </table>
+        <div id="pagination-container2" class="">
+            @*Pagination Widget created here*@
+        </div>
+    </div>
+</div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+<script src="~/lib/pagination.js"></script>
+
+<script>
+    function template(polls) {
+        let html = `<tr>
                     <th>User</th>
                     <th>Title</th>
                     <th>First Option</th>
@@ -25,60 +38,87 @@
                     <th>First Vote Count</th>
                     <th>Second Vote Count</th>
                     <th>Genre</th>
+                </tr>`
+        
+        polls.forEach(poll => {
+            html += `
+                <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userid}'">
+                    <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
+                        <div class="user-flex">
+                            <img src="${poll.profilePicture}" alt="user-image" class="avatar">
+                            <p class="user-text">${poll.userName}</p>
+                        </div>
+                    </td>
+                    <td data-th="Title" class="table-cell">
+                        ${poll.poll.title}
+                    </td>
+                    <td data-th="First Option" class="table-cell">
+                        ${poll.poll.firstOption}
+                    </td>
+                    <td data-th="Second Option" class="table-cell">
+                        ${poll.poll.secondOption}
+                    </td>
+                    <td data-th="First Count" class="table-cell">
+                        <span class="first-votes">${poll.firstVoteCount}</span>
+                    </td>
+                    <td data-th="Second Count" class="table-cell">
+                        <span class="second-votes">${poll.secondVoteCount}</span>
+                    </td>
+                    <td data-th="Genre" class="table-cell">
+                        <span class="second-votes">${poll.poll.genre.name}</span>
+                    </td>
                 </tr>
+            `;
+        });
+        html += '</tbody></table>'; 
+        return html;
+    }
 
-                @*Displays list of polls*@
-                @if (Model != null)
-                {
-                    foreach (var poll in Model.Polls)
-                    {
-                        <tr class="table-data" onclick="window.location.href='@Url.Action("Index", "Poll", new { polltitle = poll.Poll.Title, pollid = poll.Poll.Id, userid = poll.Poll.UserId })'">
-                            <td data-th="User" data-id="@poll.Poll.Id" class="table-cell" >
-                                <div class="user-flex">
-                                  <img src="@poll.ProfilePicture" alt="user-image" class="avatar"/>
-                                    <p class="user-text">@poll.UserName</p>
-                                </div>
-                            </td>
-                            <td data-th="Title" class="table-cell">
-                                @poll.Poll.Title
-                            </td>
-                            <td data-th="First Option" class="table-cell">
-                                @poll.Poll.FirstOption
-                            </td>
-                            <td data-th="Second Option" class="table-cell">
-                                @poll.Poll.SecondOption
-                            </td>
-                            <td data-th="First Count" class="table-cell">
-                                <span class="first-votes">@poll.FirstVoteCount</span>
-                            </td>
-                            <td data-th="Second Count" class="table-cell">
-                                <span class="second-votes">@poll.SecondVoteCount</span>
-                            </td>
-                            <td data-th="Genre" class="table-cell">
-                                <span class="second-votes">@poll.Poll.Genre.Name</span>
-                            </td>
-                        </tr>
-                    }
 
+    // var dataContainer = $('#data-container');
+    // $('#pagination-container2').pagination({
+    //     dataSource: 'https://localhost:44378/Polls/Index',
+    //     locator: 'polls',
+    //     totalNumberLocator: function (response) {
+    //         // you can return totalNumber by analyzing response content
+    //         console.log('here')
+    //         return response.pollCount
+
+    //     },
+    //     pageSize: 5,
+    //     ajax: {
+    //         beforeSend: function () {
+    //             // template.html('Loading data from flickr.com ...');
+    //         }
+    //     },
+    //     callback: function (data, pagination) {
+    //         // template method of yourself
+    //         var html = template(data);
+    //         dataContainer.html(html);
+
+    //     }
+    // })
+
+
+    $(document).ready(function () {
+        console.log('start')
+        const populateGrid = async () => {
+            const { polls, pollCount } = await getData();
+            $('#pagination-container2').pagination({
+                dataSource: polls,
+                pageSize: 5,
+                pageRange: 1,
+
+                callback: function (data, pagination) {
+                    // template method of yourself
+                    var html = template(data);
+                    $('#data-container').html(html);
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-
-<div id="pagination-container2" class="pagination">
-    @*Pagination Widget created here*@
-</div>
-
-
-<div id="pagination-container" class="pagination">
-    @*Pagination Widget created here*@
-</div>
-
-
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chat.js"></script>
+            });
+        };
+        populateGrid();
+    });
+</script>
 
 
 
@@ -182,25 +222,8 @@
     // Start the connection.
     start();
 </script>
+ 
 
-<script src="~/js/pagination.js"></script>
-
-<script>
-    $(document).ready(function () {
-        const populateGrid = async () => {
-            const { polls, pollCount } = await getData()
-            $('#pagination-container2').pagination({
-                dataSource: polls,
-                callback: function (data, pagination) {
-                    // template method of yourself
-                    var html = template(data);
-                    $('#data-container').html(html);
-                }
-            })
-        }
-        populateGrid();
-    });
-</script>
 
 @* Filters grid by genre *@
 <script>
