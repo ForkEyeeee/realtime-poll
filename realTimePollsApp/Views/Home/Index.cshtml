@@ -109,11 +109,28 @@
                 pageSize: 5,
                 pageRange: 1,
 
+
+
                 callback: function (data, pagination) {
-                    // template method of yourself
+                    // const searchParams = new URLSearchParams(window.location.search);
+                    // const page = searchParams.get('page')
+
+                    const nextState = { additionalInformation: 'Updated the URL with JS' };
+                    const nextTitle = 'Home';
+                    const baseURL = `https://localhost:44378/`
+                    const buttonNumber = pagination.pageNumber
+                 
+
+                    nextURL = `?page=${buttonNumber}`
+                    nextURL = baseURL + nextURL
+
+                    window.history.replaceState(nextState, nextTitle, nextURL);
+
+                    console.log(pagination)
                     var html = template(data);
                     $('#data-container').html(html);
                 }
+            
             });
         };
         populateGrid();
@@ -123,6 +140,10 @@
 
 
 <style>
+
+    #pagination-container2 {
+       
+    }
 
     .pagination {
         display: inline-block;
@@ -167,7 +188,7 @@
 @* Connects client to signalR server *@
 <script>
     //Set the default url to the first page when refreshing
-    if (window.location.href !== "https://localhost:44378/?page=1") window.location.replace("https://localhost:44378/?page=1");
+    // if (window.location.href !== "https://localhost:44378/?page=1") window.location.replace("https://localhost:44378/?page=1");
 
     const oldData = @Html.Raw(Json.Serialize(@Model));
 

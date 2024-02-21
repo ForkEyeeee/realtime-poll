@@ -59,10 +59,10 @@ h1 {
 
 
 @media (min-width: 320px) and (max-width: 480px) {
-/*
-    .table-data {
-        max-width: 200px !important;
-    }*/
+/**/
+    #pagination-container2 {
+        min-width: 300px;
+    }
 }
 
 
