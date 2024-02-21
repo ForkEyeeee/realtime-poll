@@ -14,13 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\lib\paginationjs\**" />
-    <Content Remove="wwwroot\lib\paginationjs\**" />
-    <EmbeddedResource Remove="wwwroot\lib\paginationjs\**" />
-    <None Remove="wwwroot\lib\paginationjs\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
@@ -83,6 +76,8 @@
 	  <None Include="wwwroot\lib\jquery\dist\jquery.js" />
 	  <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
 	  <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
+	  <None Include="wwwroot\lib\paginationjs\pagination.js" />
+	  <None Include="wwwroot\lib\paginationjs\pagination.min.js" />
 	</ItemGroup>
 
 </Project>

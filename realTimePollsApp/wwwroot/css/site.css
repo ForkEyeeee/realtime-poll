@@ -58,12 +58,7 @@ h1 {
 }
 
 
-@media (min-width: 320px) and (max-width: 480px) {
-/**/
-    #pagination-container2 {
-        min-width: 300px;
-    }
-}
+
 
 
 
@@ -250,6 +245,7 @@ table {
   border-top: none;
   background: #428bca;
   color: #fff;
+  text-wrap: nowrap
 }
 
 .rwd-table tr {
@@ -306,7 +302,7 @@ table {
 }
 
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 1280px) {
   .rwd-table tr:hover:not(:first-child) {
     background-color: #d8e7f3;
   }
@@ -345,8 +341,7 @@ table {
 .container {
     display: block;
     position: relative;
-/*    margin: 40px auto;
-*/    height: auto;
+    height: auto;
     width: 100%;
     padding: 20px;
     gap: 20px;
@@ -918,3 +913,53 @@ input[type=radio]:checked ~ .check::before {
         padding-top: 15%;
         text-align: center;
     }
+
+
+@media (min-width: 320px) and (max-width: 479px) {
+
+    [data-th] {
+        width: 250px;
+    }
+
+
+    [data-th="User"] {
+        max-height: 99px;
+    }
+    #pagination-container {
+        min-width: 280px;
+    }
+
+    tr.table-data {
+        height: 405px;
+    }
+
+}
+
+
+@media (min-width: 480px) and (max-width: 992px) {
+
+ 
+    [data-th="User"] {
+        max-height: 99px;
+    }
+
+    [data-th] {
+        width: 350px;
+    }
+
+    #pagination-container {
+        min-width: 380px;
+    }
+
+
+    tr.table-data {
+        height: 405px;
+    }
+}
+
+@media (min-width: 1280px) {
+    tr.table-data {
+        height: 120px;
+    }
+}
+

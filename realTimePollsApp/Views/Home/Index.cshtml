@@ -18,7 +18,7 @@
         <table class="rwd-table">
             <tbody id="data-container" class="table-body"></tbody>
         </table>
-        <div id="pagination-container2" class="">
+        <div id="pagination-container" class="">
             @*Pagination Widget created here*@
         </div>
     </div>
@@ -30,7 +30,7 @@
 
 <style>
 
-    #pagination-container2 {
+    #pagination-container {
        
     }
 
@@ -83,9 +83,9 @@
                 </tr>`
         
         polls.forEach(poll => {
-            console.log(poll)
+
             html += `
-                <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
+                    <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
                     <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
                         <div class="user-flex">
                             <img src="${poll.profilePicture}" alt="user-image" class="avatar">
@@ -166,7 +166,7 @@
     $(document).ready(function () {
         const populateGrid = async () => {
             const { polls, pollCount } = await getData();
-            $('#pagination-container2').pagination({
+            $('#pagination-container').pagination({
                 dataSource: polls,
                 pageSize: 5,
                 pageRange: 1,
@@ -176,7 +176,7 @@
                     const nextTitle = 'Home';
                     const baseURL = `https://localhost:44378/`
                     const buttonNumber = pagination.pageNumber
-                 console.log(pagination)
+
                     nextURL = `?page=${buttonNumber}`
                     nextURL = baseURL + nextURL
 
@@ -204,7 +204,7 @@
 
             const { polls, pollCount } = await getSearchResults(search, page);
 
-            $('#pagination-container2').pagination({
+            $('#pagination-container').pagination({
                 dataSource: polls,
                 pageSize: 5,
                 pageRange: 1,
@@ -303,12 +303,12 @@
             const genreId = e.target.value
             const { polls, pollCount } = await getGenreResults(genreId);
 
-            $('#pagination-container2').pagination({
+            $('#pagination-container').pagination({
                 dataSource: polls,
                 pageSize: 5,
                 pageRange: 1,
                 callback: function (data, pagination) {
-                    console.log('test')
+
                     const baseURL = "https://localhost:44378/"
                     const currentUrl = window.location.href
             
