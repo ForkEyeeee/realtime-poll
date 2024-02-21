@@ -116,6 +116,27 @@
         return html;
     }
 
+     const getData = async (page) => {
+
+        const baseURL = "https://localhost:44378/Polls/Index"
+        const url = page === undefined ? baseURL : baseURL + `?page=${page}`
+
+        const userId = {
+            Id: hubConnection.connection.connectionId
+        }
+
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+
+        if (!response.ok) throw new Error("Failed to fetch polls")
+
+        const polls = await response.json()
+        return polls
+    }
+
       const getSearchResults = async (text, page) => {
         const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text + "&page=" + page
 
@@ -134,12 +155,12 @@
         const polls = await response.json()
         return polls
     }
-
+    //maybe add a helper function to clear results when navigating, changing dropdown, or typing in search
 
 </script>
 
 
-@* Populates the grid when the page loads *@
+@* Populates the grid when the first page loads *@
 <script>
     $(document).ready(function () {
         const populateGrid = async () => {
@@ -171,7 +192,8 @@
 
 @* Populates the grid from search results *@
 <script>
-        const searchBox = document.getElementById("search-box")
+    try {
+       const searchBox = document.getElementById("search-box")
 
         const populateGridFromSearch = async (search) => {
             const searchParams = new URLSearchParams(window.location.search);
@@ -207,9 +229,11 @@
             })
         };
         searchBox.addEventListener('input', async (e) => {
-            
             populateGridFromSearch(e.target.value);
-      });
+      }); 
+    } catch (e) {
+        console.error(e)
+  }     
 </script>
 
 @* Connects client to signalR server *@
@@ -218,27 +242,6 @@
     // if (window.location.href !== "https://localhost:44378/?page=1") window.location.replace("https://localhost:44378/?page=1");
 
     const oldData = @Html.Raw(Json.Serialize(@Model));
-
-    const getData = async (page) => {
-
-        const baseURL = "https://localhost:44378/Polls/Index"
-        const url = page === undefined ? baseURL : baseURL + `?page=${page}`
-
-        const userId = {
-            Id: hubConnection.connection.connectionId
-        }
-
-        const response = await fetch(url, {
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-
-        if (!response.ok) throw new Error("Failed to fetch polls")
-
-        const polls = await response.json()
-        return polls
-    }
 
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
@@ -267,9 +270,9 @@
 
 @* Filters grid by genre *@
 <script>
-    const getGenreResults = async (page, genreId) => {
+    const getGenreResults = async (genreId) => {
 
-        const url = "https://localhost:44378/Polls/GetGenreResults/" + "?page=" + page
+        const url = "https://localhost:44378/Polls/GetGenreResults/" + "?genreId=" + genreId
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -290,43 +293,48 @@
         return await response.json()
     }
 
-    const searchParams = new URLSearchParams(window.location.search);
-    const page = searchParams.get('page')
-    
     const genreDropdown = document.querySelector("#genre-search")
     
     genreDropdown.addEventListener('change', async (e) => {
         try {
-            const baseURL = "https://localhost:44378/"
-            const currentUrl = window.location.href
-
+            const searchParams = new URLSearchParams(window.location.search);
+            const page = searchParams.get('page')
             const genreId = e.target.value
-            const genreName = e.target[genreId - 1].textContent
+            const { polls, pollCount } = await getGenreResults(genreId);
 
-            const nextState = { additionalInformation: 'Updated the URL with JS' };
-            const nextTitle = 'Home';
+            $('#pagination-container2').pagination({
+                dataSource: polls,
+                pageSize: 5,
+                pageRange: 1,
+                callback: function (data, pagination) {
+                    console.log('test')
+                    const baseURL = "https://localhost:44378/"
+                    const currentUrl = window.location.href
+            
+                    var dataContainer = $('#data-container');
 
-            searchParams.set('genreId', genreId)
-            nextURL = "?genreId=" + genreId + "&page=" + page
-            nextURL = baseURL + nextURL
+                    const genreName = e.target[genreId - 1].textContent
+            
+                    const nextState = { additionalInformation: 'Updated the URL with JS' };
+                    const nextTitle = 'Home';
 
-            const { polls, pollCount } = await getGenreResults(page, genreId)
+                    nextURL = "?genreId=" + genreId + "&page=" + page
+                    nextURL = baseURL + nextURL
 
-            window.history.replaceState(nextState, nextTitle, nextURL);
-
-            updateGrid(page, null, genreId)
-            createPaginationButtons(polls, pollCount, genreId)
-            updateActivePage()
-        }
-        catch (e) {
-            console.error(error)
-        }   
+                    window.history.replaceState(nextState, nextTitle, nextURL);
+                    
+                    var html = template(data);
+                    dataContainer.html(html);
+                }
+            })
+        } catch (e) {
+            console.error(e)
+        };    
     })
 </script>
 
-
-
 @*Updates the DOM after client receives message from the server*@
+
 <script>
     hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
         try {

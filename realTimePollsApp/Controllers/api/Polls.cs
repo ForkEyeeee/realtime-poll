@@ -127,18 +127,18 @@ namespace realTimePolls.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetGenreResults([FromBody] int genreId, [FromQuery] int page = 1)
+        public IActionResult GetGenreResults([FromBody] int genreId)
         {
             try
             {
-                int take = 5;
-                int skip = (page - 1) * take;
+                //int take = 5;
+                //int skip = (page - 1) * take;
 
                 var polls = _context
                     .Polls.Include(p => p.Genre)
                     .Where(p => p.GenreId == genreId)
-                    .Skip(skip)
-                    .Take(take)
+                    //.Skip(skip)
+                    //.Take(take)
                     .Select(p => new PollItem
                     {
                         Poll = p,
