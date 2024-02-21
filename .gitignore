@@ -12,6 +12,7 @@
 *.sln.docstates
 appsettings.json
 /realTimePollsApp/wwwroot/js/signalr
+/realTimePollsApp/wwwroot/lib/pagination.js
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -274,3 +275,4 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
+/realTimePollsApp/wwwroot/lib/pagination.js
