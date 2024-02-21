@@ -12,7 +12,7 @@
 *.sln.docstates
 appsettings.json
 /realTimePollsApp/wwwroot/js/signalr
-/realTimePollsApp/wwwroot/lib/pagination.js
+realTimePollsApp/wwwroot/lib/paginationjs/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)

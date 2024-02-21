@@ -5,6 +5,11 @@
     {
       "library": "@microsoft/signalr@latest",
       "destination": "wwwroot/js/signalr/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "paginationjs@2.6.0",
+      "destination": "wwwroot/lib/paginationjs/"
     }
   ]
 }
