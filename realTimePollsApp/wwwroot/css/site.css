@@ -923,10 +923,14 @@ input[type=radio]:checked ~ .check::before {
         height: 405px;
     }
 
+    .search {
+        max-width: ;
+    }
+
 }
 
 
-@media (min-width: 480px) and (max-width: 992px) {
+@media (min-width: 480px) and (max-width: 767px) {
 
  
     [data-th="User"] {
@@ -938,7 +942,30 @@ input[type=radio]:checked ~ .check::before {
     }
 
     #pagination-container {
-        min-width: 380px;
+        min-width: 480px;
+    }
+
+
+    tr.table-data {
+        height: 405px;
+    }
+
+   
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+
+
+    [data-th="User"] {
+        max-height: 99px;
+    }
+
+    [data-th] {
+        width: 450px;
+    }
+
+    #pagination-container {
+        min-width: 480px;
     }
 
 
@@ -947,9 +974,22 @@ input[type=radio]:checked ~ .check::before {
     }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 992px) and (max-width: 1280px) {
+    [data-th="User"] {
+        max-height: 99px;
+    }
+
+    [data-th] {
+        width: 550px;
+    }
+
+    #pagination-container {
+        min-width: 480px;
+    }
+
+
     tr.table-data {
-        height: 120px;
+        height: 405px;
     }
 }
 

@@ -40,15 +40,15 @@
                         {
                             <div>
                                 @Html.Label("Title", "Poll Title", new {@class = "required"}) @*first param is for, second is label text*@
-                                @Html.TextBox("Title", string.Empty, new { @class = "input-class", @required = "required", @maxLength = 50 }) @*first param is name, secodn is value*@
+                                @Html.TextBox("Title", string.Empty, new { @class = "input-class", @required = "required", @maxLength = 25 }) @*first param is name, secodn is value*@
                             </div>
                             <div>
                                 @Html.Label("FirstOption", "First Option", new { @class = "required" })
-                                @Html.TextBox("FirstOption", string.Empty, new { @class = "input-class", @required = "required", @maxLength = 20 })
+                                @Html.TextBox("FirstOption", string.Empty, new { @class = "input-class", @required = "required", @maxLength = 15 })
                             </div>
                             <div>
                                 @Html.Label("SecondOption", "Second Option", new { @class = "required" })
-                                @Html.TextBox("SecondOption", string.Empty, new { @class = "input-class", @required = "required", @maxLength = 20 })
+                                @Html.TextBox("SecondOption", string.Empty, new { @class = "input-class", @required = "required", @maxLength = 15 })
                             </div>
                             <div class="d-flex flex-column">
                                 <label for="genre" class="required">Genre</label> @*change to html helper*@

@@ -6,9 +6,9 @@
 <div class="text-center pt-0">
     @if (Context.User.Identity.IsAuthenticated)
     {
-        <h3 class="text-break">Welcome, @Context.User.Identity.Name</h3>    
+        <h3 class="text-break display-6 text-primary ">Welcome, @Context.User.Identity.Name</h3>
     }
-    <div class="d-flex flex-column">
+    <div class="d-flex justify-content-center flex-column search">
         <input type="text" placeholder="Search by title" id="search-box"/>
         <div class="d-flex gap-3"><select  id="genre-search" name="genre-search" class="Genre w-100" placeholder="Test">
             <option disabled="disabled" selected="selected">Choose a genre to sort by...</option>
@@ -409,6 +409,27 @@
                 secondVoteIds.includes(polls[i].poll.id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
                     firstVotes[i].innerHTML = polls[i].firstVoteCount
                     secondVotes[i].innerHTML = polls[i].secondVoteCount
+                if(firstVotes[i].innerHTML > secondVotes[i].innerHTML) {
+                    firstVotes[i].style.color = "green";
+                    firstVotes[i].style.fontWeight = "bold"; 
+                    firstVotes[i].style.transform = "scale(1.1)"; 
+                    firstVotes[i].style.transition = "all 2s";
+
+                    secondVotes[i].style.color = "red";
+                    secondVotes[i].style.fontWeight = "bold";
+                    secondVotes[i].style.transform = "scale(1.1)";
+                    secondVotes[i].style.transition = "all 2s";
+                    } else {
+                    firstVotes[i].style.color = "red";
+                    firstVotes[i].style.fontWeight = "bold";
+                    firstVotes[i].style.transform = "scale(1.1)";
+                    firstVotes[i].style.transition = "all 2s";
+
+                    secondVotes[i].style.color = "green";
+                    secondVotes[i].style.fontWeight = "bold";
+                    secondVotes[i].style.transform = "scale(1.1)";
+                    secondVotes[i].style.transition = "all 2s";
+                    }
                 } 
             }  
         } catch (e) {
