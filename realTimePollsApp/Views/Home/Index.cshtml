@@ -14,7 +14,8 @@
             <option disabled="disabled" selected="selected">Choose a genre to sort by...</option>
         </select>
     </div>
-    <div class="container pt-0 mt-0 gap-5 d-flex flex-column ">
+    <div class="main-display container pt-0 mt-0 gap-5 d-flex flex-column ">
+        <h3 class="no-polls-msg">No polls found.</h3>
         <table class="rwd-table">
             <tbody id="data-container" class="table-body"></tbody>
         </table>
@@ -65,6 +66,10 @@
     .user-text {
         margin-bottom: 0;
         text-align: center
+    }
+
+    .no-polls-msg {
+        display: none;
     }
 
 </style>
@@ -156,6 +161,23 @@
         const polls = await response.json()
         return polls
     }
+
+ const checkPollCount = (polls) => {
+    const tableBody = document.querySelector("#data-container");
+    const paginationContainer = document.querySelector("#pagination-container")
+    const noPollsMessage = document.querySelector(".no-polls-msg")
+        if (polls.length === 0) {
+            tableBody.style.display = "none"
+            paginationContainer.firstElementChild.style.display = "none"
+            noPollsMessage.style.display = "block"
+            return true;
+        } else {
+        tableBody.style.display = "table-row-group"
+        paginationContainer.firstElementChild.style.display = "flex"
+        noPollsMessage.style.display = "none"
+        return false
+    }
+}
     //maybe add a helper function to clear results when navigating, changing dropdown, or typing in search
 
 </script>
@@ -195,6 +217,7 @@
 <script>
     try {
        const searchBox = document.getElementById("search-box")
+       const genreDropdown = document.getElementById("genre-search")
 
         const populateGridFromSearch = async (search) => {
             const searchParams = new URLSearchParams(window.location.search);
@@ -203,6 +226,8 @@
             var dataContainer = $('#data-container');
 
             const { polls, pollCount } = await getSearchResults(search, page);
+             
+            if(checkPollCount(polls)) return
 
             $('#pagination-container').pagination({
                 dataSource: polls,
@@ -230,6 +255,7 @@
             })
         };
         searchBox.addEventListener('input', async (e) => {
+            genreDropdown.value = "Choose a genre to sort by..."
             populateGridFromSearch(e.target.value);
       }); 
     } catch (e) {
@@ -298,10 +324,15 @@
     
     genreDropdown.addEventListener('change', async (e) => {
         try {
+            const searchBox = document.getElementById("search-box")
+            if(searchBox.value !== "") searchBox.value = ""
+
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
             const genreId = e.target.value
             const { polls, pollCount } = await getGenreResults(genreId);
+
+            if(checkPollCount(polls)) return
 
             $('#pagination-container').pagination({
                 dataSource: polls,
@@ -319,7 +350,7 @@
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
                     const nextTitle = 'Home';
 
-                    nextURL = "?genreId=" + genreId + "&page=" + page
+                    nextURL = "?genreId=" + genreId + "&page=" + pagination.pageNumber
                     nextURL = baseURL + nextURL
 
                     window.history.replaceState(nextState, nextTitle, nextURL);
