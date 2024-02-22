@@ -8,18 +8,20 @@
     {
         <h3 class="text-break">Welcome, @Context.User.Identity.Name</h3>    
     }
-    <div class="d-flex flex-column ">
+    <div class="d-flex flex-column">
         <input type="text" placeholder="Search by title" id="search-box"/>
-        <select  id="genre-search" name="genre-search" class="Genre w-100" placeholder="Test">
+        <div class="d-flex gap-3"><select  id="genre-search" name="genre-search" class="Genre w-100" placeholder="Test">
             <option disabled="disabled" selected="selected">Choose a genre to sort by...</option>
         </select>
+        <button class="reset-btn btn btn-danger">Reset</button>
+        </div>
     </div>
     <div class="main-display container pt-0 mt-0 gap-5 d-flex flex-column ">
         <h3 class="no-polls-msg">No polls found.</h3>
         <table class="rwd-table">
             <tbody id="data-container" class="table-body"></tbody>
         </table>
-        <div id="pagination-container" class="">
+        <div id="pagination-container">
             @*Pagination Widget created here*@
         </div>
     </div>
@@ -74,7 +76,36 @@
 
 </style>
 
-@* Helper functions *@
+@* Connects client to signalR server *@
+
+<script>
+    const oldData = @Html.Raw(Json.Serialize(@Model));
+
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/pollHub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    async function start() {
+        try {
+            await hubConnection.start();
+            console.log("SignalR Connected.");
+
+        } catch (e) {
+            console.error("Failed to connect with SignalR", e);
+        }
+    }
+
+    hubConnection.onclose(async () => {
+        await start();
+    });
+
+    // Start the connection.
+    start();
+</script>
+
+@* Helper functions/Initialize event listeners *@
+
 <script>
  function template(polls) {
         let html = `<tr>
@@ -162,58 +193,74 @@
         return polls
     }
 
- const checkPollCount = (polls) => {
-    const tableBody = document.querySelector("#data-container");
-    const paginationContainer = document.querySelector("#pagination-container")
-    const noPollsMessage = document.querySelector(".no-polls-msg")
-        if (polls.length === 0) {
-            tableBody.style.display = "none"
-            paginationContainer.firstElementChild.style.display = "none"
-            noPollsMessage.style.display = "block"
-            return true;
-        } else {
-        tableBody.style.display = "table-row-group"
-        paginationContainer.firstElementChild.style.display = "flex"
-        noPollsMessage.style.display = "none"
-        return false
+     const checkPollCount = (polls) => {
+        const tableBody = document.querySelector("#data-container");
+        const paginationContainer = document.querySelector("#pagination-container")
+        const noPollsMessage = document.querySelector(".no-polls-msg")
+            if (polls.length === 0) {
+                tableBody.style.display = "none"
+                paginationContainer.firstElementChild.style.display = "none"
+                noPollsMessage.style.display = "block"
+                return true;
+            } else {
+            tableBody.style.display = "table-row-group"
+            paginationContainer.firstElementChild.style.display = "flex"
+            noPollsMessage.style.display = "none"
+            return false
+        }
     }
-}
-    //maybe add a helper function to clear results when navigating, changing dropdown, or typing in search
 
+      const populateGrid = async () => {
+                const { polls, pollCount } = await getData();
+                $('#pagination-container').pagination({
+                    dataSource: polls,
+                    pageSize: 5,
+                    pageRange: 1,
+
+                    callback: function (data, pagination) {
+                        const nextState = { additionalInformation: 'Updated the URL with JS' };
+                        const nextTitle = 'Home';
+                        const baseURL = `https://localhost:44378/`
+                        const buttonNumber = pagination.pageNumber
+
+                        nextURL = `?page=${buttonNumber}`
+                        nextURL = baseURL + nextURL
+
+                        window.history.replaceState(nextState, nextTitle, nextURL);
+
+                        var html = template(data);
+                        $('#data-container').html(html);
+                    }
+                  });
+           }
+
+
+        const resetSearch = () => {
+            const resetBtn = document.querySelector(".reset-btn")
+            const searchBox = document.getElementById("search-box")
+            const genreDropdown = document.getElementById("genre-search")
+
+            resetBtn.addEventListener("click", (e) => {
+                searchBox.value = ""
+                genreDropdown.value = "Choose a genre to sort by..."
+                populateGrid();
+           })
+        }
+
+        resetSearch()
 </script>
 
 
 @* Populates the grid when the first page loads *@
+
 <script>
     $(document).ready(function () {
-        const populateGrid = async () => {
-            const { polls, pollCount } = await getData();
-            $('#pagination-container').pagination({
-                dataSource: polls,
-                pageSize: 5,
-                pageRange: 1,
-
-                callback: function (data, pagination) {
-                    const nextState = { additionalInformation: 'Updated the URL with JS' };
-                    const nextTitle = 'Home';
-                    const baseURL = `https://localhost:44378/`
-                    const buttonNumber = pagination.pageNumber
-
-                    nextURL = `?page=${buttonNumber}`
-                    nextURL = baseURL + nextURL
-
-                    window.history.replaceState(nextState, nextTitle, nextURL);
-
-                    var html = template(data);
-                    $('#data-container').html(html);
-                }
-            });
-        };
         populateGrid();
     });
 </script>
 
 @* Populates the grid from search results *@
+
 <script>
     try {
        const searchBox = document.getElementById("search-box")
@@ -263,39 +310,8 @@
   }     
 </script>
 
-@* Connects client to signalR server *@
-<script>
-    //Set the default url to the first page when refreshing
-    // if (window.location.href !== "https://localhost:44378/?page=1") window.location.replace("https://localhost:44378/?page=1");
-
-    const oldData = @Html.Raw(Json.Serialize(@Model));
-
-    const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("/pollHub")
-        .configureLogging(signalR.LogLevel.Information)
-        .build();
-
-    async function start() {
-        try {
-            await hubConnection.start();
-            console.log("SignalR Connected.");
-
-        } catch (e) {
-            console.error("Failed to connect with SignalR", e);
-        }
-    }
-
-    hubConnection.onclose(async () => {
-        await start();
-    });
-
-    // Start the connection.
-    start();
-</script>
- 
-
-
 @* Filters grid by genre *@
+
 <script>
     const getGenreResults = async (genreId) => {
 
