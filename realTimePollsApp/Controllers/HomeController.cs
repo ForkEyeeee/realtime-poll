@@ -26,17 +26,12 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] int page = 1)
+        public async Task<IActionResult> Index()
         {
             try
             {
-                int take = 5;
-                int skip = (page - 1) * take;
-
                 var polls = _context
                     .Polls.Include(p => p.Genre)
-                    //.Skip(skip)
-                    //.Take(take)
                     .Select(p => new PollItem
                     {
                         Poll = p,

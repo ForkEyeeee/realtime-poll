@@ -1,9 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using realTimePolls.Models;
+﻿using Microsoft.AspNetCore.SignalR;
 
 namespace SignalRChat.Hubs
 {
@@ -14,10 +9,10 @@ namespace SignalRChat.Hubs
             return Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
 
-        //public override async Task OnConnectedAsync()
-        //{
-        //    await Clients.All.SendAsync($"Connected {Context.ConnectionId}");
-        //}
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.All.SendAsync($"Connected {Context.ConnectionId}");
+        }
 
         public async Task SendMessage(string user, string message)
         {

@@ -124,15 +124,6 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                //if (_context.Polls.Count() >= 25)
-                //{
-                //    PollItem viewModel = new PollItem();
-                //    var error = new realTimePolls.Result<string>("invalid data", "error message");
-                //    viewModel.ErrorMsg = error.ErrorMsg;
-                //    viewModel.Data = error.Data;
-                //    return View("Views/Shared/_Layout.cshtml", viewModel);
-                //}
-
                 var googleId =
                     HttpContext != null ? HttpContext.User.Claims.ToList()[0].Value : string.Empty;
 

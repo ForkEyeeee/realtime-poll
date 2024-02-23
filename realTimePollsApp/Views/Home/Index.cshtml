@@ -239,10 +239,16 @@
             const resetBtn = document.querySelector(".reset-btn")
             const searchBox = document.getElementById("search-box")
             const genreDropdown = document.getElementById("genre-search")
+            const noPollsMessage = document.querySelector(".no-polls-msg")
+            const tableBody = document.querySelector("#data-container")
 
             resetBtn.addEventListener("click", (e) => {
                 searchBox.value = ""
                 genreDropdown.value = "Choose a genre to sort by..."
+
+                if (noPollsMessage.style.display === "block") noPollsMessage.style.display = "none"
+                if (tableBody.style.display === "none") tableBody.style.display = "block"
+
                 populateGrid();
            })
         }
