@@ -109,45 +109,45 @@
 <script>
     function template(polls) {
         let html = `<tr>
-                        <th>User</th>
-                        <th>Title</th>
-                        <th>First Option</th>
-                        <th>Second Option</th>
-                        <th>First Vote Count</th>
-                        <th>Second Vote Count</th>
-                        <th>Genre</th>
-                    </tr>`
+                            <th>User</th>
+                            <th>Title</th>
+                            <th>First Option</th>
+                            <th>Second Option</th>
+                            <th>First Vote Count</th>
+                            <th>Second Vote Count</th>
+                            <th>Genre</th>
+                        </tr>`
 
         polls.forEach(poll => {
 
             html += `
-                        <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
-                        <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
-                            <div class="user-flex">
-                                <img src="${poll.profilePicture}" alt="user-image" class="avatar">
-                                <p class="user-text">${poll.userName}</p>
-                            </div>
-                        </td>
-                        <td data-th="Title" class="table-cell">
-                            ${poll.poll.title}
-                        </td>
-                        <td data-th="First Option" class="table-cell">
-                            ${poll.poll.firstOption}
-                        </td>
-                        <td data-th="Second Option" class="table-cell">
-                            ${poll.poll.secondOption}
-                        </td>
-                        <td data-th="First Count" class="table-cell">
-                            <span class="first-votes">${poll.firstVoteCount}</span>
-                        </td>
-                        <td data-th="Second Count" class="table-cell">
-                            <span class="second-votes">${poll.secondVoteCount}</span>
-                        </td>
-                        <td data-th="Genre" class="table-cell">
-                            <span>${poll.poll.genre.name}</span>
-                        </td>
-                    </tr>
-                `;
+                            <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
+                            <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
+                                <div class="user-flex">
+                                    <img src="${poll.profilePicture}" alt="user-image" class="avatar">
+                                    <p class="user-text">${poll.userName}</p>
+                                </div>
+                            </td>
+                            <td data-th="Title" class="table-cell">
+                                ${poll.poll.title}
+                            </td>
+                            <td data-th="First Option" class="table-cell">
+                                ${poll.poll.firstOption}
+                            </td>
+                            <td data-th="Second Option" class="table-cell">
+                                ${poll.poll.secondOption}
+                            </td>
+                            <td data-th="First Count" class="table-cell">
+                                <span class="first-votes">${poll.firstVoteCount}</span>
+                            </td>
+                            <td data-th="Second Count" class="table-cell">
+                                <span class="second-votes">${poll.secondVoteCount}</span>
+                            </td>
+                            <td data-th="Genre" class="table-cell">
+                                <span>${poll.poll.genre.name}</span>
+                            </td>
+                        </tr>
+                    `;
         });
         html += '</tbody></table>';
         return html;
@@ -155,7 +155,7 @@
 
     const getData = async (page) => {
 
-        const baseURL = "https://localhost:44378/Polls/Index"
+        const baseURL = "http://localhost:8080/Polls/Index"
         const url = page === undefined ? baseURL : baseURL + `?page=${page}`
 
         const userId = {
@@ -220,7 +220,7 @@
             callback: function (data, pagination) {
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
                 const nextTitle = 'Home';
-                const baseURL = `https://localhost:44378/`
+                const baseURL = `http://localhost:8080/`
                 const buttonNumber = pagination.pageNumber
 
                 nextURL = `?page=${buttonNumber}`
@@ -289,7 +289,7 @@
                 callback: function (data, pagination) {
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
                     const nextTitle = 'Home';
-                    const baseURL = `https://localhost:44378/`
+                    const baseURL = `https://localhost:8080/`
                     let nextURL;
 
                     if (search === "") {
@@ -362,7 +362,7 @@
                 pageRange: 1,
                 callback: function (data, pagination) {
 
-                    const baseURL = "https://localhost:44378/"
+                    const baseURL = "https://localhost:8080/"
                     const currentUrl = window.location.href
 
                     var dataContainer = $('#data-container');
