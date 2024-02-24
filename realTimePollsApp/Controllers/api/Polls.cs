@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using realTimePolls.Models;
 
 namespace realTimePolls.Controllers
@@ -12,11 +13,33 @@ namespace realTimePolls.Controllers
 
         private readonly RealTimePollsContext _context; // Declare the DbContext variable
 
-        public Polls(ILogger<HomeController> logger, RealTimePollsContext context) // Inject DbContext in the constructor
+        private readonly IWebHostEnvironment _env;
+
+        private readonly IConfiguration _configuration;
+
+        public Polls(
+            ILogger<HomeController> logger,
+            RealTimePollsContext context,
+            IWebHostEnvironment env,
+            IConfiguration configuration
+        ) // Inject DbContext in the constructor
         {
             _logger = logger;
             _context = context; // Initialize the _context variable. This the DbContext instance.
+            _env = env;
+            _configuration = configuration;
         }
+
+        //[HttpGet]
+        //public IActionResult GetApiBaseUrl()
+        //{
+        //    var baseUrl = _configuration["ApiSettings:BaseUrl"];
+        //    if (string.IsNullOrEmpty(baseUrl))
+        //    {
+        //        return NotFound("BaseUrl configuration not found.");
+        //    }
+        //    return Ok(baseUrl);
+        //}
 
         [HttpGet]
         public IActionResult Index([FromQuery] int page = 1)
@@ -27,10 +50,7 @@ namespace realTimePolls.Controllers
                 int skip = (page - 1) * take;
 
                 var polls = _context
-                    .Polls
-                    //.Skip(skip)
-                    //.Take(take)
-                    .Include(p => p.Genre)
+                    .Polls.Include(p => p.Genre)
                     .Select(p => new PollItem
                     {
                         Poll = p,
@@ -83,17 +103,11 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                //int take = 5;
-                //int skip = (page - 1) * take;
-
-
                 var pattern = $"%{search}%";
 
                 var polls = _context
                     .Polls.Include(p => p.Genre)
                     .Where(c => EF.Functions.Like(c.Title, pattern))
-                    //.Skip(skip)
-                    //.Take(take)
                     .Select(p => new PollItem
                     {
                         Poll = p,
@@ -131,14 +145,9 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                //int take = 5;
-                //int skip = (page - 1) * take;
-
                 var polls = _context
                     .Polls.Include(p => p.Genre)
                     .Where(p => p.GenreId == genreId)
-                    //.Skip(skip)
-                    //.Take(take)
                     .Select(p => new PollItem
                     {
                         Poll = p,

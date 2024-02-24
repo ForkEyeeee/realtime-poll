@@ -73,7 +73,7 @@ namespace realTimePolls.Controllers
             );
 
             if (result.Principal == null)
-                throw new Exception("Could not authenticate");
+                return string.Empty;
 
             var claims = result
                 .Principal.Identities.FirstOrDefault()

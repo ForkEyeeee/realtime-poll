@@ -9,11 +9,12 @@
         <h3 class="text-break display-6 text-primary ">Welcome, @Context.User.Identity.Name</h3>
     }
     <div class="d-flex justify-content-center flex-column search">
-        <input type="text" placeholder="Search by title" id="search-box"/>
-        <div class="d-flex gap-3"><select  id="genre-search" name="genre-search" class="Genre w-100" placeholder="Test">
-            <option disabled="disabled" selected="selected">Choose a genre to sort by...</option>
-        </select>
-        <button class="reset-btn btn btn-danger">Reset</button>
+        <input type="text" placeholder="Search by title" id="search-box" />
+        <div class="d-flex gap-3">
+            <select id="genre-search" name="genre-search" class="Genre w-100" placeholder="Test">
+                <option disabled="disabled" selected="selected">Choose a genre to sort by...</option>
+            </select>
+            <button class="reset-btn btn btn-danger">Reset</button>
         </div>
     </div>
     <div class="main-display container pt-0 mt-0 gap-5 d-flex flex-column ">
@@ -34,7 +35,6 @@
 <style>
 
     #pagination-container {
-       
     }
 
     .pagination {
@@ -107,53 +107,53 @@
 @* Helper functions/Initialize event listeners *@
 
 <script>
- function template(polls) {
+    function template(polls) {
         let html = `<tr>
-                    <th>User</th>
-                    <th>Title</th>
-                    <th>First Option</th>
-                    <th>Second Option</th>
-                    <th>First Vote Count</th>
-                    <th>Second Vote Count</th>
-                    <th>Genre</th>
-                </tr>`
-        
+                        <th>User</th>
+                        <th>Title</th>
+                        <th>First Option</th>
+                        <th>Second Option</th>
+                        <th>First Vote Count</th>
+                        <th>Second Vote Count</th>
+                        <th>Genre</th>
+                    </tr>`
+
         polls.forEach(poll => {
 
             html += `
-                    <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
-                    <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
-                        <div class="user-flex">
-                            <img src="${poll.profilePicture}" alt="user-image" class="avatar">
-                            <p class="user-text">${poll.userName}</p>
-                        </div>
-                    </td>
-                    <td data-th="Title" class="table-cell">
-                        ${poll.poll.title}
-                    </td>
-                    <td data-th="First Option" class="table-cell">
-                        ${poll.poll.firstOption}
-                    </td>
-                    <td data-th="Second Option" class="table-cell">
-                        ${poll.poll.secondOption}
-                    </td>
-                    <td data-th="First Count" class="table-cell">
-                        <span class="first-votes">${poll.firstVoteCount}</span>
-                    </td>
-                    <td data-th="Second Count" class="table-cell">
-                        <span class="second-votes">${poll.secondVoteCount}</span>
-                    </td>
-                    <td data-th="Genre" class="table-cell">
-                        <span>${poll.poll.genre.name}</span>
-                    </td>
-                </tr>
-            `;
+                        <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
+                        <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
+                            <div class="user-flex">
+                                <img src="${poll.profilePicture}" alt="user-image" class="avatar">
+                                <p class="user-text">${poll.userName}</p>
+                            </div>
+                        </td>
+                        <td data-th="Title" class="table-cell">
+                            ${poll.poll.title}
+                        </td>
+                        <td data-th="First Option" class="table-cell">
+                            ${poll.poll.firstOption}
+                        </td>
+                        <td data-th="Second Option" class="table-cell">
+                            ${poll.poll.secondOption}
+                        </td>
+                        <td data-th="First Count" class="table-cell">
+                            <span class="first-votes">${poll.firstVoteCount}</span>
+                        </td>
+                        <td data-th="Second Count" class="table-cell">
+                            <span class="second-votes">${poll.secondVoteCount}</span>
+                        </td>
+                        <td data-th="Genre" class="table-cell">
+                            <span>${poll.poll.genre.name}</span>
+                        </td>
+                    </tr>
+                `;
         });
-        html += '</tbody></table>'; 
+        html += '</tbody></table>';
         return html;
     }
 
-     const getData = async (page) => {
+    const getData = async (page) => {
 
         const baseURL = "https://localhost:44378/Polls/Index"
         const url = page === undefined ? baseURL : baseURL + `?page=${page}`
@@ -174,7 +174,7 @@
         return polls
     }
 
-      const getSearchResults = async (text, page) => {
+    const getSearchResults = async (text, page) => {
         const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text + "&page=" + page
 
         const userId = {
@@ -193,16 +193,16 @@
         return polls
     }
 
-     const checkPollCount = (polls) => {
+    const checkPollCount = (polls) => {
         const tableBody = document.querySelector("#data-container");
         const paginationContainer = document.querySelector("#pagination-container")
         const noPollsMessage = document.querySelector(".no-polls-msg")
-            if (polls.length === 0) {
-                tableBody.style.display = "none"
-                paginationContainer.firstElementChild.style.display = "none"
-                noPollsMessage.style.display = "block"
-                return true;
-            } else {
+        if (polls.length === 0) {
+            tableBody.style.display = "none"
+            paginationContainer.firstElementChild.style.display = "none"
+            noPollsMessage.style.display = "block"
+            return true;
+        } else {
             tableBody.style.display = "table-row-group"
             paginationContainer.firstElementChild.style.display = "flex"
             noPollsMessage.style.display = "none"
@@ -210,50 +210,50 @@
         }
     }
 
-      const populateGrid = async () => {
-                const { polls, pollCount } = await getData();
-                $('#pagination-container').pagination({
-                    dataSource: polls,
-                    pageSize: 5,
-                    pageRange: 1,
+    const populateGrid = async () => {
+        const { polls, pollCount } = await getData();
+        $('#pagination-container').pagination({
+            dataSource: polls,
+            pageSize: 5,
+            pageRange: 1,
 
-                    callback: function (data, pagination) {
-                        const nextState = { additionalInformation: 'Updated the URL with JS' };
-                        const nextTitle = 'Home';
-                        const baseURL = `https://localhost:44378/`
-                        const buttonNumber = pagination.pageNumber
+            callback: function (data, pagination) {
+                const nextState = { additionalInformation: 'Updated the URL with JS' };
+                const nextTitle = 'Home';
+                const baseURL = `https://localhost:44378/`
+                const buttonNumber = pagination.pageNumber
 
-                        nextURL = `?page=${buttonNumber}`
-                        nextURL = baseURL + nextURL
+                nextURL = `?page=${buttonNumber}`
+                nextURL = baseURL + nextURL
 
-                        window.history.replaceState(nextState, nextTitle, nextURL);
+                window.history.replaceState(nextState, nextTitle, nextURL);
 
-                        var html = template(data);
-                        $('#data-container').html(html);
-                    }
-                  });
-           }
+                var html = template(data);
+                $('#data-container').html(html);
+            }
+        });
+    }
 
 
-        const resetSearch = () => {
-            const resetBtn = document.querySelector(".reset-btn")
-            const searchBox = document.getElementById("search-box")
-            const genreDropdown = document.getElementById("genre-search")
-            const noPollsMessage = document.querySelector(".no-polls-msg")
-            const tableBody = document.querySelector("#data-container")
+    const resetSearch = () => {
+        const resetBtn = document.querySelector(".reset-btn")
+        const searchBox = document.getElementById("search-box")
+        const genreDropdown = document.getElementById("genre-search")
+        const noPollsMessage = document.querySelector(".no-polls-msg")
+        const tableBody = document.querySelector("#data-container")
 
-            resetBtn.addEventListener("click", (e) => {
-                searchBox.value = ""
-                genreDropdown.value = "Choose a genre to sort by..."
+        resetBtn.addEventListener("click", (e) => {
+            searchBox.value = ""
+            genreDropdown.value = "Choose a genre to sort by..."
 
-                if (noPollsMessage.style.display === "block") noPollsMessage.style.display = "none"
-                if (tableBody.style.display === "none") tableBody.style.display = "block"
+            if (noPollsMessage.style.display === "block") noPollsMessage.style.display = "none"
+            if (tableBody.style.display === "none") tableBody.style.display = "block"
 
-                populateGrid();
-           })
-        }
+            populateGrid();
+        })
+    }
 
-        resetSearch()
+    resetSearch()
 </script>
 
 
@@ -269,18 +269,18 @@
 
 <script>
     try {
-       const searchBox = document.getElementById("search-box")
-       const genreDropdown = document.getElementById("genre-search")
+        const searchBox = document.getElementById("search-box")
+        const genreDropdown = document.getElementById("genre-search")
 
         const populateGridFromSearch = async (search) => {
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
-            
+
             var dataContainer = $('#data-container');
 
             const { polls, pollCount } = await getSearchResults(search, page);
-             
-            if(checkPollCount(polls)) return
+
+            if (checkPollCount(polls)) return
 
             $('#pagination-container').pagination({
                 dataSource: polls,
@@ -291,8 +291,8 @@
                     const nextTitle = 'Home';
                     const baseURL = `https://localhost:44378/`
                     let nextURL;
-                   
-                    if(search === "") {
+
+                    if (search === "") {
                         nextURL = `?page=1`
                     } else {
                         nextURL = `?search=${search}`
@@ -310,10 +310,10 @@
         searchBox.addEventListener('input', async (e) => {
             genreDropdown.value = "Choose a genre to sort by..."
             populateGridFromSearch(e.target.value);
-      }); 
+        });
     } catch (e) {
         console.error(e)
-  }     
+    }
 </script>
 
 @* Filters grid by genre *@
@@ -343,18 +343,18 @@
     }
 
     const genreDropdown = document.querySelector("#genre-search")
-    
+
     genreDropdown.addEventListener('change', async (e) => {
         try {
             const searchBox = document.getElementById("search-box")
-            if(searchBox.value !== "") searchBox.value = ""
+            if (searchBox.value !== "") searchBox.value = ""
 
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
             const genreId = e.target.value
             const { polls, pollCount } = await getGenreResults(genreId);
 
-            if(checkPollCount(polls)) return
+            if (checkPollCount(polls)) return
 
             $('#pagination-container').pagination({
                 dataSource: polls,
@@ -364,11 +364,11 @@
 
                     const baseURL = "https://localhost:44378/"
                     const currentUrl = window.location.href
-            
+
                     var dataContainer = $('#data-container');
 
                     const genreName = e.target[genreId - 1].textContent
-            
+
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
                     const nextTitle = 'Home';
 
@@ -376,14 +376,14 @@
                     nextURL = baseURL + nextURL
 
                     window.history.replaceState(nextState, nextTitle, nextURL);
-                    
+
                     var html = template(data);
                     dataContainer.html(html);
                 }
             })
         } catch (e) {
             console.error(e)
-        };    
+        };
     })
 </script>
 
@@ -401,43 +401,43 @@
 
             const firstVotes = document.querySelectorAll(".first-votes");
 
-            const firstVoteIds =  Array.from(firstVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
+            const firstVoteIds = Array.from(firstVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
                 previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
 
             const secondVotes = document.querySelectorAll(".second-votes");
 
             const secondVoteIds = Array.from(secondVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
-            previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
+                previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
 
-            for(let i = 0; i <= polls.length - 1; i++) {
-               
+            for (let i = 0; i <= polls.length - 1; i++) {
+
                 if (firstVoteIds.includes(polls[i].poll.id) && firstVotes[i].innerHTML != polls[i].firstVoteCount ||
-                secondVoteIds.includes(polls[i].poll.id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
+                    secondVoteIds.includes(polls[i].poll.id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
                     firstVotes[i].innerHTML = polls[i].firstVoteCount
                     secondVotes[i].innerHTML = polls[i].secondVoteCount
-                if(firstVotes[i].innerHTML > secondVotes[i].innerHTML) {
-                    firstVotes[i].style.color = "green";
-                    firstVotes[i].style.fontWeight = "bold"; 
-                    firstVotes[i].style.transform = "scale(1.1)"; 
-                    firstVotes[i].style.transition = "all 2s";
+                    if (firstVotes[i].innerHTML > secondVotes[i].innerHTML) {
+                        firstVotes[i].style.color = "green";
+                        firstVotes[i].style.fontWeight = "bold";
+                        firstVotes[i].style.transform = "scale(1.1)";
+                        firstVotes[i].style.transition = "all 2s";
 
-                    secondVotes[i].style.color = "red";
-                    secondVotes[i].style.fontWeight = "bold";
-                    secondVotes[i].style.transform = "scale(1.1)";
-                    secondVotes[i].style.transition = "all 2s";
+                        secondVotes[i].style.color = "red";
+                        secondVotes[i].style.fontWeight = "bold";
+                        secondVotes[i].style.transform = "scale(1.1)";
+                        secondVotes[i].style.transition = "all 2s";
                     } else {
-                    firstVotes[i].style.color = "red";
-                    firstVotes[i].style.fontWeight = "bold";
-                    firstVotes[i].style.transform = "scale(1.1)";
-                    firstVotes[i].style.transition = "all 2s";
+                        firstVotes[i].style.color = "red";
+                        firstVotes[i].style.fontWeight = "bold";
+                        firstVotes[i].style.transform = "scale(1.1)";
+                        firstVotes[i].style.transition = "all 2s";
 
-                    secondVotes[i].style.color = "green";
-                    secondVotes[i].style.fontWeight = "bold";
-                    secondVotes[i].style.transform = "scale(1.1)";
-                    secondVotes[i].style.transition = "all 2s";
+                        secondVotes[i].style.color = "green";
+                        secondVotes[i].style.fontWeight = "bold";
+                        secondVotes[i].style.transform = "scale(1.1)";
+                        secondVotes[i].style.transition = "all 2s";
                     }
-                } 
-            }  
+                }
+            }
         } catch (e) {
             console.error(e);
         }
