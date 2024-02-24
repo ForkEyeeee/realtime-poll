@@ -262,7 +262,7 @@
 
     <script>
         const getDropdownList = async () => {
-            const url = "https://localhost:8080/Polls/GetDropdownList"
+            const url = "http://localhost:8080/Polls/GetDropdownList"
 
             const response = await fetch(url, {
                 method: "GET",
@@ -295,7 +295,7 @@
 
     <script>
         const getProfilePicture = async () => {
-            const url = "https://localhost:8080/Home/GetUserProfilePicture"
+            const url = "http://localhost:8080/Home/GetUserProfilePicture"
 
             const response = await fetch(url, {
                 method: "GET",
