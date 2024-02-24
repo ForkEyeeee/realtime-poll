@@ -23,6 +23,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    develop:
+      watch:
+        - action: rebuild
+          path: .
   db:
     image: postgres
     restart: always

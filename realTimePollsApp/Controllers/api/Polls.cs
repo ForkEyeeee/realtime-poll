@@ -135,8 +135,8 @@ namespace realTimePolls.Controllers
             }
             catch (Exception e)
             {
-                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-                return View("Error", errorViewModel);
+                Debug.WriteLine(e);
+                return Json(null);
             }
         }
 

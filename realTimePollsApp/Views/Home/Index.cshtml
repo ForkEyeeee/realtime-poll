@@ -175,7 +175,7 @@
     }
 
     const getSearchResults = async (text, page) => {
-        const url = "https://localhost:44378/Polls/GetSearchResults?search=" + text + "&page=" + page
+        const url = "http://localhost:8080/Polls/GetSearchResults?search=" + text + "&page=" + page
 
         const userId = {
             Id: hubConnection.connection.connectionId

@@ -390,20 +390,25 @@
     @* Closes the profile dropdown menu *@
 
     <script>
-        const avatar = document.querySelector(".dropdown")
-        const dropdownMenu = document.querySelector(".dropdown-menu")
+        const initializeAvatar = () => {
+            const avatar = document.querySelector(".dropdown")
+            const dropdownMenu = document.querySelector(".dropdown-menu")
 
-            document.addEventListener('click', (e) => {
-                if (avatar.classList.contains("show") && dropdownMenu.classList.contains("show")) {
-                    if (e.target.parentElement.parentElement !== avatar) {
-                        avatar.classList.toggle("show")
-                        dropdownMenu.classList.toggle("show")
-                    } else {
-                        avatar.classList.add("show")
-                        dropdownMenu.classList.add("show")
+            if (!avatar || !dropdownMenu) return
+
+                document.addEventListener('click', (e) => {
+                    if (avatar.classList.contains("show") && dropdownMenu.classList.contains("show")) {
+                        if (e.target.parentElement.parentElement !== avatar) {
+                            avatar.classList.toggle("show")
+                            dropdownMenu.classList.toggle("show")
+                        } else {
+                            avatar.classList.add("show")
+                            dropdownMenu.classList.add("show")
+                        }
                     }
-                }
-            })
+                })
+        }
+
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
