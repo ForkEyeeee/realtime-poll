@@ -276,3 +276,4 @@ __pycache__/
 # tools/
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
 /realTimePollsApp/wwwroot/lib/pagination.js
+/db
