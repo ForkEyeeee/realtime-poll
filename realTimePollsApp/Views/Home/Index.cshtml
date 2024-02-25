@@ -392,6 +392,7 @@
 <script>
     hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
         try {
+            //add conditional logic to update DOM based on currentURL
             const currentUrl = window.location.href
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
