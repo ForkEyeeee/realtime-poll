@@ -85,9 +85,7 @@
 
 @* Connects client to signalR server *@
 
-<script>
-    const oldData = @Html.Raw(Json.Serialize(@Model));
-   
+<script>   
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
         .configureLogging(signalR.LogLevel.Information)
