@@ -9,7 +9,7 @@
         <div class="container">
             @if (Model.Poll.Genre != null)
             {
-                <h2 class="fw-bold genre-heading">Genre: @Model.Poll.Genre.Name</h2>
+                <h2 class="fw-bold genre-heading">@Model.Poll.Title</h2>
             }
             <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
                 <ul>
@@ -137,9 +137,17 @@
     }
 </style>
 
-<script>
+@*Sets global base url*@
 
-        var oldData = @Html.Raw(Json.Serialize(@Model));
+<script>
+    const environment = @Html.Raw(Json.Serialize(@Model.EnvironmentName))
+    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : location.port === "8080" ?
+    `http://localhost:${location.port}/` : `https://localhost:${location.port}/`;
+</script>
+
+@* Connects client to signalR server *@
+
+<script>
 
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/pollHub")
@@ -164,9 +172,7 @@
         start();
 
         const getData = async (page) => {
-
-        const baseURL = "https://realtime-poll.onrender.com/Polls/Index"
-        const url = page === undefined ? baseURL : baseURL + `?page=${page}`
+        const url = page === undefined ? baseURL + "Polls/Index" : baseURL + "Polls/Index" `?page=${page}`
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -185,51 +191,20 @@
     }
 </script>
 
+@* Updates the DOM after client receives message from the server *@
+
 <script>
-    hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
+    hubConnection.on("ReceiveMessage", async (user, message) => { 
         try {
  
             const { polls } = await getData();
 
-            const firstVotes = document.querySelectorAll(".first-votes");
+            const firstOptionVotes = document.querySelector(".first-vote-count")
+            const secondOptionVotes = document.querySelector(".second-vote-count")
 
-            const firstVoteIds = Array.from(firstVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
-                previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
+            firstOptionVotes.textContent = polls[0].firstVoteCount + " Votes"
+            secondOptionVotes.textContent = polls[0].secondVoteCount + " Votes"
 
-            const secondVotes = document.querySelectorAll(".second-votes");
-
-            const secondVoteIds = Array.from(secondVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
-                previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
-
-            for (let i = 0; i <= polls.length - 1; i++) {
-
-                if (firstVoteIds.includes(polls[i].poll.id) && firstVotes[i].innerHTML != polls[i].firstVoteCount ||
-                    secondVoteIds.includes(polls[i].poll.id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
-                    firstVotes[i].innerHTML = polls[i].firstVoteCount
-                    secondVotes[i].innerHTML = polls[i].secondVoteCount
-                    if (firstVotes[i].innerHTML > secondVotes[i].innerHTML) {
-                        firstVotes[i].style.color = "green";
-                        firstVotes[i].style.fontWeight = "bold";
-                        firstVotes[i].style.transform = "scale(1.1)";
-                        firstVotes[i].style.transition = "all 2s";
-
-                        secondVotes[i].style.color = "red";
-                        secondVotes[i].style.fontWeight = "bold";
-                        secondVotes[i].style.transform = "scale(1.1)";
-                        secondVotes[i].style.transition = "all 2s";
-                    } else {
-                        firstVotes[i].style.color = "red";
-                        firstVotes[i].style.fontWeight = "bold";
-                        firstVotes[i].style.transform = "scale(1.1)";
-                        firstVotes[i].style.transition = "all 2s";
-
-                        secondVotes[i].style.color = "green";
-                        secondVotes[i].style.fontWeight = "bold";
-                        secondVotes[i].style.transform = "scale(1.1)";
-                        secondVotes[i].style.transition = "all 2s";
-                    }
-                }
-            }
         } catch (e) {
             console.error(e);
         }

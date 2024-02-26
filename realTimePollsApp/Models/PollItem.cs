@@ -23,5 +23,8 @@ namespace realTimePolls.Models
 
         [NotMapped]
         public string? Data { get; set; }
+
+        [NotMapped]
+        public virtual string EnvironmentName { get; set; }
     }
 }

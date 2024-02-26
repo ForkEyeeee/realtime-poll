@@ -17,17 +17,22 @@ namespace realTimePolls.Controllers
         private readonly ILogger<PollController> _logger;
 
         private readonly RealTimePollsContext _context; // Declare the DbContext variable
+
         private readonly IHubContext<PollHub> _myHubContext;
+
+        private readonly IWebHostEnvironment _environment;
 
         public PollController(
             ILogger<PollController> logger,
             RealTimePollsContext context,
-            IHubContext<PollHub> myHubContext
+            IHubContext<PollHub> myHubContext,
+            IWebHostEnvironment environment
         )
         {
             _logger = logger;
             _context = context;
             _myHubContext = myHubContext;
+            _environment = environment;
         }
 
         public class JsonRequestItem
@@ -111,6 +116,7 @@ namespace realTimePolls.Controllers
                 })
                 .FirstOrDefault();
 
+            viewModel.EnvironmentName = _environment.EnvironmentName;
             return View(viewModel);
         }
 

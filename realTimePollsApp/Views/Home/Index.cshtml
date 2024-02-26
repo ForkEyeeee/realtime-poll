@@ -75,12 +75,15 @@
 
 </style>
 
-@* Connects client to signalR server *@
+@*Sets global base url*@
 
 <script>
     const environment = @Html.Raw(Json.Serialize(@Model.EnvironmentName))
-    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : "http://localhost:8080/"
+    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : location.port === "8080" ? 
+        `http://localhost:${location.port}/` : `https://localhost:${location.port}/`;
 </script>
+
+@* Connects client to signalR server *@
 
 <script>
     const oldData = @Html.Raw(Json.Serialize(@Model));
@@ -392,7 +395,7 @@
     })
 </script>
 
-@*Updates the DOM after client receives message from the server*@
+@* Updates the DOM after client receives message from the server *@
 
 <script>
     hubConnection.on("ReceiveMessage", async (user, message) => { 
