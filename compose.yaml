@@ -21,6 +21,7 @@ services:
   # a password of your choosing to it before running `docker compose up`.
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - IS_DOCKER=true
     depends_on:
       db:
         condition: service_healthy
