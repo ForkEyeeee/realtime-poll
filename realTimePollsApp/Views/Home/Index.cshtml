@@ -216,7 +216,18 @@
     }
 
     const populateGrid = async () => {
+        const paginationContainer = document.querySelector("#pagination-container")
+        const noPollsMessage = document.querySelector(".no-polls-msg")
+        const tableBody = document.querySelector("#data-container")
+
         const { polls, pollCount } = await getData();
+
+
+        if (pollCount === 0) {
+            tableBody.style.display = "none"
+            paginationContainer.style.display = "none"
+            noPollsMessage.style.display = "block"
+        }
         
         $('#pagination-container').pagination({
             dataSource: polls,
@@ -282,6 +293,8 @@
             const page = searchParams.get('page')
             const nextState = { additionalInformation: 'Updated the URL with JS' };
             const nextTitle = 'Home';
+            let polls;
+            let pollCount;
 
             var dataContainer = $('#data-container');
 
@@ -289,14 +302,17 @@
 
             if (search === "") {
                 nextURL = `?page=1`
+                nextURL = baseURL + nextURL
+                window.history.replaceState(nextState, nextTitle, nextURL);
+                ({ polls, pollCount } = await getData(page));
             } else {
                 nextURL = `?search=${search}`
+                nextURL = baseURL + nextURL
+                window.history.replaceState(nextState, nextTitle, nextURL);
+                ({ polls, pollCount } = await getSearchResults(search, page));
             }
 
-            nextURL = baseURL + nextURL
-            window.history.replaceState(nextState, nextTitle, nextURL);
 
-            const { polls, pollCount } = await getSearchResults(search, page);
 
             if (checkPollCount(polls)) return
 
