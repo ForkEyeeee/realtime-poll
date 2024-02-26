@@ -37,12 +37,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RealTimePollsContext>(options =>
 {
     var connectionString = string.Empty;
+    Console.WriteLine(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
         connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     else
         connectionString = builder.Configuration.GetConnectionString("DevelopmentConnection");
-    Console.WriteLine($"using string: {connectionString}");
+
+    Console.WriteLine(connectionString);
 
     options.UseNpgsql(connectionString);
 });
