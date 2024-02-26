@@ -37,7 +37,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RealTimePollsContext>(options =>
 {
     var connectionString = string.Empty;
-    Console.WriteLine(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+    Console.WriteLine(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
 
     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
         connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
