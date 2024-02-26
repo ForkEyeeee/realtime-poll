@@ -78,8 +78,13 @@
 @* Connects client to signalR server *@
 
 <script>
+    const environment = @Html.Raw(Json.Serialize(@Model.EnvironmentName))
+    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : "http://localhost:8080/"
+</script>
+
+<script>
     const oldData = @Html.Raw(Json.Serialize(@Model));
-    console.log(@Html.Raw(Json.Serialize(@Model.EnvironmentName)))
+   
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
         .configureLogging(signalR.LogLevel.Information)
@@ -153,9 +158,8 @@
     }
 
     const getData = async (page) => {
-
-        const baseURL = "https://realtime-poll.onrender.com/Polls/Index"
-        const url = page === undefined ? baseURL : baseURL + `?page=${page}`
+    
+        const url = page === undefined ? baseURL + "Polls/Index" : baseURL + "Polls/Index" + `?page=${page}`
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -174,7 +178,7 @@
     }
 
     const getSearchResults = async (text, page) => {
-        const url = "https://realtime-poll.onrender.com/Polls/GetSearchResults?search=" + text + "&page=" + page
+        const url = baseURL + "Polls/GetSearchResults?search=" + text + "&page=" + page
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -196,6 +200,7 @@
         const tableBody = document.querySelector("#data-container");
         const paginationContainer = document.querySelector("#pagination-container")
         const noPollsMessage = document.querySelector(".no-polls-msg")
+        
         if (polls.length === 0) {
             tableBody.style.display = "none"
             paginationContainer.firstElementChild.style.display = "none"
@@ -211,6 +216,7 @@
 
     const populateGrid = async () => {
         const { polls, pollCount } = await getData();
+        
         $('#pagination-container').pagination({
             dataSource: polls,
             pageSize: 5,
@@ -219,7 +225,6 @@
             callback: function (data, pagination) {
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
                 const nextTitle = 'Home';
-                const baseURL = `https://realtime-poll.onrender.com/`
                 const buttonNumber = pagination.pageNumber
 
                 nextURL = `?page=${buttonNumber}`
@@ -288,7 +293,6 @@
                 callback: function (data, pagination) {
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
                     const nextTitle = 'Home';
-                    const baseURL = `https://realtime-poll.onrender.com/`
                     let nextURL;
 
                     if (search === "") {
@@ -320,7 +324,7 @@
 <script>
     const getGenreResults = async (genreId) => {
 
-        const url = "https://localhost:44378/Polls/GetGenreResults/" + "?genreId=" + genreId
+        const url = baseURL + "Polls/GetGenreResults/" + "?genreId=" + genreId
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -361,7 +365,6 @@
                 pageRange: 1,
                 callback: function (data, pagination) {
 
-                    const baseURL = "https://realtime-poll.onrender.com/"
                     const currentUrl = window.location.href
 
                     var dataContainer = $('#data-container');
@@ -389,9 +392,8 @@
 @*Updates the DOM after client receives message from the server*@
 
 <script>
-    hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
+    hubConnection.on("ReceiveMessage", async (user, message) => { 
         try {
-            //add conditional logic to update DOM based on currentURL
             const currentUrl = window.location.href
             const searchParams = new URLSearchParams(window.location.search);
             let page = searchParams.get('page')
