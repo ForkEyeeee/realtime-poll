@@ -51,27 +51,6 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 
 var app = builder.Build();
 
-app.UseForwardedHeaders(
-    new ForwardedHeadersOptions
-    {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-    }
-);
-
-app.Use(
-    (context, next) =>
-    {
-        if (
-            context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)
-            && proto == "https"
-        )
-        {
-            context.Request.Scheme = "https";
-        }
-        return next();
-    }
-);
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
