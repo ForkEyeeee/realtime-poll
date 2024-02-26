@@ -42,6 +42,7 @@ builder.Services.AddDbContext<RealTimePollsContext>(options =>
         connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     else
         connectionString = builder.Configuration.GetConnectionString("DevelopmentConnection");
+    Console.WriteLine($"using string: {connectionString}");
 
     options.UseNpgsql(connectionString);
 });
