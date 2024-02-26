@@ -154,7 +154,7 @@
 
     const getData = async (page) => {
 
-        const baseURL = "http://localhost:8080/Polls/Index"
+        const baseURL = "https://realtime-poll.onrender.com/Polls/Index"
         const url = page === undefined ? baseURL : baseURL + `?page=${page}`
 
         const userId = {
@@ -174,7 +174,7 @@
     }
 
     const getSearchResults = async (text, page) => {
-        const url = "http://localhost:8080/Polls/GetSearchResults?search=" + text + "&page=" + page
+        const url = "https://realtime-poll.onrender.com/Polls/GetSearchResults?search=" + text + "&page=" + page
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -219,7 +219,7 @@
             callback: function (data, pagination) {
                 const nextState = { additionalInformation: 'Updated the URL with JS' };
                 const nextTitle = 'Home';
-                const baseURL = `http://localhost:8080/`
+                const baseURL = `https://realtime-poll.onrender.com/`
                 const buttonNumber = pagination.pageNumber
 
                 nextURL = `?page=${buttonNumber}`
@@ -288,7 +288,7 @@
                 callback: function (data, pagination) {
                     const nextState = { additionalInformation: 'Updated the URL with JS' };
                     const nextTitle = 'Home';
-                    const baseURL = `https://localhost:8080/`
+                    const baseURL = `https://realtime-poll.onrender.com/`
                     let nextURL;
 
                     if (search === "") {
@@ -361,7 +361,7 @@
                 pageRange: 1,
                 callback: function (data, pagination) {
 
-                    const baseURL = "https://localhost:8080/"
+                    const baseURL = "https://realtime-poll.onrender.com/"
                     const currentUrl = window.location.href
 
                     var dataContainer = $('#data-container');
