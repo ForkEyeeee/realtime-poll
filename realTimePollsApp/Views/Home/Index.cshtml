@@ -79,7 +79,7 @@
 
 <script>
     const oldData = @Html.Raw(Json.Serialize(@Model));
-
+    console.log(@Html.Raw(Json.Serialize(@Model.EnvironmentName)))
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
         .configureLogging(signalR.LogLevel.Information)

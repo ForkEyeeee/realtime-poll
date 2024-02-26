@@ -11,5 +11,8 @@ namespace realTimePolls.Models
 
         [NotMapped]
         public virtual string? UserProfilePicture { get; set; }
+
+        [NotMapped]
+        public string? EnvironmentName { get; set; }
     }
 }

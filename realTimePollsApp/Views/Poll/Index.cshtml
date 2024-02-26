@@ -17,7 +17,7 @@
                         <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.Poll != null && Model.Vote == true ? "checked" : "")>
                         <label for="vote-first">@Model.Poll.FirstOption</label>
                         <div class="d-flex flex-column vote-flex">
-                            <p class="float-end">@Model.FirstVoteCount Votes</p>
+                            <p class="float-end first-vote-count">@Model.FirstVoteCount Votes</p>
                         </div>
                         <div class="check"><div class="inside"></div></div>
                     </li>
@@ -25,7 +25,7 @@
                         <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.Poll != null && Model.Vote == false ? "checked" : "")>
                         <label for="vote-second">@Model.Poll.SecondOption</label>
                         <div class="d-flex flex-column vote-flex">
-                            <p class="float-end">@Model.SecondVoteCount Votes</p>
+                            <p class="float-end second-vote-count">@Model.SecondVoteCount Votes</p>
                         </div>
                         <div class="check"><div class="inside"></div></div>
                     </li>
@@ -46,8 +46,7 @@
 </div>
 
 
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.14/signalr.min.js"></script>
 
 
 <style>
@@ -163,4 +162,76 @@
 
         // Start the connection.
         start();
+
+        const getData = async (page) => {
+
+        const baseURL = "https://realtime-poll.onrender.com/Polls/Index"
+        const url = page === undefined ? baseURL : baseURL + `?page=${page}`
+
+        const userId = {
+            Id: hubConnection.connection.connectionId
+        }
+
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+
+        if (!response.ok) throw new Error("Failed to fetch polls")
+
+        const polls = await response.json()
+        return polls
+    }
+</script>
+
+<script>
+    hubConnection.on("ReceiveMessage", async (user, message) => { //maybe add this to the sharedlayout instead
+        try {
+ 
+            const { polls } = await getData();
+
+            const firstVotes = document.querySelectorAll(".first-votes");
+
+            const firstVoteIds = Array.from(firstVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
+                previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
+
+            const secondVotes = document.querySelectorAll(".second-votes");
+
+            const secondVoteIds = Array.from(secondVotes).map(vote => parseInt(vote.parentElement.previousElementSibling.
+                previousElementSibling.previousElementSibling.previousElementSibling.dataset.id))
+
+            for (let i = 0; i <= polls.length - 1; i++) {
+
+                if (firstVoteIds.includes(polls[i].poll.id) && firstVotes[i].innerHTML != polls[i].firstVoteCount ||
+                    secondVoteIds.includes(polls[i].poll.id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
+                    firstVotes[i].innerHTML = polls[i].firstVoteCount
+                    secondVotes[i].innerHTML = polls[i].secondVoteCount
+                    if (firstVotes[i].innerHTML > secondVotes[i].innerHTML) {
+                        firstVotes[i].style.color = "green";
+                        firstVotes[i].style.fontWeight = "bold";
+                        firstVotes[i].style.transform = "scale(1.1)";
+                        firstVotes[i].style.transition = "all 2s";
+
+                        secondVotes[i].style.color = "red";
+                        secondVotes[i].style.fontWeight = "bold";
+                        secondVotes[i].style.transform = "scale(1.1)";
+                        secondVotes[i].style.transition = "all 2s";
+                    } else {
+                        firstVotes[i].style.color = "red";
+                        firstVotes[i].style.fontWeight = "bold";
+                        firstVotes[i].style.transform = "scale(1.1)";
+                        firstVotes[i].style.transition = "all 2s";
+
+                        secondVotes[i].style.color = "green";
+                        secondVotes[i].style.fontWeight = "bold";
+                        secondVotes[i].style.transform = "scale(1.1)";
+                        secondVotes[i].style.transition = "all 2s";
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    });
 </script>

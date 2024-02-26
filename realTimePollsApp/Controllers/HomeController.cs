@@ -19,10 +19,17 @@ namespace realTimePolls.Controllers
 
         private readonly RealTimePollsContext _context; // Declare the DbContext variable
 
-        public HomeController(ILogger<HomeController> logger, RealTimePollsContext context) // Inject DbContext in the constructor
+        private readonly IWebHostEnvironment _environment;
+
+        public HomeController(
+            ILogger<HomeController> logger,
+            RealTimePollsContext context,
+            IWebHostEnvironment environment
+        ) // Inject DbContext in the constructor
         {
             _logger = logger;
             _context = context; // Initialize the _context variable. This the DbContext instance.
+            _environment = environment;
         }
 
         [HttpGet]
@@ -49,14 +56,17 @@ namespace realTimePolls.Controllers
                     .ToList();
 
                 int pollCount = _context.Polls.Count();
-                var viewModel = new PollsList { Polls = polls, };
+                var viewModel = new PollsList
+                {
+                    Polls = polls,
+                    EnvironmentName = _environment.EnvironmentName
+                };
 
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var profilePicture = await GetUserProfilePicture();
                     viewModel.UserProfilePicture = profilePicture;
                 }
-
                 return View(viewModel);
             }
             catch (Exception e)
