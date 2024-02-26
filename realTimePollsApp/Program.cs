@@ -32,12 +32,29 @@ builder
         }
     );
 
-// This adds services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RealTimePollsContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseNpgsql(connectionString);
+    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+    if (!string.IsNullOrEmpty(databaseUrl))
+    {
+        var uri = new Uri(databaseUrl);
+        var host = uri.Host;
+        var port = uri.Port;
+        var database = uri.AbsolutePath.Trim('/');
+        var userInfo = uri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+        var user = userInfo[0];
+        var password = userInfo.Length > 1 ? userInfo[1] : string.Empty;
+
+        var connectionString =
+            $"Host={host};Port={port};Database={database};Username={user};Password={password};SslMode=Require;Trust Server Certificate=true";
+        options.UseNpgsql(connectionString);
+    }
+    else
+    {
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        options.UseNpgsql(connectionString);
+    }
 });
 builder.Services.AddSignalR();
 
@@ -51,11 +68,9 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
