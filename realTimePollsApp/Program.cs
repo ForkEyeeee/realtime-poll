@@ -58,13 +58,19 @@ app.UseForwardedHeaders(
     }
 );
 
-//app.Use(
-//    (context, next) =>
-//    {
-//        context.Request.Scheme = "https";
-//        return next(context);
-//    }
-//);
+app.Use(
+    (context, next) =>
+    {
+        if (
+            context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)
+            && proto == "https"
+        )
+        {
+            context.Request.Scheme = "https";
+        }
+        return next();
+    }
+);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
