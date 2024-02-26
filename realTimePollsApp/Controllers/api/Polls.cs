@@ -104,7 +104,7 @@ namespace realTimePolls.Controllers
 
                 var polls = _context
                     .Polls.Include(p => p.Genre)
-                    .Where(c => EF.Functions.Like(c.Title, pattern))
+                    .Where(c => EF.Functions.Like(c.Title.ToLower(), pattern.ToLower()))
                     .Select(p => new PollItem
                     {
                         Poll = p,
