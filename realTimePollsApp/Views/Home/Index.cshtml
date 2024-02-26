@@ -279,8 +279,21 @@
         const populateGridFromSearch = async (search) => {
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
+            const nextState = { additionalInformation: 'Updated the URL with JS' };
+            const nextTitle = 'Home';
 
             var dataContainer = $('#data-container');
+
+            let nextURL;
+
+            if (search === "") {
+                nextURL = `?page=1`
+            } else {
+                nextURL = `?search=${search}`
+            }
+
+            nextURL = baseURL + nextURL
+            window.history.replaceState(nextState, nextTitle, nextURL);
 
             const { polls, pollCount } = await getSearchResults(search, page);
 
@@ -291,19 +304,9 @@
                 pageSize: 5,
                 pageRange: 1,
                 callback: function (data, pagination) {
-                    const nextState = { additionalInformation: 'Updated the URL with JS' };
-                    const nextTitle = 'Home';
-                    let nextURL;
 
-                    if (search === "") {
-                        nextURL = `?page=1`
-                    } else {
-                        nextURL = `?search=${search}`
-                    }
 
-                    nextURL = baseURL + nextURL
 
-                    window.history.replaceState(nextState, nextTitle, nextURL);
 
                     var html = template(data);
                     dataContainer.html(html);

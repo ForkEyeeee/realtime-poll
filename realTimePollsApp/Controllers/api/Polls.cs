@@ -46,9 +46,6 @@ namespace realTimePolls.Controllers
         {
             try
             {
-                int take = 5;
-                int skip = (page - 1) * take;
-
                 var polls = _context
                     .Polls.Include(p => p.Genre)
                     .Select(p => new PollItem
