@@ -16,6 +16,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <Compile Remove="wwwroot\lib\jquery-validation\**" />
+    <Compile Remove="wwwroot\lib\jquery\**" />
+    <Content Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <Content Remove="wwwroot\lib\jquery-validation\**" />
+    <Content Remove="wwwroot\lib\jquery\**" />
+    <EmbeddedResource Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <EmbeddedResource Remove="wwwroot\lib\jquery-validation\**" />
+    <EmbeddedResource Remove="wwwroot\lib\jquery\**" />
+    <None Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <None Remove="wwwroot\lib\jquery-validation\**" />
+    <None Remove="wwwroot\lib\jquery\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
@@ -69,16 +84,6 @@
 	  <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
 	  <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
 	  <None Include="wwwroot\lib\bootstrap\LICENSE" />
-	  <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
-	  <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
-	  <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.js" />
-	  <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
-	  <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
-	  <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
-	  <None Include="wwwroot\lib\jquery-validation\LICENSE.md" />
-	  <None Include="wwwroot\lib\jquery\dist\jquery.js" />
-	  <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
-	  <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
 	  <None Include="wwwroot\lib\paginationjs\pagination.js" />
 	  <None Include="wwwroot\lib\paginationjs\pagination.min.js" />
 	</ItemGroup>
