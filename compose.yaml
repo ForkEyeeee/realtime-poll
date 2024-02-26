@@ -21,9 +21,8 @@ services:
 # to set the database password. You must create `db/password.txt` and add
 # a password of your choosing to it before running `docker compose up`.
     depends_on:
-      - db
-    env_file:
-      - ./postgres.env
+      db:
+        condition: service_healthy
     develop:
       watch:
         - action: rebuild
@@ -54,4 +53,3 @@ volumes:
 secrets:
   db-password:
     file: db/password.txt
-
