@@ -278,3 +278,7 @@ __pycache__/
 /realTimePollsApp/wwwroot/lib/pagination.js
 /db
 /postgres.env
+/realTimePollsApp/wwwroot/lib/jquery
+/realTimePollsApp/wwwroot/lib/jquery-validation/dist
+/realTimePollsApp/wwwroot/lib/jquery-validation-unobtrusive
+/realTimePollsApp/wwwroot/lib/jquery-validation/LICENSE.md
