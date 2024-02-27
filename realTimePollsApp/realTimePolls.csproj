@@ -19,15 +19,19 @@
     <Compile Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
     <Compile Remove="wwwroot\lib\jquery-validation\**" />
     <Compile Remove="wwwroot\lib\jquery\**" />
+    <Compile Remove="wwwroot\lib\paginationjs\**" />
     <Content Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
     <Content Remove="wwwroot\lib\jquery-validation\**" />
     <Content Remove="wwwroot\lib\jquery\**" />
+    <Content Remove="wwwroot\lib\paginationjs\**" />
     <EmbeddedResource Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
     <EmbeddedResource Remove="wwwroot\lib\jquery-validation\**" />
     <EmbeddedResource Remove="wwwroot\lib\jquery\**" />
+    <EmbeddedResource Remove="wwwroot\lib\paginationjs\**" />
     <None Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
     <None Remove="wwwroot\lib\jquery-validation\**" />
     <None Remove="wwwroot\lib\jquery\**" />
+    <None Remove="wwwroot\lib\paginationjs\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,8 +88,6 @@
 	  <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
 	  <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
 	  <None Include="wwwroot\lib\bootstrap\LICENSE" />
-	  <None Include="wwwroot\lib\paginationjs\pagination.js" />
-	  <None Include="wwwroot\lib\paginationjs\pagination.min.js" />
 	</ItemGroup>
 
 </Project>
