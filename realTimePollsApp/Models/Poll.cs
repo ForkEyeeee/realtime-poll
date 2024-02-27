@@ -33,7 +33,6 @@ namespace realTimePolls.Models
         [Column("genreid")]
         public int? GenreId { get; set; }
 
-        [NotMapped] //navigation property
         public Genre Genre { get; set; }
     }
 }
