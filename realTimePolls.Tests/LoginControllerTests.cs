@@ -37,8 +37,6 @@ namespace realTimePolls.Tests
         {
             //Arrange - What do i need to bring in?
 
-            //maybe integration test
-
             //Act
             var result = _LoginController.Login();
 

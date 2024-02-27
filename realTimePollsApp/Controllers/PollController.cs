@@ -35,11 +35,6 @@ namespace realTimePolls.Controllers
             _environment = environment;
         }
 
-        public class JsonRequestItem
-        {
-            public string jsonRequest { get; set; }
-        }
-
         public async Task<int> GetUserId()
         {
             var result = await HttpContext.AuthenticateAsync(
@@ -198,7 +193,7 @@ namespace realTimePolls.Controllers
             }
         }
 
-        public void SendMessage() //this can receive a string msg, then pass it to sendasync
+        public void SendMessage()
         {
             _myHubContext.Clients.All.SendAsync("ReceiveMessage");
         }

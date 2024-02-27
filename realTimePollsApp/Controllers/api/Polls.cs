@@ -30,19 +30,8 @@ namespace realTimePolls.Controllers
             _configuration = configuration;
         }
 
-        //[HttpGet]
-        //public IActionResult GetApiBaseUrl()
-        //{
-        //    var baseUrl = _configuration["ApiSettings:BaseUrl"];
-        //    if (string.IsNullOrEmpty(baseUrl))
-        //    {
-        //        return NotFound("BaseUrl configuration not found.");
-        //    }
-        //    return Ok(baseUrl);
-        //}
-
         [HttpGet]
-        public IActionResult Index([FromQuery] int page = 1)
+        public IActionResult Index()
         {
             try
             {
@@ -78,7 +67,7 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetDropdownList([FromQuery] int page = 1)
+        public IActionResult GetDropdownList()
         {
             try
             {

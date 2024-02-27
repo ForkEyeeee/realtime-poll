@@ -20,6 +20,8 @@ namespace realTimePolls.Controllers
         private readonly RealTimePollsContext _context; // Declare the DbContext variable
 
         private readonly IWebHostEnvironment _environment;
+        private ILogger<HomeController> logger;
+        private RealTimePollsContext context;
 
         public HomeController(
             ILogger<HomeController> logger,
@@ -30,6 +32,12 @@ namespace realTimePolls.Controllers
             _logger = logger;
             _context = context; // Initialize the _context variable. This the DbContext instance.
             _environment = environment;
+        }
+
+        public HomeController(ILogger<HomeController> logger, RealTimePollsContext context)
+        {
+            this.logger = logger;
+            this.context = context;
         }
 
         [HttpGet]
