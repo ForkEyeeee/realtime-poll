@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 ---
 
 # Real-time Poll App
@@ -68,46 +68,7 @@ Before you start, ensure you have installed:
 
    The app will be accessible at [https://localhost:44378](https://localhost:44378).
 
-### Docker Setup
-
-1. **Database Setup**
-
-Certainly, let's correct the formatting for the database setup instructions:
-
-1. **Database Setup**
-   - Create a `db` directory at the root of your project.
-   - Inside `db`, create a `password.txt` file containing your PostgreSQL password.
-   - Create a `postgres.env` file at the root of your project.
-   - `postgres.env`, should contain your database password in the following format:
-
-     ```env
-     POSTGRES_PASSWORD=<password>
-     ```
-2. **Docker Initialization**
-
-      Before starting your containers, clean up any previous instances:
-
-   ```bash
-   docker-compose down -v
-   ```
-
-   To build and start the containers:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-   If you want to watch for changes and automatically rebuild:
-
-   ```bash
-   docker-compose watch
-   ```
-
-3. **Access the Application**
-
-   Once the Docker containers are up, the application will be accessible at [http://localhost:8080](http://localhost:8080).
-
-## Dependencies
+ ## Dependencies
 
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
 - [Npgsql.EntityFrameworkCore.PostgreSQL](https://www.npgsql.org/efcore/)
