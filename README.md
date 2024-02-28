@@ -1,4 +1,4 @@
-﻿﻿
+﻿﻿﻿
 ---
 
 # Real-time Poll App
@@ -7,12 +7,12 @@
 
 Poll application built with ASP.NET CORE & PostgreSQL, featuring Google authentication, user-created polls, and real-time data display.
 
-[🔴 Live](https://realtime-poll.onrender.com)
+https://realtime-poll.onrender.com
+
 ## Prerequisites
 
 Before you start, ensure you have installed:
 - [PostgreSQL](https://www.postgresql.org/download/)
-- [Docker](https://www.docker.com/get-started)
 
 ## Installation
 
@@ -34,7 +34,7 @@ Before you start, ensure you have installed:
 
 3. **Environment Setup**
 
-   Create an `appsettings.json` file in the root of your project and enter your PostgreSQL connection string using the provided format. If you'd like to run the app with localhost only, you can leave DockerConnection blank.
+   Create an `appsettings.json` file in the /realTimePollsApp directory your project and enter your PostgreSQL connection string using the provided format.
 
    ```json
    {
@@ -50,8 +50,7 @@ Before you start, ensure you have installed:
        "ClientSecret": ""
      },
      "ConnectionStrings": {
-       "DevelopmentConnection": "Host=localhost;Port=5432;Database=realtime_poll;User Id=postgres;Password=<password>;",
-       "DockerConnection": "Host=db;Port=5432;Database=realtime_poll;User Id=postgres;Password=<password>;",
+       "DevelopmentConnection": "Host=<hostname>;Port=<port>;Database=<databasename>;User Id=<userid>;Password=<password>;",
      }
    }
    ```
