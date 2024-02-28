@@ -1,6 +1,4 @@
 ﻿﻿﻿
----
-
 # Real-time Poll App
 
 ## Overview
