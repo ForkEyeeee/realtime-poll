@@ -284,3 +284,6 @@ __pycache__/
 /realTimePollsApp/wwwroot/lib/jquery-validation/LICENSE.md
 /New folder
 /realTimePollsApp/db
+/.realtimepolls_db-data
+/realTimePollsApp/appsettings.Development.json
+/realTimePollsApp/appsettings.Production.json
