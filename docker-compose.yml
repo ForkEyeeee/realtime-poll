@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  realtimepolls:
+    image: ${DOCKER_REGISTRY-}realtimepolls
+    container_name: realtimepolls
+    build:
+      context: .
+      dockerfile: realTimePollsApp/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+  realtimepolls.database:
+    image: postgres:latest
+    container_name: realtimepolls.database
+    environment: 
+        - POSTGRES_DB=products
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+    volumes:
+        # - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+        - ./containers/products-db:/var/lib/postgresql/data
+    ports:
+        - 5432:5432
+  
