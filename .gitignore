@@ -288,3 +288,8 @@ __pycache__/
 /realTimePollsApp/appsettings.Development.json
 /realTimePollsApp/appsettings.Production.json
 /containers/products-db
+/containers/realtimepolls_db-data/base
+/containers/realtimepolls_db-data/global
+/containers/realtimepolls_db-data/global/1213
+/containers/realtimepolls_db-data
+/docker-compose.override.yml
