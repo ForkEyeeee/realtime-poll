@@ -141,8 +141,7 @@
 
 <script>
     const environment = @Html.Raw(Json.Serialize(@Model.EnvironmentName))
-    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : location.port === "8080" ?
-    `http://localhost:${location.port}/` : `https://localhost:${location.port}/`;
+    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : `https://localhost:${location.port}/`;
 </script>
 
 @* Connects client to signalR server *@

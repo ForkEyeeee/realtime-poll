@@ -262,8 +262,7 @@
 
     <script>
         const getDropdownList = async () => {
-            const url = "https://realtime-poll.onrender.com/Polls/GetDropdownList"
-
+            const url = `${baseURL}Polls/GetDropdownList`
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
@@ -295,7 +294,7 @@
 
     <script>
         const getProfilePicture = async () => {
-            const url = "https://realtime-poll.onrender.com/Home/GetUserProfilePicture"
+            const url = `${baseURL}Home/GetUserProfilePicture`
 
             const response = await fetch(url, {
                 method: "GET",

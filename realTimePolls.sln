@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "realTimePolls", "realTimePollsApp\realTimePolls.csproj", "{34514DBD-417A-4BD7-9173-9DFACBE5A5AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "realTimePolls.Tests", "realTimePolls.Tests\realTimePolls.Tests.csproj", "{7D23261A-7E8F-4F5E-ADFA-5FF0A5AEFBFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "realTimePolls.Tests", "realTimePolls.Tests\realTimePolls.Tests.csproj", "{7D23261A-7E8F-4F5E-ADFA-5FF0A5AEFBFA}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1A42C0B8-2F1C-458E-BCA8-821CB5CE490D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7D23261A-7E8F-4F5E-ADFA-5FF0A5AEFBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D23261A-7E8F-4F5E-ADFA-5FF0A5AEFBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D23261A-7E8F-4F5E-ADFA-5FF0A5AEFBFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A42C0B8-2F1C-458E-BCA8-821CB5CE490D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A42C0B8-2F1C-458E-BCA8-821CB5CE490D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A42C0B8-2F1C-458E-BCA8-821CB5CE490D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A42C0B8-2F1C-458E-BCA8-821CB5CE490D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
