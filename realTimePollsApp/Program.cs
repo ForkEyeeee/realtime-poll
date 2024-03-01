@@ -34,12 +34,7 @@ builder.Services.AddDbContext<RealTimePollsContext>(options =>
 {
     var connectionString = string.Empty;
 
-    if (Environment.GetEnvironmentVariable("IS_DOCKER") == "true")
-        connectionString = builder.Configuration.GetConnectionString("DockerConnection");
-    else if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-        connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    else
-        connectionString = builder.Configuration.GetConnectionString("DevelopmentConnection");
+    connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 
     options.UseNpgsql(connectionString);
 });
