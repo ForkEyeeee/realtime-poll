@@ -287,3 +287,4 @@ __pycache__/
 /.realtimepolls_db-data
 /realTimePollsApp/appsettings.Development.json
 /realTimePollsApp/appsettings.Production.json
+/containers/products-db
