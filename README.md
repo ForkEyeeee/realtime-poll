@@ -1,64 +1,47 @@
 ﻿# Real-time Poll App
 
-## Overview
 Poll application built with ASP.NET CORE & PostgreSQL, featuring Google authentication, user-created polls, and real-time data display.
 
 ## Prerequisites
-Before you start, ensure you have installed:
+
+Before you begin, ensure you have the following installed:
+
+- [Docker](https://www.docker.com/get-started)
 - [PostgreSQL](https://www.postgresql.org/download/)
 
-## Installation
+## Setup Instructions
 
-### Localhost Development
+Follow these steps to get the application up and running:
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/JBrown58/realtime-poll.git
-   ```
+### 1. Clone the Repository
 
-2. **Install Dependencies**
-   Navigate to the project directory and restore the .NET dependencies:
-   ```bash
-   dotnet restore
-   ```
+Start by cloning the repository to your local machine. Open a terminal and run:
 
-3. **Environment Setup**
-   Create an `appsettings.json` file in the /realTimePollsApp directory of your project and enter your PostgreSQL connection string using the provided format.
-   ```json
-   {
-     "Logging": {
-       "LogLevel": {
-         "Default": "Information",
-         "Microsoft.AspNetCore": "Warning"
-       }
-     },
-     "AllowedHosts": "*",
-     "GoogleKeys": {
-       "ClientId": "",
-       "ClientSecret": ""
-     },
-     "ConnectionStrings": {
-       "DevelopmentConnection": "Host=<hostname>;Port=<port>;Database=<databasename>;User Id=<userid>;Password=<password>;",
-     }
-   }
-   ```
-   - **Note:** For `ClientId` and `ClientSecret` under `GoogleKeys`, enter your Google OAuth credentials.
+```bash
+git clone https://github.com/JBrown58/realtime-poll.git
+```
 
-4. **Run the Application**
-   You can run the application using IIS Express or via the command line:
-   ```bash
-   dotnet run
-   ```
-   The app will be accessible at [https://localhost:44378](https://localhost:44378).
+### 2. Set Up Google OAuth Credentials
 
- ## Dependencies
-- [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
-- [Npgsql.EntityFrameworkCore.PostgreSQL](https://www.npgsql.org/efcore/)
-- [Microsoft.AspNetCore.Authentication.Google](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-6.0)
-- [SignalR](https://docs.microsoft.com/en-us/aspnet/core/signalr/introduction?view=aspnetcore-6.0)
-- [xUnit](https://xunit.net/)
-- [FakeItEasy](https://fakeiteasy.github.io/)
-- [FluentAssertions](https://fluentassertions.com/)
-- [Moq](https://github.com/moq/moq4)
-- [Paginationjs](http://pagination.js.org/)
-- [Docker](https://www.docker.com/get-started)
+For user authentication, you'll need to obtain a Google Client ID and Client Secret. Here's how:
+
+1. Visit the [Google Developer Console](https://console.developers.google.com/).
+2. Create a project and navigate to the Credentials page.
+3. Create OAuth 2.0 credentials to get your Client ID and Client Secret.
+
+After getting the `ClientID` and `ClientSecret`, store them in your project:
+
+```bash
+dotnet user-secrets set "GoogleKeys:ClientId" "<ClientID>"
+dotnet user-secrets set "GoogleKeys:ClientSecret" "<ClientSecret>"
+```
+
+### 3. Run with Docker
+
+Navigate to the project root directory in your terminal, then run:
+
+```bash
+docker-compose up
+```
+
+Visit [https://localhost:8081](https://localhost:8081) to access the application.
