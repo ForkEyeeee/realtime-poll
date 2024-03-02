@@ -24,7 +24,7 @@ jobs:
       - name: Build and test
         uses: docker/build-push-action@v5
         with:
-          context: ./realTimePollsApp
+          context: .
           file: ./realTimePollsApp/Dockerfile
           target: build
           load: true
@@ -32,8 +32,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./realTimePollsApp
-          file: ./realTimePollsApp/Dockerfile
+          context: .
+          file: ./realTimePollsApp/Dockerfile 
           push: true
           target: final
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:latest
