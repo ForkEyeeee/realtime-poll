@@ -19,6 +19,7 @@ if (builder.Environment.IsDevelopment())
         builder.Configuration.AddJsonFile(secretFilePath, optional: true, reloadOnChange: true);
     }
 }
+else if (builder.Environment.IsProduction()) { }
 
 builder
     .Services.AddAuthentication(options =>
@@ -31,12 +32,33 @@ builder
         GoogleDefaults.AuthenticationScheme,
         options =>
         {
-            options.ClientId = builder.Configuration["GoogleKeys:ClientId"];
-            options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
+            options.ClientId = builder.Environment.IsProduction()
+                ? Environment.GetEnvironmentVariable("GoogleKeys_ClientId")
+                : builder.Configuration["GoogleKeys:ClientId"];
+            options.ClientSecret = builder.Environment.IsProduction()
+                ? Environment.GetEnvironmentVariable("GoogleKeys_ClientSecret")
+                : builder.Configuration["GoogleKeys:ClientSecret"];
             options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
             options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
         }
     );
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<RealTimePollsContext>(options =>
+{
+    string connectionString;
+
+    if (builder.Environment.IsProduction())
+    {
+        connectionString = Environment.GetEnvironmentVariable("DatabaseConnection");
+    }
+    else
+    {
+        connectionString = builder.Configuration["ConnectionStrings:DatabaseConnection"];
+    }
+
+    options.UseNpgsql(connectionString);
+});
 
 // This adds services to the container
 builder.Services.AddControllersWithViews();
