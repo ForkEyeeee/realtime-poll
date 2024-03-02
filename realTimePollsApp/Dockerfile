@@ -9,15 +9,14 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["realTimePolls.csproj", "realTimePollsApp/"]
-RUN dotnet restore "./realTimePollsApp/./realTimePolls.csproj"
-COPY . .
-WORKDIR "/src/realTimePollsApp"
-RUN dotnet build "./realTimePolls.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY ["/realTimePollsApp/realTimePolls.csproj", "./"]
+RUN dotnet restore "./realTimePolls.csproj"
+COPY /realTimePollsApp/ .
+RUN dotnet build "realTimePolls.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./realTimePolls.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "realTimePolls.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
