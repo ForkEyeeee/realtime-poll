@@ -9,7 +9,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["realTimePollsApp/realTimePolls.csproj", "realTimePollsApp/"]
+COPY ["realTimePolls.csproj", "realTimePollsApp/"]
 RUN dotnet restore "./realTimePollsApp/./realTimePolls.csproj"
 COPY . .
 WORKDIR "/src/realTimePollsApp"
