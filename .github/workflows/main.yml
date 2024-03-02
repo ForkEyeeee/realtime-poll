@@ -36,4 +36,5 @@ jobs:
           file: ./realTimePollsApp/Dockerfile 
           push: true
           target: final
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:latest
+          tags: jbrown58/jbrown58-realtime-poll:latest
+
