@@ -27,7 +27,7 @@ namespace HomeUnitTests
             _context = new RealTimePollsContext(options);
 
             //SUT
-            _HomeController = new HomeController(_logger, _context);
+            _HomeController = new HomeController(_logger, _context, null);
         }
 
         [Fact]

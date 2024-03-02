@@ -8,6 +8,18 @@ using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsDevelopment())
+{
+    var secretsPath = "/home/app/.microsoft/usersecrets";
+    var userSecretsId = builder.Configuration["UserSecretsId"];
+    var secretFilePath = Path.Combine(secretsPath, userSecretsId, "secrets.json");
+
+    if (File.Exists(secretFilePath))
+    {
+        builder.Configuration.AddJsonFile(secretFilePath, optional: true, reloadOnChange: true);
+    }
+}
+
 builder
     .Services.AddAuthentication(options =>
     {
@@ -19,10 +31,8 @@ builder
         GoogleDefaults.AuthenticationScheme,
         options =>
         {
-            options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
-            options.ClientSecret = builder
-                .Configuration.GetSection("GoogleKeys:ClientSecret")
-                .Value;
+            options.ClientId = builder.Configuration["GoogleKeys:ClientId"];
+            options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
             options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
             options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
         }
@@ -34,7 +44,7 @@ builder.Services.AddDbContext<RealTimePollsContext>(options =>
 {
     var connectionString = string.Empty;
 
-    connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
+    connectionString = builder.Configuration["ConnectionStrings:DatabaseConnection"];
 
     options.UseNpgsql(connectionString);
 });
