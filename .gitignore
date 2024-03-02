@@ -296,3 +296,4 @@ __pycache__/
 /realTimePollsApp/Dockerfile
 /google_keys.env
 /input.json
+/docker-compose.dcproj
