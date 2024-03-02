@@ -293,3 +293,6 @@ __pycache__/
 /containers/realtimepolls_db-data/global/1213
 /containers/realtimepolls_db-data
 /docker-compose.override.yml
+/realTimePollsApp/Dockerfile
+/google_keys.env
+/input.json
