@@ -28,15 +28,15 @@
             <div id="myModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="fw-bold mb-0" >Create Poll</h2>
+                        <h2 class="fw-bold mb-0">Create Poll</h2>
                         <span class="close">&times;</span>
                     </div>
-    
+
                     <div class="modal-body">
                         @using (Html.BeginForm("Create", "Poll", FormMethod.Post))
                         {
                             <div>
-                                @Html.Label("Title", "Poll Title", new {@class = "required"}) @*first param is for, second is label text*@
+                                @Html.Label("Title", "Poll Title", new { @class = "required" }) @*first param is for, second is label text*@
                                 @Html.TextBox("Title", string.Empty, new { @class = "input-class", @required = "required", @maxLength = 25 }) @*first param is name, secodn is value*@
                             </div>
                             <div>
@@ -60,8 +60,8 @@
                         }
                     </div>
 
-     @*                <div class="modal-footer">
-                        <h3>Modal Footer</h3>
+                    @*                <div class="modal-footer">
+                    <h3>Modal Footer</h3>
                     </div> *@
                 </div>
             </div>
@@ -75,14 +75,14 @@
                                 + Create Poll
                             </button>
 
-                          
+
                         </div>
                     </div>
-                    <div class="dropdown" >
-                        <div class="dropdown-btn" type="button" >
+                    <div class="dropdown">
+                        <div class="dropdown-btn" type="button">
                             <img src="@ViewBag.Message" class="navbar-avatar" />
                         </div>
-                        <ul class="dropdown-menu dropdown-menu-navbar " >
+                        <ul class="dropdown-menu dropdown-menu-navbar ">
                             <a asp-controller="Login" class="dropdown-item logout-btn " asp-action="Logout">Logout</a>
                         </ul>
                     </div>
@@ -138,41 +138,42 @@
 
 
         .Genre {
-            background-color: #f9f9f9; 
-            border: 1px solid #ccc; 
-            padding: 10px; 
-            width: 50%; 
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 50%;
             font-size: 16px;
-            border-radius: 5px; 
+            border-radius: 5px;
         }
-        .Genre:hover {
-            border-color: #888; 
-            cursor: pointer
-        }
+
+            .Genre:hover {
+                border-color: #888;
+                cursor: pointer
+            }
 
         .Genre {
             position: relative;
         }
 
-        .Genre:after {
-            content: '▼';
-            position: absolute;
-            right: 45px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none; 
-            color: #333; 
-        }
+            .Genre:after {
+                content: '▼';
+                position: absolute;
+                right: 45px;
+                top: 50%;
+                transform: translateY(-50%);
+                pointer-events: none;
+                color: #333;
+            }
 
         div.d-flex.flex-column {
             display: flex;
             flex-direction: column;
-            margin-bottom: 20px; 
+            margin-bottom: 20px;
         }
 
-       .modal {
+        .modal {
             background: #2D3748;
-       }
+        }
 
         .required:after {
             content: " *";
@@ -194,10 +195,10 @@
             transition: .3s;
         }
 
-        input[type=text]:focus {
-            border-color: dodgerBlue;
-            box-shadow: 0 0 8px 0 dodgerBlue;
-        }
+            input[type=text]:focus {
+                border-color: dodgerBlue;
+                box-shadow: 0 0 8px 0 dodgerBlue;
+            }
 
         .navbar-avatar {
             width: 40px;
@@ -235,27 +236,26 @@
             border-color: transparent;
         }
 
-        #create-btn:active, #create-btn:hover {
-            background-color: #0dcaf0
-        }
+            #create-btn:active, #create-btn:hover {
+                background-color: #0dcaf0
+            }
 
         .pagination {
-            justify-content:center
+            justify-content: center
         }
 
         .close {
-           color: #aaa;
-           float: right;
-           font-size: 28px;
-           font-weight: bold;
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
         }
 
-       .close:hover, 
-       .close:focus {
-        color: red;
-        cursor: pointer;
-
-    }
+            .close:hover,
+            .close:focus {
+                color: red;
+                cursor: pointer;
+            }
     </style>
 
     @* Populates Genre Dropdown List *@
@@ -278,7 +278,7 @@
             dropdown.forEach(element => {
                 for (let i = 0; i < options.length; i++) {
                     const option = document.createElement("option")
-                    
+
                     option.value = options[i].id
                     option.innerHTML = options[i].name
                     element.appendChild(option)
@@ -319,39 +319,39 @@
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    
- @* Add event listener to genre dropdowns *@
 
-<script>
+    @* Add event listener to genre dropdowns *@
+
+    <script>
         const initializeDropdowns = () => {
 
-        const dropdown = document.querySelector(".dropdown")
-        const ul = document.querySelector(".dropdown-menu")
+            const dropdown = document.querySelector(".dropdown")
+            const ul = document.querySelector(".dropdown-menu")
 
-        if(dropdown === null || ul === null) return
+            if (dropdown === null || ul === null) return
 
-        dropdown.addEventListener('click', (e) => {
-            e.currentTarget.classList.toggle("show")
-            ul.classList.toggle("show")
-        })
-    }
-    initializeDropdowns()
-</script>
+            dropdown.addEventListener('click', (e) => {
+                e.currentTarget.classList.toggle("show")
+                ul.classList.toggle("show")
+            })
+        }
+        initializeDropdowns()
+    </script>
 
     @*Opens and closes modal window*@
 
     <script>
 
         const resetInputs = () => {
-           const title = document.getElementById("Title")
-           const firstOption = document.getElementById("FirstOption")
-           const secondOption = document.getElementById("SecondOption")
-           const genre = document.getElementById("genre")
-           
-           title.value = ""
-           firstOption.value = ""
-           secondOption.value = ""
-           genre.value = "Choose a genre"
+            const title = document.getElementById("Title")
+            const firstOption = document.getElementById("FirstOption")
+            const secondOption = document.getElementById("SecondOption")
+            const genre = document.getElementById("genre")
+
+            title.value = ""
+            firstOption.value = ""
+            secondOption.value = ""
+            genre.value = "Choose a genre"
         }
 
         const initalizeModal = () => {
@@ -394,17 +394,17 @@
 
             if (!avatar || !dropdownMenu) return
 
-                document.addEventListener('click', (e) => {
-                    if (avatar.classList.contains("show") && dropdownMenu.classList.contains("show")) {
-                        if (e.target.parentElement.parentElement !== avatar) {
-                            avatar.classList.toggle("show")
-                            dropdownMenu.classList.toggle("show")
-                        } else {
-                            avatar.classList.add("show")
-                            dropdownMenu.classList.add("show")
-                        }
+            document.addEventListener('click', (e) => {
+                if (avatar.classList.contains("show") && dropdownMenu.classList.contains("show")) {
+                    if (e.target.parentElement.parentElement !== avatar) {
+                        avatar.classList.toggle("show")
+                        dropdownMenu.classList.toggle("show")
+                    } else {
+                        avatar.classList.add("show")
+                        dropdownMenu.classList.add("show")
                     }
-                })
+                }
+            })
         }
 
     </script>

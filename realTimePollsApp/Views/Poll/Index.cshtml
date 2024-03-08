@@ -3,7 +3,6 @@
     var userId = ViewData["UserId"];
 }
 
-
 <div class="main">
     <div class="card">
         <div class="container">
@@ -14,7 +13,7 @@
             <form asp-controller="Poll" asp-action="Vote" method="post" id="form">
                 <ul>
                     <li>
-                        <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.Poll != null && Model.Vote == true ? "checked" : "")>
+                        <input type="radio" id="vote-first" name="vote" value="Vote First" @(Model.Vote == true ? "checked" : "")>
                         <label for="vote-first">@Model.Poll.FirstOption</label>
                         <div class="d-flex flex-column vote-flex">
                             <p class="float-end first-vote-count">@Model.FirstVoteCount Votes</p>
@@ -22,7 +21,7 @@
                         <div class="check"><div class="inside"></div></div>
                     </li>
                     <li>
-                        <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.Poll != null && Model.Vote == false ? "checked" : "")>
+                        <input type="radio" id="vote-second" name="vote" value="Vote Second" @(Model.Vote == false ? "checked" : "")>
                         <label for="vote-second">@Model.Poll.SecondOption</label>
                         <div class="d-flex flex-column vote-flex">
                             <p class="float-end second-vote-count">@Model.SecondVoteCount Votes</p>
@@ -37,7 +36,10 @@
                     {
                         <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Poll", new { pollid = Model.Poll.Id })'" />
                     }
-                    <button type="submit" class="btn btn-success" id="vote-btn">Submit Vote</button>
+                    @if (Context.User.Identity.IsAuthenticated)
+                    {
+                        <button type="submit" class="btn btn-success" id="vote-btn">Submit Vote</button>
+                    }
                 </div>
             </form>
         </div>
