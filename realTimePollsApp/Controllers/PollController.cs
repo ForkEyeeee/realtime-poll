@@ -173,16 +173,15 @@ namespace realTimePolls.Controllers
                 if (userPolls.Any())
                 {
                     _context.UserPoll.RemoveRange(userPolls);
+                    _context.SaveChanges();
                 }
 
                 var poll = _context.Polls.SingleOrDefault(p => p.Id == pollid);
-                if (poll == null)
+                if (poll != null)
                 {
-                    throw new Exception("Could not find pollId");
+                    _context.Polls.Remove(poll);
+                    _context.SaveChanges();
                 }
-
-                _context.Polls.Remove(poll);
-                _context.SaveChanges();
 
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
