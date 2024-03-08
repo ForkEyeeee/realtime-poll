@@ -74,11 +74,50 @@ namespace realTimePolls.Controllers
             return userId;
         }
 
+        public async Task<User> GetUser()
+        {
+            var result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            if (result.Principal == null)
+                throw new Exception("Could not authenticate");
+
+            var claims = result
+                .Principal.Identities.FirstOrDefault()
+                ?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                })
+                .ToList();
+
+            User newUser;
+            string? userName = null;
+            string? userEmail = null;
+
+            if (claims == null || claims.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+            }
+
+            var googleId = claims
+                .FirstOrDefault(c =>
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                )
+                .Value;
+
+            var user = _context.User.SingleOrDefault(user => user.GoogleId == googleId);
+            return user;
+        }
+
         [HttpGet]
         public async Task<ViewResult> Index([FromQuery] string polltitle, int pollid, int userid)
         {
             Poll poll = _context
-                .Polls.Include(p => p.Genre) //maybe do the same ting here for user and poll
+                .Polls.Include(p => p.Genre)
                 .FirstOrDefault(u => u.Id == pollid && u.UserId == userid && u.Title == polltitle);
 
             if (poll == null)
@@ -98,7 +137,11 @@ namespace realTimePolls.Controllers
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 var userId = await GetUserId();
+                var currentUser = _context.UserPoll.FirstOrDefault(up =>
+                    up.UserId == userId && up.PollId == pollid
+                );
                 ViewData["UserId"] = userId;
+                ViewData["CurrentVote"] = currentUser == null ? null : currentUser.Vote;
             }
 
             var viewModel = _context
@@ -198,11 +241,12 @@ namespace realTimePolls.Controllers
         }
 
         [HttpPost]
-        public ActionResult Vote([FromForm] int userid, int pollid, string vote)
+        public async Task<IActionResult> Vote([FromForm] int userid, int pollid, string vote)
         {
             try
             {
                 bool userVoter;
+                var currentUserId = await GetUserId();
 
                 if (vote == "Vote First")
                     userVoter = true;
@@ -211,26 +255,28 @@ namespace realTimePolls.Controllers
                 else
                     throw new Exception("Unable to vote");
 
-                var userPoll = _context.UserPoll.FirstOrDefault(userPoll =>
-                    userPoll.PollId == pollid && userPoll.UserId == userid
+                var currentUserPoll = _context.UserPoll.FirstOrDefault(up =>
+                    up.PollId == pollid && up.UserId == currentUserId
                 );
 
-                UserPoll UserPoll = new UserPoll()
+                if (currentUserPoll == null)
                 {
-                    UserId = userid,
-                    PollId = pollid,
-                    Vote = userVoter
-                };
-
-                if (userPoll == null)
-                    _context.UserPoll.Add(UserPoll);
+                    _context.UserPoll.Add(
+                        new UserPoll
+                        {
+                            UserId = currentUserId,
+                            PollId = pollid,
+                            Vote = userVoter
+                        }
+                    );
+                }
                 else
-                    userPoll.Vote = userVoter;
+                {
+                    currentUserPoll.Vote = userVoter;
+                }
 
                 _context.SaveChanges();
-
                 SendMessage();
-
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
             catch (Exception e)
