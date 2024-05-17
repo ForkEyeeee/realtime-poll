@@ -30,6 +30,6 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="../realTimePollsApp/realTimePolls.csproj" />
+	<ProjectReference Include="../RealTimePolls.App/RealTimePolls.csproj" />
 	</ItemGroup>
 </Project>

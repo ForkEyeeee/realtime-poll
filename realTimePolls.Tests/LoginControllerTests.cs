@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using realTimePolls.Controllers;
-using realTimePolls.Models;
+using RealTimePolls.Data;
 using Xunit;
 
 namespace realTimePolls.Tests
