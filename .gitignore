@@ -11,8 +11,6 @@
 *.userosscache
 *.sln.docstates
 appsettings.json
-/RealTimePolls.App/wwwroot/js/signalr
-RealTimePolls.App/wwwroot/lib/paginationjs/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -275,21 +273,5 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
-/RealTimePolls.App/wwwroot/lib/pagination.js
-/db
-/postgres.env
-/RealTimePolls.App/wwwroot/lib/jquery
-/RealTimePolls.App/wwwroot/lib/jquery-validation/dist
-/RealTimePolls.App/wwwroot/lib/jquery-validation-unobtrusive
-/RealTimePolls.App/wwwroot/lib/jquery-validation/LICENSE.md
-/New folder
-/RealTimePolls.App/db
-/.realtimepolls_db-data
-/containers/products-db
-/containers/realtimepolls_db-data/base
-/containers/realtimepolls_db-data/global
-/containers/realtimepolls_db-data/global/1213
-/containers/realtimepolls_db-data
-/docker-compose.override.yml
-/google_keys.env
-/input.json
+
+/RealTimePolls.App/wwwroot/js/signalr/
