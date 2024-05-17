@@ -275,4 +275,6 @@ __pycache__/
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
 
 #ignore everything in signalr directory
-RealTimePolls.App/wwwroot/js/signalr/*
+RealTimePolls.App/wwwroot/js/signalr/*.ts
+RealTimePolls.App/wwwroot/js/signalr/*.js
+
