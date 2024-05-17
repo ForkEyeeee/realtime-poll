@@ -10,7 +10,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-/realTimePollsApp/wwwroot/js/signalr
+/RealTimePolls.App/wwwroot/js/signalr
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
