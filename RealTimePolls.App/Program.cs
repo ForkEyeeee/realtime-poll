@@ -45,6 +45,14 @@ builder.Services.AddDbContext<RealTimePollsAuthDbContext>(options =>
     )
 );
 
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
+{
+    builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
+    {
+        options.UseInMemoryDatabase("InMemoryDbForTesting");
+    });
+}
+
 builder
     .Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
@@ -54,18 +62,9 @@ builder
 
 // This adds services to the container
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddSignalR();
-
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
-{
-    builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
-    {
-        options.UseInMemoryDatabase("InMemoryDbForTesting");
-    });
-}
 
 var app = builder.Build();
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
@@ -9,7 +11,7 @@ namespace RealTimePolls.Repositories
     {
         Task<List<Poll>> Index();
         Task<IActionResult> GetPolls();
-        Task<IActionResult> GetDropdownList();
-        Task<string> GetUserProfilePicture();
+        Task<List<Genre>> GetDropdownList();
+        Task<string> GetUserProfilePicture(AuthenticateResult result);
     }
 }
