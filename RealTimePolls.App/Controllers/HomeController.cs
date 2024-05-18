@@ -1,197 +1,185 @@
-//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using System.Diagnostics;
-//using System.Net;
-//using System.Text;
-//using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Authentication.Cookies;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using realTimePolls.Models;
-//using RealTimePolls.Data;
-//using RealTimePolls.Models;
-//using RealTimePolls.Models.Domain;
+using System.Diagnostics;
+using System.Text;
+using AutoMapper;
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RealTimePolls.Data;
+using RealTimePolls.Models.Domain;
+using RealTimePolls.Models.DTO;
+using RealTimePolls.Models.ViewModels;
+using RealTimePolls.Repositories;
 
-//namespace realTimePolls.Controllers
-//{
-//    public class HomeController : Controller
-//    {
-//        private readonly ILogger<HomeController> _logger;
+namespace RealTimePolls.Controllers
+{
+    public class HomeController : Controller
+    {
+        private readonly RealTimePollsDbContext dbContext;
 
-//        private readonly RealTimePollsContext _context; // Declare the DbContext variable
+        private readonly IWebHostEnvironment environment;
+        private readonly IHomeRepository homeRepository;
+        private readonly IMapper mapper;
 
-//        private readonly IWebHostEnvironment _environment;
+        public HomeController(
+            RealTimePollsDbContext dbContext,
+            IWebHostEnvironment environment,
+            IHomeRepository homeRepository,
+            IMapper mapper
+        )
+        {
+            this.dbContext = dbContext;
+            this.environment = environment;
+            this.homeRepository = homeRepository;
+            this.mapper = mapper;
+        }
 
-//        public HomeController(
-//            ILogger<HomeController> logger,
-//            RealTimePollsContext context,
-//            IWebHostEnvironment environment
-//        ) // Inject DbContext in the constructor
-//        {
-//            _logger = logger;
-//            _context = context; // Initialize the _context variable. This the DbContext instance.
-//            _environment = environment;
-//        }
+        // Get all polls
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var polls = await homeRepository.Index();
 
-//        [HttpGet]
-//        public async Task<IActionResult> Index()
-//        {
-//            try
-//            {
-//                var polls = _context
-//                    .Polls.Include(p => p.Genre)
-//                    .Select(p => new PollItem
-//                    {
-//                        Poll = p,
-//                        FirstVoteCount = _context
-//                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
-//                            .Count(),
-//                        SecondVoteCount = _context
-//                            .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
-//                            .Count(),
-//                        UserName = _context.User.SingleOrDefault(user => user.Id == p.UserId).Name,
-//                        ProfilePicture = _context
-//                            .User.SingleOrDefault(user => user.Id == p.UserId)
-//                            .ProfilePicture
-//                    })
-//                    .ToList();
+            //var homeViewModel = mapper.Map<HomeViewModel>(polls);
 
-//                int pollCount = _context.Polls.Count();
-//                var viewModel = new PollsList
-//                {
-//                    Polls = polls,
-//                    EnvironmentName = _environment.EnvironmentName
-//                };
+            //int pollCount = dbContext.Polls.Count();
+            return View(polls);
 
-//                if (HttpContext.User.Identity.IsAuthenticated)
-//                {
-//                    var profilePicture = await GetUserProfilePicture();
-//                    viewModel.UserProfilePicture = profilePicture;
-//                }
-//                return View(viewModel);
-//            }
-//            catch (Exception e)
-//            {
-//                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-//                return View("Error", errorViewModel);
-//            }
-//        }
+            //var polls = new List<Poll>();
 
-//        public async Task<string> GetUserProfilePicture()
-//        {
-//            var result = await HttpContext.AuthenticateAsync(
-//                CookieAuthenticationDefaults.AuthenticationScheme
-//            );
+            //foreach (var poll in polls)
+            //{
+            //    polls.Add(poll);
+            //}
 
-//            if (result.Principal == null)
-//                return string.Empty;
+            //{
+            //    Polls = polls,
+            //    EnvironmentName = _environment.EnvironmentName
+            //};
 
-//            var claims = result
-//                .Principal.Identities.FirstOrDefault()
-//                ?.Claims.Select(claim => new
-//                {
-//                    claim.Issuer,
-//                    claim.OriginalIssuer,
-//                    claim.Type,
-//                    claim.Value
-//                })
-//                .ToList();
+            //if (HttpContext.User.Identity.IsAuthenticated)
+            //{
+            //    var profilePicture = await GetUserProfilePicture();
+            //    viewModel.UserProfilePicture = profilePicture;
+            //}
+        }
+    }
 
-//            User newUser;
-//            string? userName = null;
-//            string? userEmail = null;
+    //public async Task<string> GetUserProfilePicture()
+    //{
+    //    var result = await HttpContext.AuthenticateAsync(
+    //        CookieAuthenticationDefaults.AuthenticationScheme
+    //    );
 
-//            if (claims == null || claims.Count == 0)
-//            {
-//                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
-//            }
+    //    if (result.Principal == null)
+    //        return string.Empty;
 
-//            var googleId = claims
-//                .FirstOrDefault(c =>
-//                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-//                )
-//                .Value;
+    //    var claims = result
+    //        .Principal.Identities.FirstOrDefault()
+    //        ?.Claims.Select(claim => new
+    //        {
+    //            claim.Issuer,
+    //            claim.OriginalIssuer,
+    //            claim.Type,
+    //            claim.Value
+    //        })
+    //        .ToList();
 
-//            string profilePicture = _context
-//                .User.SingleOrDefault(user => user.GoogleId == googleId)
-//                .ProfilePicture;
+    //    User newUser;
+    //    string? userName = null;
+    //    string? userEmail = null;
 
-//            if (profilePicture != null)
-//                return profilePicture;
-//            else
-//                return string.Empty;
-//        }
+    //    if (claims == null || claims.Count == 0)
+    //    {
+    //        throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+    //    }
 
-//        [HttpPost]
-//        public IActionResult Poll(string pollName)
-//        {
-//            try
-//            {
-//                Poll poll = _context.Polls.FirstOrDefault(u => u.Title == pollName);
+    //    var googleId = claims
+    //        .FirstOrDefault(c =>
+    //            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+    //        )
+    //        .Value;
 
-//                if (poll == null)
-//                    throw new Exception("Poll cannot be found");
+    //    string profilePicture = _context
+    //        .User.SingleOrDefault(user => user.GoogleId == googleId)
+    //        .ProfilePicture;
 
-//                int firstVoteCount = _context.UserPoll.Count(up =>
-//                        up.PollId == poll.Id && up.Vote == true
-//                    ),
-//                    secondVoteCount = _context.UserPoll.Count(up =>
-//                        up.PollId == poll.Id && up.Vote == true
-//                    );
+    //    if (profilePicture != null)
+    //        return profilePicture;
+    //    else
+    //        return string.Empty;
+    //}
 
-//                var viewModel = _context
-//                    .Polls.Select(p => new PollItem
-//                    {
-//                        Poll = poll,
-//                        FirstVoteCount = firstVoteCount,
-//                        SecondVoteCount = secondVoteCount
-//                    })
-//                    .ToList();
+    //[HttpPost]
+    //public IActionResult Poll(string pollName)
+    //{
+    //    try
+    //    {
+    //        Poll poll = _context.Polls.FirstOrDefault(u => u.Title == pollName);
 
-//                return View("index", viewModel);
-//            }
-//            catch (Exception e)
-//            {
-//                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-//                return View("Error", errorViewModel);
-//            }
-//        }
+    //        if (poll == null)
+    //            throw new Exception("Poll cannot be found");
 
-//        [HttpPost]
-//        public async Task<IActionResult> GetRawContent()
-//        {
-//            try
-//            {
-//                string rawContent = string.Empty;
-//                using (
-//                    var reader = new StreamReader(
-//                        Request.Body,
-//                        encoding: Encoding.UTF8,
-//                        detectEncodingFromByteOrderMarks: false
-//                    )
-//                )
-//                {
-//                    rawContent = await reader.ReadToEndAsync();
-//                }
-//                return Ok(rawContent);
-//            }
-//            catch (Exception e)
-//            {
-//                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-//                return View("Error", errorViewModel);
-//            }
-//        }
+    //        int firstVoteCount = _context.UserPoll.Count(up =>
+    //                up.PollId == poll.Id && up.Vote == true
+    //            ),
+    //            secondVoteCount = _context.UserPoll.Count(up =>
+    //                up.PollId == poll.Id && up.Vote == true
+    //            );
 
-//        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-//        public IActionResult Error()
-//        {
-//            return View(
-//                new ErrorViewModel
-//                {
-//                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-//                }
-//            );
-//        }
-//    }
-//}
+    //        var viewModel = _context
+    //            .Polls.Select(p => new PollItem
+    //            {
+    //                Poll = poll,
+    //                FirstVoteCount = firstVoteCount,
+    //                SecondVoteCount = secondVoteCount
+    //            })
+    //            .ToList();
+
+    //        return View("index", viewModel);
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+    //        return View("Error", errorViewModel);
+    //    }
+    //}
+
+    //[HttpPost]
+    //public async Task<IActionResult> GetRawContent()
+    //{
+    //    try
+    //    {
+    //        string rawContent = string.Empty;
+    //        using (
+    //            var reader = new StreamReader(
+    //                Request.Body,
+    //                encoding: Encoding.UTF8,
+    //                detectEncodingFromByteOrderMarks: false
+    //            )
+    //        )
+    //        {
+    //            rawContent = await reader.ReadToEndAsync();
+    //        }
+    //        return Ok(rawContent);
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+    //        return View("Error", errorViewModel);
+    //    }
+    //}
+
+    //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    //public IActionResult Error()
+    //{
+    //    return View(
+    //        new ErrorViewModel
+    //        {
+    //            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+    //        }
+    //    );
+    //}
+    //}
+}

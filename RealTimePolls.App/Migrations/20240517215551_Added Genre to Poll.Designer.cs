@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealTimePolls.Data;
 
@@ -11,9 +12,11 @@ using RealTimePolls.Data;
 namespace RealTimePolls.Migrations
 {
     [DbContext(typeof(RealTimePollsDbContext))]
-    partial class RealTimePollsContextModelSnapshot : ModelSnapshot
+    [Migration("20240517215551_Added Genre to Poll")]
+    partial class AddedGenretoPoll
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,26 +175,6 @@ namespace RealTimePolls.Migrations
                     b.HasIndex("GenreId");
 
                     b.ToTable("Polls");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FirstOption = "Chicken",
-                            GenreId = 13,
-                            SecondOption = "Egg",
-                            Title = "Which came first?",
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FirstOption = "First choice",
-                            GenreId = 13,
-                            SecondOption = "Second choice",
-                            Title = "What's your option?",
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("RealTimePolls.Models.Domain.User", b =>

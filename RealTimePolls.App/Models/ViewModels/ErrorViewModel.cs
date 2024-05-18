@@ -1,4 +1,4 @@
-namespace realTimePolls.Models
+namespace RealTimePolls.Models.ViewModels
 {
     public class ErrorViewModel
     {

@@ -3,9 +3,9 @@ using RealTimePolls.Models.Domain;
 
 namespace RealTimePolls.Data
 {
-    public class RealTimePollsContext : DbContext
+    public class RealTimePollsDbContext : DbContext
     {
-        public RealTimePollsContext(DbContextOptions<RealTimePollsContext> options)
+        public RealTimePollsDbContext(DbContextOptions<RealTimePollsDbContext> options)
             : base(options) { }
 
         public DbSet<Poll> Polls { get; set; }
@@ -39,6 +39,29 @@ namespace RealTimePolls.Data
                 new Genre { Id = 20, Name = "DIY & Crafts" }
             };
 
+            var polls = new List<Poll>
+            {
+                new Poll
+                {
+                    Id = 1,
+                    FirstOption = "Chicken",
+                    SecondOption = "Egg",
+                    Title = "Which came first?",
+                    GenreId = 13,
+                    UserId = 1,
+                },
+                new Poll
+                {
+                    Id = 2,
+                    FirstOption = "First choice",
+                    SecondOption = "Second choice",
+                    Title = "What's your option?",
+                    GenreId = 13,
+                    UserId = 1,
+                },
+            };
+
+            modelBuilder.Entity<Poll>().HasData(polls);
             modelBuilder.Entity<Genre>().HasData(genres);
         }
     }

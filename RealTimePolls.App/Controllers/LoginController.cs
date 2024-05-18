@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
-using realTimePolls.Models;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
+using RealTimePolls.Models.ViewModels;
 
 namespace realTimePolls.Controllers
 {
@@ -13,9 +13,9 @@ namespace realTimePolls.Controllers
     {
         private readonly ILogger<LoginController> _logger;
 
-        private readonly RealTimePollsContext _context; // Declare the DbContext variable
+        private readonly RealTimePollsDbContext _context; // Declare the DbContext variable
 
-        public LoginController(ILogger<LoginController> logger, RealTimePollsContext context)
+        public LoginController(ILogger<LoginController> logger, RealTimePollsDbContext context)
         {
             _logger = logger;
             _context = context;

@@ -1,7 +1,14 @@
-﻿@model realTimePolls.Models.PollsList
-@{
-    ViewBag.Message = @Model.UserProfilePicture;
-}
+﻿@model List<RealTimePolls.Models.Domain.Poll>;
+
+<div>
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var poll in Model)
+        {
+            <p>adsad</p>
+        }
+    }
+</div>
 
 <div class="text-center pt-0">
     @if (Context.User.Identity.IsAuthenticated)
@@ -75,13 +82,12 @@
 @*Sets global base url*@
 
 <script>
-    const environment = @Html.Raw(Json.Serialize(@Model.EnvironmentName))
-    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" :`https://localhost:${location.port}/`;
+    const baseURL = `https://localhost:${location.port}/`;
 </script>
 
 @* Connects client to signalR server *@
 
-<script>   
+<script>
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/pollHub")
         .configureLogging(signalR.LogLevel.Information)
@@ -110,52 +116,52 @@
 <script>
     function template(polls) {
         let html = `<tr>
-                            <th>User</th>
-                            <th>Title</th>
-                            <th>First Option</th>
-                            <th>Second Option</th>
-                            <th>First Vote Count</th>
-                            <th>Second Vote Count</th>
-                            <th>Genre</th>
-                        </tr>`
+                                    <th>User</th>
+                                    <th>Title</th>
+                                    <th>First Option</th>
+                                    <th>Second Option</th>
+                                    <th>First Vote Count</th>
+                                    <th>Second Vote Count</th>
+                                    <th>Genre</th>
+                                </tr>`
 
         polls.forEach(poll => {
 
             html += `
-                            <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
-                            <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
-                                <div class="user-flex">
-                                    <img src="${poll.profilePicture}" alt="user-image" class="avatar">
-                                    <p class="user-text">${poll.userName}</p>
-                                </div>
-                            </td>
-                            <td data-th="Title" class="table-cell">
-                                ${poll.poll.title}
-                            </td>
-                            <td data-th="First Option" class="table-cell">
-                                ${poll.poll.firstOption}
-                            </td>
-                            <td data-th="Second Option" class="table-cell">
-                                ${poll.poll.secondOption}
-                            </td>
-                            <td data-th="First Count" class="table-cell">
-                                <span class="first-votes">${poll.firstVoteCount}</span>
-                            </td>
-                            <td data-th="Second Count" class="table-cell">
-                                <span class="second-votes">${poll.secondVoteCount}</span>
-                            </td>
-                            <td data-th="Genre" class="table-cell">
-                                <span>${poll.poll.genre.name}</span>
-                            </td>
-                        </tr>
-                    `;
+                                    <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
+                                    <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
+                                        <div class="user-flex">
+                                            <img src="${poll.profilePicture}" alt="user-image" class="avatar">
+                                            <p class="user-text">${poll.userName}</p>
+                                        </div>
+                                    </td>
+                                    <td data-th="Title" class="table-cell">
+                                        ${poll.poll.title}
+                                    </td>
+                                    <td data-th="First Option" class="table-cell">
+                                        ${poll.poll.firstOption}
+                                    </td>
+                                    <td data-th="Second Option" class="table-cell">
+                                        ${poll.poll.secondOption}
+                                    </td>
+                                    <td data-th="First Count" class="table-cell">
+                                        <span class="first-votes">${poll.firstVoteCount}</span>
+                                    </td>
+                                    <td data-th="Second Count" class="table-cell">
+                                        <span class="second-votes">${poll.secondVoteCount}</span>
+                                    </td>
+                                    <td data-th="Genre" class="table-cell">
+                                        <span>${poll.poll.genre.name}</span>
+                                    </td>
+                                </tr>
+                            `;
         });
         html += '</tbody></table>';
         return html;
     }
 
     const getData = async (page) => {
-    
+
         const url = page === undefined ? baseURL + "Polls/Index" : baseURL + "Polls/Index" + `?page=${page}`
 
         const userId = {
@@ -167,7 +173,7 @@
                 'Accept': 'application/json'
             }
         })
-
+        console.log(response)
         if (!response.ok) throw new Error("Failed to fetch polls")
 
         const polls = await response.json()
@@ -197,7 +203,7 @@
         const tableBody = document.querySelector("#data-container");
         const paginationContainer = document.querySelector("#pagination-container")
         const noPollsMessage = document.querySelector(".no-polls-msg")
-        
+
         if (polls.length === 0) {
             tableBody.style.display = "none"
             paginationContainer.firstElementChild.style.display = "none"
@@ -224,7 +230,7 @@
             paginationContainer.style.display = "none"
             noPollsMessage.style.display = "block"
         }
-        
+
         $('#pagination-container').pagination({
             dataSource: polls,
             pageSize: 5,
@@ -408,7 +414,7 @@
 @* Updates the DOM after client receives message from the server *@
 
 <script>
-    hubConnection.on("ReceiveMessage", async (user, message) => { 
+    hubConnection.on("ReceiveMessage", async (user, message) => {
         try {
             const currentUrl = window.location.href
             const searchParams = new URLSearchParams(window.location.search);

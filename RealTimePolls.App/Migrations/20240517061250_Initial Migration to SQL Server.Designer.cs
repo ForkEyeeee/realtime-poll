@@ -11,7 +11,7 @@ using RealTimePolls.Data;
 
 namespace RealTimePolls.Migrations
 {
-    [DbContext(typeof(RealTimePollsContext))]
+    [DbContext(typeof(RealTimePollsDbContext))]
     [Migration("20240517061250_Initial Migration to SQL Server")]
     partial class InitialMigrationtoSQLServer
     {

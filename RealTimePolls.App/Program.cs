@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
+using RealTimePolls.Mappings;
+using RealTimePolls.Repositories;
 using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,18 +34,20 @@ builder
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<RealTimePollsContext>(options =>
+builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RealTimePollsConnectionString"))
 );
 
 // This adds services to the container
 builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
 
 builder.Services.AddSignalR();
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 {
-    builder.Services.AddDbContext<RealTimePollsContext>(options =>
+    builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
     {
         options.UseInMemoryDatabase("InMemoryDbForTesting");
     });
