@@ -11,7 +11,6 @@ namespace RealTimePolls.Mappings
         {
             CreateMap<Poll, PollDto>().ReverseMap();
             CreateMap<List<PollDto>, HomeViewModel>().ReverseMap();
-            CreateMap<List<Poll>, HomeViewModel>().ReverseMap();
             CreateMap<Poll, HomeViewModel>().ReverseMap();
         }
     }

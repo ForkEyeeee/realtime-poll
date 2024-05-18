@@ -1,11 +1,11 @@
-﻿@model List<RealTimePolls.Models.Domain.Poll>;
+﻿@model List<RealTimePolls.Models.ViewModels.HomeViewModel>;
 
 <div>
     @if (Model != null && Model.Any())
     {
         @foreach (var poll in Model)
         {
-            <p>adsad</p>
+            <p>test</p>
         }
     }
 </div>
@@ -83,6 +83,10 @@
 
 <script>
     const baseURL = `https://localhost:${location.port}/`;
+
+    const model = @Html.Raw(Json.Serialize(@Model))
+   
+
 </script>
 
 @* Connects client to signalR server *@
@@ -128,21 +132,21 @@
         polls.forEach(poll => {
 
             html += `
-                                    <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.poll.title}&pollid=${poll.poll.id}&userid=${poll.poll.userId}'">
-                                    <td data-th="User" data-id="${poll.poll.id}" class="table-cell">
+                                    <tr class="table-data" onclick="window.location.href='/Poll?polltitle=${poll.title}&pollid=${poll.id}&userid=${poll.userId}'">
+                                    <td data-th="User" data-id="${poll.id}" class="table-cell">
                                         <div class="user-flex">
-                                            <img src="${poll.profilePicture}" alt="user-image" class="avatar">
-                                            <p class="user-text">${poll.userName}</p>
+                                            <img src="${poll.user.profilePicture}" alt="user-image" class="avatar">
+                                            <p class="user-text">${poll.user.name}</p>
                                         </div>
                                     </td>
                                     <td data-th="Title" class="table-cell">
-                                        ${poll.poll.title}
+                                        ${poll.title}
                                     </td>
                                     <td data-th="First Option" class="table-cell">
-                                        ${poll.poll.firstOption}
+                                        ${poll.firstOption}
                                     </td>
                                     <td data-th="Second Option" class="table-cell">
-                                        ${poll.poll.secondOption}
+                                        ${poll.secondOption}
                                     </td>
                                     <td data-th="First Count" class="table-cell">
                                         <span class="first-votes">${poll.firstVoteCount}</span>
@@ -151,7 +155,7 @@
                                         <span class="second-votes">${poll.secondVoteCount}</span>
                                     </td>
                                     <td data-th="Genre" class="table-cell">
-                                        <span>${poll.poll.genre.name}</span>
+                                        <span>${poll.genre.name}</span>
                                     </td>
                                 </tr>
                             `;
@@ -161,9 +165,8 @@
     }
 
     const getData = async (page) => {
-
-        const url = page === undefined ? baseURL + "Polls/Index" : baseURL + "Polls/Index" + `?page=${page}`
-
+        //data is in model
+        const url = page === undefined ? baseURL + "Home/GetPolls" : baseURL + "Home/GetPolls" + `?page=${page}`
         const userId = {
             Id: hubConnection.connection.connectionId
         }
@@ -173,11 +176,14 @@
                 'Accept': 'application/json'
             }
         })
-        console.log(response)
         if (!response.ok) throw new Error("Failed to fetch polls")
 
         const polls = await response.json()
-        return polls
+        console.log(polls, polls.length)
+        return { 
+            polls: polls, 
+            pollCount: polls.length
+        }
     }
 
     const getSearchResults = async (text, page) => {
@@ -230,7 +236,6 @@
             paginationContainer.style.display = "none"
             noPollsMessage.style.display = "block"
         }
-
         $('#pagination-container').pagination({
             dataSource: polls,
             pageSize: 5,

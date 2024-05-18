@@ -18,5 +18,7 @@ namespace RealTimePolls.Models.Domain
 
         //Navigation properties
         public Genre Genre { get; set; }
+
+        public User User { get; set; }
     }
 }

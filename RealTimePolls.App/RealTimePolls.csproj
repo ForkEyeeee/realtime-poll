@@ -45,6 +45,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Migrations\RealTimePollsAuthDb\" />
   </ItemGroup>
 
 	<ItemGroup>

@@ -7,7 +7,7 @@ using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.ViewModels;
 
-namespace realTimePolls.Controllers
+namespace RealTimePolls.Controllers
 {
     public class LoginController : Controller
     {

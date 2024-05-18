@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
 using RealTimePolls.Mappings;
@@ -38,11 +39,24 @@ builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RealTimePollsConnectionString"))
 );
 
+builder.Services.AddDbContext<RealTimePollsAuthDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("RealTimePollsAuthConnectionString")
+    )
+);
+
+builder
+    .Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("RealTimePolls")
+    .AddEntityFrameworkStores<RealTimePollsAuthDbContext>()
+    .AddDefaultTokenProviders();
+
 // This adds services to the container
 builder.Services.AddControllersWithViews();
-builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
 
+builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddSignalR();
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")

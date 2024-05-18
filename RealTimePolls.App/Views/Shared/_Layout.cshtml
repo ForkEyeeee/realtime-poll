@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var userId = Context.User.Identity.Name;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -261,8 +265,9 @@
     @* Populates Genre Dropdown List *@
 
     <script>
+        console.log(@Html.Raw(userId))
         const getDropdownList = async () => {
-            const url = `${baseURL}Polls/GetDropdownList`
+            const url = `${baseURL}Home/GetDropdownList`
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
@@ -270,7 +275,7 @@
                 }
             })
 
-            if (!response.ok) throw new Error("Failed to fetch profile picture")
+            if (!response.ok) throw new Error("Failed to fetch dropdown list")
 
             const { options } = await response.json()
             const dropdown = document.querySelectorAll(".Genre")
@@ -295,7 +300,7 @@
     <script>
         const getProfilePicture = async () => {
             const url = `${baseURL}Home/GetUserProfilePicture`
-
+            // pass userid to server
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
@@ -305,9 +310,10 @@
             })
 
             if (!response.ok) throw new Error("Failed to fetch profile picture")
-
             const profilePicture = await response.json()
             const avatar = document.querySelector(".navbar-avatar")
+
+
 
             if (!profilePicture) return
 

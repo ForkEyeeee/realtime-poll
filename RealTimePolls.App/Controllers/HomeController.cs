@@ -4,6 +4,7 @@ using AutoMapper;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
@@ -21,95 +22,142 @@ namespace RealTimePolls.Controllers
         private readonly IWebHostEnvironment environment;
         private readonly IHomeRepository homeRepository;
         private readonly IMapper mapper;
+        private readonly UserManager<IdentityUser> userManager;
 
         public HomeController(
             RealTimePollsDbContext dbContext,
             IWebHostEnvironment environment,
             IHomeRepository homeRepository,
-            IMapper mapper
+            IMapper mapper,
+            UserManager<IdentityUser> userManager
         )
         {
             this.dbContext = dbContext;
             this.environment = environment;
             this.homeRepository = homeRepository;
             this.mapper = mapper;
+            this.userManager = userManager;
         }
 
-        // Get all polls
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var domainPolls = await homeRepository.Index();
+
+            var polls = domainPolls.Select(p => new HomeViewModel
+            {
+                Poll = mapper.Map<PollDto>(p),
+                FirstVoteCount = dbContext
+                    .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
+                    .Count(),
+                SecondVoteCount = dbContext
+                    .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
+                    .Count(),
+                UserName = dbContext.User.SingleOrDefault(user => user.Id == p.UserId).Name,
+                ProfilePicture = dbContext
+                    .User.SingleOrDefault(user => user.Id == p.UserId)
+                    .ProfilePicture
+            });
+
+            var homeViewModel = new List<HomeViewModel>();
+
+            foreach (var poll in polls)
+            {
+                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
+            }
+
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPolls()
+        {
             var polls = await homeRepository.Index();
 
-            //var homeViewModel = mapper.Map<HomeViewModel>(polls);
+            var homeViewModel = new List<HomeViewModel>();
 
-            //int pollCount = dbContext.Polls.Count();
-            return View(polls);
+            foreach (var poll in polls)
+            {
+                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
+            }
 
-            //var polls = new List<Poll>();
+            return Json(homeViewModel);
+        }
 
-            //foreach (var poll in polls)
-            //{
-            //    polls.Add(poll);
-            //}
+        [HttpGet]
+        public IActionResult GetDropdownList()
+        {
+            try
+            {
+                var dropdownList = dbContext.Genre.OrderBy(g => g.Name).ToList();
 
-            //{
-            //    Polls = polls,
-            //    EnvironmentName = _environment.EnvironmentName
-            //};
+                var options = new { options = dropdownList };
 
-            //if (HttpContext.User.Identity.IsAuthenticated)
-            //{
-            //    var profilePicture = await GetUserProfilePicture();
-            //    viewModel.UserProfilePicture = profilePicture;
-            //}
+                return Json(options);
+            }
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            }
+        }
+
+        public async Task<string> GetUserProfilePicture()
+        {
+            var result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            if (result.Principal == null)
+                return string.Empty;
+
+            var claims = result
+                .Principal.Identities.FirstOrDefault()
+                ?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                })
+                .ToList();
+
+            User newUser;
+            string? userName = null;
+            string? userEmail = null;
+
+            if (claims == null || claims.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+            }
+
+            var googleId = claims
+                .FirstOrDefault(c =>
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                )
+                .Value;
+
+            string profilePicture = dbContext
+                .User.SingleOrDefault(user => user.GoogleId == googleId)
+                .ProfilePicture;
+
+            if (profilePicture != null)
+                return profilePicture;
+            else
+                return string.Empty;
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(
+                new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                }
+            );
         }
     }
-
-    //public async Task<string> GetUserProfilePicture()
-    //{
-    //    var result = await HttpContext.AuthenticateAsync(
-    //        CookieAuthenticationDefaults.AuthenticationScheme
-    //    );
-
-    //    if (result.Principal == null)
-    //        return string.Empty;
-
-    //    var claims = result
-    //        .Principal.Identities.FirstOrDefault()
-    //        ?.Claims.Select(claim => new
-    //        {
-    //            claim.Issuer,
-    //            claim.OriginalIssuer,
-    //            claim.Type,
-    //            claim.Value
-    //        })
-    //        .ToList();
-
-    //    User newUser;
-    //    string? userName = null;
-    //    string? userEmail = null;
-
-    //    if (claims == null || claims.Count == 0)
-    //    {
-    //        throw new ArgumentOutOfRangeException("Claims count cannot be 0");
-    //    }
-
-    //    var googleId = claims
-    //        .FirstOrDefault(c =>
-    //            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-    //        )
-    //        .Value;
-
-    //    string profilePicture = _context
-    //        .User.SingleOrDefault(user => user.GoogleId == googleId)
-    //        .ProfilePicture;
-
-    //    if (profilePicture != null)
-    //        return profilePicture;
-    //    else
-    //        return string.Empty;
-    //}
 
     //[HttpPost]
     //public IActionResult Poll(string pollName)
@@ -171,15 +219,5 @@ namespace RealTimePolls.Controllers
     //    }
     //}
 
-    //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    //public IActionResult Error()
-    //{
-    //    return View(
-    //        new ErrorViewModel
-    //        {
-    //            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-    //        }
-    //    );
-    //}
     //}
 }
