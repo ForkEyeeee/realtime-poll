@@ -23,15 +23,12 @@ namespace RealTimePolls.Repositories
     public class SQLHomeRepository : IHomeRepository
     {
         private readonly RealTimePollsDbContext dbContext;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
         public SQLHomeRepository(
-            RealTimePollsDbContext dbContext,
-            IHttpContextAccessor httpContextAccessor
+            RealTimePollsDbContext dbContext
         )
         {
             this.dbContext = dbContext;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<Genre>> GetDropdownList()
