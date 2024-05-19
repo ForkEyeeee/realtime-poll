@@ -1,6 +1,6 @@
 ﻿@model List<RealTimePolls.Models.ViewModels.HomeViewModel>;
 
-<div>
+@* <div>
     @if (Model != null && Model.Any())
     {
         @foreach (var poll in Model)
@@ -8,7 +8,7 @@
             <p>test</p>
         }
     }
-</div>
+</div> *@
 
 <div class="text-center pt-0">
     @if (Context.User.Identity.IsAuthenticated)

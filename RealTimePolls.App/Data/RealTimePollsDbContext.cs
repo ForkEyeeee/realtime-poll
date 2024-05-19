@@ -47,7 +47,7 @@ namespace RealTimePolls.Data
                     FirstOption = "Chicken",
                     SecondOption = "Egg",
                     Title = "Which came first?",
-                    GenreId = 13,
+                    GenreId = 2,
                     UserId = 1,
                 },
                 new Poll
@@ -55,14 +55,14 @@ namespace RealTimePolls.Data
                     Id = 2,
                     FirstOption = "First choice",
                     SecondOption = "Second choice",
-                    Title = "What's your option?",
-                    GenreId = 13,
+                    Title = "What is your option?",
+                    GenreId = 5,
                     UserId = 1,
                 },
             };
+            modelBuilder.Entity<Genre>().HasData(genres);
 
             modelBuilder.Entity<Poll>().HasData(polls);
-            modelBuilder.Entity<Genre>().HasData(genres);
         }
     }
 }

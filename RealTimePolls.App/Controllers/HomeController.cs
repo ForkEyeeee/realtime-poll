@@ -99,10 +99,6 @@ namespace RealTimePolls.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme
             );
 
-            //if (result.Principal == null)
-            //    return string.Empty;
-
-
             var profilePicture = await homeRepository.GetUserProfilePicture(result);
 
             return profilePicture;
