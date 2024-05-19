@@ -66,6 +66,8 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
         options.UseInMemoryDatabase("InMemoryDbForTesting");
     });
 }
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<SQLHomeRepository>();
 
 var app = builder.Build();
 
