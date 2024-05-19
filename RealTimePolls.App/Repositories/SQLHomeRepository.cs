@@ -2,14 +2,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using RealTimePolls.Data;
@@ -18,7 +15,6 @@ using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.DTO;
-using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 

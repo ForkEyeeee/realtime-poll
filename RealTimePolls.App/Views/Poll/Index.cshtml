@@ -143,8 +143,7 @@
 @*Sets global base url*@
 
 <script>
-    const environment = @Html.Raw(Json.Serialize(@Model.EnvironmentName))
-    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : `https://localhost:${location.port}/`;
+    const baseURL = `https://localhost:${location.port}/`;
 </script>
 
 @* Connects client to signalR server *@

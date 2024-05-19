@@ -265,7 +265,6 @@
     @* Populates Genre Dropdown List *@
 
     <script>
-        console.log(@Html.Raw(userId))
         const getDropdownList = async () => {
             const url = `${baseURL}Home/GetDropdownList`
             const response = await fetch(url, {
@@ -277,9 +276,9 @@
 
             if (!response.ok) throw new Error("Failed to fetch dropdown list")
 
-            const { options } = await response.json()
+            const options = await response.json()
             const dropdown = document.querySelectorAll(".Genre")
-
+            console.log(options)
             dropdown.forEach(element => {
                 for (let i = 0; i < options.length; i++) {
                     const option = document.createElement("option")

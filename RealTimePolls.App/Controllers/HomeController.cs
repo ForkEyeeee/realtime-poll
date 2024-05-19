@@ -94,21 +94,97 @@ namespace RealTimePolls.Controllers
 
             return genreOptions;
         }
+                var options = new { options = dropdownList };
 
-        [HttpGet]
-        public async Task<string> GetUserProfilePicture()
-        {
-            AuthenticateResult result = await HttpContext.AuthenticateAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
-
-            //if (result.Principal == null)
-            //    return string.Empty;
-
-
+                return Json(options);
+            }
+            catch (Exception e)
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
             var profilePicture = await homeRepository.GetUserProfilePicture(result);
 
             return profilePicture;
+            {
+                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
+                return View("Error", errorViewModel);
+            if (result.Principal == null)
+                return string.Empty;
+
+            var claims = result
+                .Principal.Identities.FirstOrDefault()
+                ?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                })
+                .ToList();
+
+            User newUser;
+            string? userName = null;
+            string? userEmail = null;
+
+            if (claims == null || claims.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+            }
+
+            var googleId = claims
+                .FirstOrDefault(c =>
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                )
+                .Value;
+
+            string profilePicture = dbContext
+                .User.SingleOrDefault(user => user.GoogleId == googleId)
+                .ProfilePicture;
+
+            if (profilePicture != null)
+                return profilePicture;
+            else
+                return string.Empty;
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            if (result.Principal == null)
+                return string.Empty;
+
+            var claims = result
+                .Principal.Identities.FirstOrDefault()
+                ?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                })
+                .ToList();
+
+            User newUser;
+            string? userName = null;
+            string? userEmail = null;
+
+            if (claims == null || claims.Count == 0)
+            {
+                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+            }
+
+            var googleId = claims
+                .FirstOrDefault(c =>
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                )
+                .Value;
+
+            string profilePicture = dbContext
+                .User.SingleOrDefault(user => user.GoogleId == googleId)
+                .ProfilePicture;
+
+            if (profilePicture != null)
+                return profilePicture;
+            else
+                return string.Empty;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
