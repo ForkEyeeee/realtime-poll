@@ -86,7 +86,60 @@ namespace RealTimePolls.Repositories
 
         public async Task<List<Poll>> Index()
         {
-            var polls = await dbContext.Polls.Include("Genre").Include("User").ToListAsync();
+            var domainPolls = await dbContext.Polls.Include(p => p.User).Include(p => p.Genre).ToListAsync();
+
+           domainPolls = await this.GetVoteCounts(domainPolls);
+
+           domainPolls = await this.GetProfilePictures(domainPolls);
+
+            //one method to get polls
+            //anothe rmethod to get vote count for each poll
+            //another method to get profiel picture
+
+ 
+            return domainPolls;
+        }
+
+        private async Task<List<Poll>> GetVoteCounts(List<Poll> polls)
+        {
+            var userpolls = await dbContext.UserPoll.ToListAsync();
+
+            foreach (var poll in polls)
+            {
+                poll.FirstVoteCount = userpolls.Where(up => up.PollId == up.Id && up.Vote == true).Count();
+
+                poll.SecondVoteCount = userpolls.Where(up => up.PollId == up.Id && up.Vote == false).Count();
+            }
+     
+
+
+            //var polls = domainPolls.Select(p => new HomeViewModel
+            //{
+            //    Poll = mapper.Map<PollDto>(p),
+            //    FirstVoteCount = dbContext
+            //.UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
+            //.Count(),
+            //    SecondVoteCount = dbContext
+            //.UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
+            //.Count(),
+            //    UserName = dbContext.User.SingleOrDefault(user => user.Id == p.UserId).Name,
+            //    ProfilePicture = dbContext
+            //.User.SingleOrDefault(user => user.Id == p.UserId)
+            //.ProfilePicture
+            //});
+
+
+            return polls;
+        }
+
+        private async Task<List<Poll>> GetProfilePictures(List<Poll> polls)
+        {
+
+            foreach (var poll in polls)
+            {
+                var user = await dbContext.User.SingleOrDefaultAsync(user => user.Id == poll.UserId);
+                poll.ProfilePicture = user.ProfilePicture;
+            }
 
             return polls;
         }

@@ -8,8 +8,8 @@ namespace RealTimePolls.Data
         public RealTimePollsDbContext(DbContextOptions<RealTimePollsDbContext> options)
             : base(options) { }
 
-        public DbSet<Poll> Polls { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<Poll> Polls { get; set; }
         public DbSet<UserPoll> UserPoll { get; set; }
         public DbSet<Genre> Genre { get; set; }
 
@@ -60,9 +60,20 @@ namespace RealTimePolls.Data
                     UserId = 1,
                 },
             };
-            modelBuilder.Entity<Genre>().HasData(genres);
 
+            var user = new User
+            {
+                Id = 1,
+                Email = "shawncarter123456@gmail.com",
+                GoogleId = "9999999",
+                Name = "Windows 10",
+                ProfilePicture = "https://image.png"
+            };
+
+            modelBuilder.Entity<User>().HasData(user);
+            modelBuilder.Entity<Genre>().HasData(genres);
             modelBuilder.Entity<Poll>().HasData(polls);
+
         }
     }
 }

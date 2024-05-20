@@ -44,24 +44,9 @@ namespace RealTimePolls.Controllers
         {
             var domainPolls = await homeRepository.Index();
 
-            var polls = domainPolls.Select(p => new HomeViewModel
-            {
-                Poll = mapper.Map<PollDto>(p),
-                FirstVoteCount = dbContext
-                    .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
-                    .Count(),
-                SecondVoteCount = dbContext
-                    .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
-                    .Count(),
-                UserName = dbContext.User.SingleOrDefault(user => user.Id == p.UserId).Name,
-                ProfilePicture = dbContext
-                    .User.SingleOrDefault(user => user.Id == p.UserId)
-                    .ProfilePicture
-            });
-
             var homeViewModel = new List<HomeViewModel>();
 
-            foreach (var poll in polls)
+            foreach (var poll in domainPolls)
             {
                 homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
             }

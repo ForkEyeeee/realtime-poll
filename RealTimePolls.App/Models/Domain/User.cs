@@ -14,5 +14,7 @@ namespace RealTimePolls.Models.Domain
         public string GoogleId { get; set; }
 
         public string ProfilePicture { get; set; }
+
+
     }
 }

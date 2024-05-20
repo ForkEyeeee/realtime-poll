@@ -7,7 +7,7 @@
 namespace RealTimePolls.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedRealTimesPollDb : Migration
+    public partial class AddedUserfkrelationship : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,11 +62,11 @@ namespace RealTimePolls.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FirstOption = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SecondOption = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false)
+                    GenreId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,12 +113,17 @@ namespace RealTimePolls.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "User",
+                columns: new[] { "Id", "Email", "GoogleId", "Name", "ProfilePicture" },
+                values: new object[] { 1, "shawncarter123456@gmail.com", "9999999", "Windows 10", "https://image.png" });
+
+            migrationBuilder.InsertData(
                 table: "Polls",
                 columns: new[] { "Id", "FirstOption", "GenreId", "SecondOption", "Title", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Chicken", 13, "Egg", "Which came first?", 1 },
-                    { 2, "First choice", 13, "Second choice", "What's your option?", 1 }
+                    { 1, "Chicken", 2, "Egg", "Which came first?", 1 },
+                    { 2, "First choice", 5, "Second choice", "What is your option?", 1 }
                 });
 
             migrationBuilder.CreateIndex(

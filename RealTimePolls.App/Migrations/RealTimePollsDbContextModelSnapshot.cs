@@ -223,6 +223,16 @@ namespace RealTimePolls.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "shawncarter123456@gmail.com",
+                            GoogleId = "9999999",
+                            Name = "Windows 10",
+                            ProfilePicture = "https://image.png"
+                        });
                 });
 
             modelBuilder.Entity("RealTimePolls.Models.Domain.UserPoll", b =>

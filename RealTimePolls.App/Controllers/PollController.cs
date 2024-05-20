@@ -12,31 +12,31 @@ using RealTimePolls.Models;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
+using RealTimePolls.Repositories;
 using SignalRChat.Hubs;
 
 namespace realTimePolls.Controllers
 {
     public class PollController : Controller
     {
-        private readonly ILogger<PollController> _logger;
 
         private readonly RealTimePollsDbContext dbContext;
 
         private static IHubContext<PollHub> _myHubContext;
-
+        private readonly IPollRepository pollRepository;
         private readonly IWebHostEnvironment _environment;
         private readonly IMapper mapper;
 
         public PollController(
             RealTimePollsDbContext dbContext,
             IHubContext<PollHub> myHubContext,
-            IWebHostEnvironment environment,
+            IPollRepository pollRepository,
             IMapper mapper
         )
         {
             this.dbContext = dbContext;
             _myHubContext = myHubContext;
-            _environment = environment;
+            this.pollRepository = pollRepository;
             this.mapper = mapper;
         }
 
@@ -119,47 +119,25 @@ namespace realTimePolls.Controllers
         }
 
         [HttpGet]
-        public async Task<ViewResult> Index([FromQuery] string polltitle, int pollid, int userid)
+        public async Task<IActionResult> Index([FromQuery] string pollTitle, int pollId, int userId)
         {
-            Poll poll = dbContext
-                .Polls.Include(p => p.Genre)
-                .FirstOrDefault(u => u.Id == pollid && u.UserId == userid && u.Title == polltitle);
+            var pollViewModelDomain = await pollRepository.GetPollAsync(pollTitle, pollId, userId);
 
-            if (poll == null)
-                throw new Exception("Poll cannot be found");
-
-            int firstVoteCount = dbContext
-                    .UserPoll.Where(up => up.PollId == pollid && up.Vote == true)
-                    .Count(),
-                secondVoteCount = dbContext
-                    .UserPoll.Where(up => up.PollId == pollid && up.Vote == false)
-                    .Count();
-
-            UserPoll userPoll =
-                dbContext.UserPoll.FirstOrDefault(up => up.UserId == userid && up.PollId == pollid)
-                ?? null;
-
-            if (HttpContext.User.Identity.IsAuthenticated)
+            if(pollViewModelDomain == null)
             {
-                var userId = await GetUserId();
-                var currentUser = dbContext.UserPoll.FirstOrDefault(up =>
-                    up.UserId == userId && up.PollId == pollid
-                );
-                ViewData["UserId"] = userId;
-                ViewData["CurrentVote"] = currentUser == null ? null : currentUser.Vote;
+                return View(null);
             }
 
-            var viewModel = dbContext
-                .Polls.Select(p => new PollViewModel
-                {
-                    Poll = mapper.Map<PollDto>(p),
-                    FirstVoteCount = firstVoteCount,
-                    SecondVoteCount = secondVoteCount,
-                    Vote = null,
-                })
-                .FirstOrDefault();
+            PollViewModel pollViewModel = new PollViewModel()
+            {
+                Poll = mapper.Map<PollDto>(pollViewModelDomain.Poll),
+                FirstVoteCount = pollViewModelDomain.FirstVoteCount,
+                SecondVoteCount = pollViewModelDomain.SecondVoteCount,
+                Vote = pollViewModelDomain.Vote
+            };
+            
 
-            return View(viewModel);
+            return View(pollViewModel);
         }
 
         [HttpPost]

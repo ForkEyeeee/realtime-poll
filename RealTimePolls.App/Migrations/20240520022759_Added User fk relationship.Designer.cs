@@ -12,8 +12,8 @@ using RealTimePolls.Data;
 namespace RealTimePolls.Migrations
 {
     [DbContext(typeof(RealTimePollsDbContext))]
-    [Migration("20240517232250_Added GenreId to Poll")]
-    partial class AddedGenreIdtoPoll
+    [Migration("20240520022759_Added User fk relationship")]
+    partial class AddedUserfkrelationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -174,7 +174,29 @@ namespace RealTimePolls.Migrations
 
                     b.HasIndex("GenreId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Polls");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstOption = "Chicken",
+                            GenreId = 2,
+                            SecondOption = "Egg",
+                            Title = "Which came first?",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FirstOption = "First choice",
+                            GenreId = 5,
+                            SecondOption = "Second choice",
+                            Title = "What is your option?",
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("RealTimePolls.Models.Domain.User", b =>
@@ -204,6 +226,16 @@ namespace RealTimePolls.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "shawncarter123456@gmail.com",
+                            GoogleId = "9999999",
+                            Name = "Windows 10",
+                            ProfilePicture = "https://image.png"
+                        });
                 });
 
             modelBuilder.Entity("RealTimePolls.Models.Domain.UserPoll", b =>
@@ -236,7 +268,15 @@ namespace RealTimePolls.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RealTimePolls.Models.Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Genre");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

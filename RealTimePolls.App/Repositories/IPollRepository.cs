@@ -1,4 +1,10 @@
-﻿namespace RealTimePolls.Repositories
+﻿using Microsoft.AspNetCore.Mvc;
+using RealTimePolls.Models.ViewModels;
+
+namespace RealTimePolls.Repositories
 {
-    public interface IPollRepository { }
+    public interface IPollRepository {
+    
+    Task<PollViewModelDomain> GetPollAsync(string pollTitle, int pollTd, int userId);
+    }
 }
