@@ -72,45 +72,6 @@ namespace realTimePolls.Controllers
             return userId;
         }
 
-        //public async Task<User> GetUser()
-        //{
-        //    var result = await HttpContext.AuthenticateAsync(
-        //        CookieAuthenticationDefaults.AuthenticationScheme
-        //    );
-
-        //    if (result.Principal == null)
-        //        throw new Exception("Could not authenticate");
-
-        //    var claims = result
-        //        .Principal.Identities.FirstOrDefault()
-        //        ?.Claims.Select(claim => new
-        //        {
-        //            claim.Issuer,
-        //            claim.OriginalIssuer,
-        //            claim.Type,
-        //            claim.Value
-        //        })
-        //        .ToList();
-
-        //    User newUser;
-        //    string? userName = null;
-        //    string? userEmail = null;
-
-        //    if (claims == null || claims.Count == 0)
-        //    {
-        //        throw new ArgumentOutOfRangeException("Claims count cannot be 0");
-        //    }
-
-        //    var googleId = claims
-        //        .FirstOrDefault(c =>
-        //            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-        //        )
-        //        .Value;
-
-        //    var user = dbContext.User.SingleOrDefault(user => user.GoogleId == googleId);
-        //    return user;
-        //}
-
         // Get poll by id
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] string pollTitle, int pollId, int userId)
@@ -119,7 +80,7 @@ namespace realTimePolls.Controllers
 
             if(pollViewModelDomain == null)
             {
-                return View(null);
+                return null;
             }
 
             PollViewModel pollViewModel = new PollViewModel()
@@ -130,59 +91,20 @@ namespace realTimePolls.Controllers
                 Vote = pollViewModelDomain.Vote
             };
             
-
             return View(pollViewModel);
         }
+        // <--refactor the rest of these methods -->
 
         //Create poll
         [HttpPost]
-        public ActionResult Create(
-            [FromForm] string title,
-            [FromForm] string firstOption,
-            [FromForm] string secondOption,
-            [FromForm] int genre
-        )
+        public async Task<IActionResult> Create(AddPollRequest addPollRequest)
         {
-            try
-            {
-                var googleId =
-                    HttpContext != null ? HttpContext.User.Claims.ToList()[0].Value : string.Empty;
+            addPollRequest.UserId = await this.GetUserId();
 
-                if (googleId == string.Empty)
-                    throw new Exception("Could not find googleId");
-
-                int userId = dbContext.User.SingleOrDefault(u => u.GoogleId == googleId).Id;
-
-                var pollGenre = dbContext.Genre.SingleOrDefault(g => g.Id == genre);
-
-                Poll poll = new Poll
-                {
-                    UserId = userId,
-                    Title = title,
-                    FirstOption = firstOption,
-                    SecondOption = secondOption,
-                    GenreId = pollGenre.Id
-                };
-
-                dbContext.Polls.Add(poll);
-                dbContext.SaveChanges();
-
-                return RedirectToAction(
-                    "Index",
-                    new
-                    {
-                        polltitle = poll.Title,
-                        pollid = poll.Id,
-                        userid = poll.UserId,
-                        genreName = pollGenre.Name,
-                    }
-                );
-            }
-            catch (Exception e)
-            {
-                var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-                return View("Error", errorViewModel);
-            }
+            var domainPoll = mapper.Map<Poll>(addPollRequest);
+            await pollRepository.CreatePollAsync(domainPoll);
+            return RedirectToAction("Index", "Home");
+     
         }
 
         // Delete poll

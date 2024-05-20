@@ -55,5 +55,12 @@ namespace RealTimePolls.Repositories
         
             return pollViewModelDomain;
         }
+
+        public async Task<Poll> CreatePollAsync(Poll poll)
+        {
+            await dbContext.AddAsync(poll);
+            await dbContext.SaveChangesAsync();
+            return poll;
+        }
     }
 }

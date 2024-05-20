@@ -1,5 +1,6 @@
 ﻿@{
     var userId = Context.User.Identity.Name;
+    var email = Context.User.Claims.ToArray()[4].Value;
 }
 
 <!DOCTYPE html>
@@ -53,10 +54,14 @@
                             </div>
                             <div class="d-flex flex-column">
                                 <label for="genre" class="required">Genre</label> @*change to html helper*@
-                                <select id="genre" name="genre" class="Genre" required="required">
+                                <select id="genre" name="GenreId" class="Genre" required="required">
                                     <option disabled="disabled" selected="selected">Choose a genre</option>
                                 </select>
                             </div>
+                            @if (Context.User.Identity.IsAuthenticated)
+                            {
+                                <input type="hidden" name="UserId" value=userId />
+                            }
                             <div class="d-flex justify-content-end gap-3">
                                 <input type="button" id="cancel-btn" value="Cancel" class="btn btn-secondary" />
                                 <input type="submit" value="Submit" class="btn  btn-primary  " />
