@@ -166,7 +166,7 @@
 
     const getData = async (page) => {
         //data is in model
-        const url = page === undefined ? baseURL + "Home/GetPolls" : baseURL + "Home/GetPolls" + `?page=${page}`
+        const url = page === undefined ? baseURL + "api/GetPollsList" : baseURL + "api/GetPollsList" + `?page=${page}`
         const userId = {
             Id: hubConnection.connection.connectionId
         }

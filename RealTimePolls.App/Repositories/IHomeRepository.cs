@@ -10,6 +10,5 @@ namespace RealTimePolls.Repositories
     public interface IHomeRepository
     {
         Task<List<Poll>> Index();
-        Task<string> GetUserProfilePicture(AuthenticateResult result);
     }
 }

@@ -1,4 +1,5 @@
-﻿using RealTimePolls.Models.Domain;
+﻿using Microsoft.AspNetCore.Authentication;
+using RealTimePolls.Models.Domain;
 
 namespace RealTimePolls.Repositories
 {
@@ -7,5 +8,8 @@ namespace RealTimePolls.Repositories
         Task<List<Poll>> GetPollsListAsync();
 
         Task<List<Genre>> GetDropdownListAsync();
+
+        Task<string> GetUserProfilePicture(AuthenticateResult result);
+
     }
 }

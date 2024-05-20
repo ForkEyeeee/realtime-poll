@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Repositories;
 
 namespace realTimePolls.Controllers
@@ -30,7 +32,18 @@ namespace realTimePolls.Controllers
             return Json(genreOptions);
         }
 
+        [HttpGet]
+        [Route("api/[action]")]
+        public async Task<string> GetUserProfilePicture()
+        {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
 
+            var profilePicture = await pollsApiRepository.GetUserProfilePicture(result);
+
+            return profilePicture;
+        }
         //[HttpGet]
         //public IActionResult Index()
         //{

@@ -266,7 +266,7 @@
 
     <script>
         const getDropdownList = async () => {
-            const url = `${baseURL}Home/GetDropdownList`
+            const url = `${baseURL}api/GetDropdownList`
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
@@ -298,7 +298,7 @@
 
     <script>
         const getProfilePicture = async () => {
-            const url = `${baseURL}Home/GetUserProfilePicture`
+            const url = `${baseURL}api/GetUserProfilePicture`
             // pass userid to server
             const response = await fetch(url, {
                 method: "GET",

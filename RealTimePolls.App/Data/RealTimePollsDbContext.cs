@@ -64,10 +64,10 @@ namespace RealTimePolls.Data
             var user = new User
             {
                 Id = 1,
-                Email = "shawncarter123456@gmail.com",
+                Email = "user@gmail.com",
                 GoogleId = "9999999",
-                Name = "Windows 10",
-                ProfilePicture = "https://image.png"
+                Name = "Anonymous User",
+                ProfilePicture = "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU"
             };
 
             modelBuilder.Entity<User>().HasData(user);

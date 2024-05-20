@@ -44,17 +44,7 @@ namespace RealTimePolls.Controllers
         }
 
 
-        //[HttpGet]
-        //public async Task<string> GetUserProfilePicture()
-        //{
-        //    AuthenticateResult result = await HttpContext.AuthenticateAsync(
-        //        CookieAuthenticationDefaults.AuthenticationScheme
-        //    );
 
-        //    var profilePicture = await homeRepository.GetUserProfilePicture(result);
-
-        //    return profilePicture;
-        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

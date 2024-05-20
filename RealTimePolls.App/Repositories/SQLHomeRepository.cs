@@ -34,46 +34,7 @@ namespace RealTimePolls.Repositories
 
  
 
-        public async Task<string> GetUserProfilePicture(AuthenticateResult result)
-        {
-            if (result.Principal == null)
-                return string.Empty;
-
-            var claims = result
-                .Principal.Identities.FirstOrDefault()
-                ?.Claims.Select(claim => new
-                {
-                    claim.Issuer,
-                    claim.OriginalIssuer,
-                    claim.Type,
-                    claim.Value
-                })
-                .ToList();
-
-            User newUser;
-            string? userName = null;
-            string? userEmail = null;
-
-            if (claims == null || !claims.Any())
-            {
-                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
-            }
-
-            var googleId = claims
-                .FirstOrDefault(c =>
-                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-                )
-                .Value;
-
-            string profilePicture = dbContext
-                .User.SingleOrDefault(user => user.GoogleId == googleId)
-                .ProfilePicture;
-
-            if (profilePicture != null)
-                return profilePicture;
-            else
-                return string.Empty;
-        }
+       
 
         public async Task<List<Poll>> Index()
         {
