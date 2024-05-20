@@ -1,14 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
-using RealTimePolls.Models;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
@@ -21,10 +16,8 @@ namespace realTimePolls.Controllers
     {
 
         private readonly RealTimePollsDbContext dbContext;
-
         private static IHubContext<PollHub> _myHubContext;
         private readonly IPollRepository pollRepository;
-        private readonly IWebHostEnvironment _environment;
         private readonly IMapper mapper;
 
         public PollController(
@@ -40,7 +33,7 @@ namespace realTimePolls.Controllers
             this.mapper = mapper;
         }
 
-        public async Task<int> GetUserId()
+        private async Task<int> GetUserId()
         {
             var result = await HttpContext.AuthenticateAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme
@@ -79,45 +72,46 @@ namespace realTimePolls.Controllers
             return userId;
         }
 
-        public async Task<User> GetUser()
-        {
-            var result = await HttpContext.AuthenticateAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
+        //public async Task<User> GetUser()
+        //{
+        //    var result = await HttpContext.AuthenticateAsync(
+        //        CookieAuthenticationDefaults.AuthenticationScheme
+        //    );
 
-            if (result.Principal == null)
-                throw new Exception("Could not authenticate");
+        //    if (result.Principal == null)
+        //        throw new Exception("Could not authenticate");
 
-            var claims = result
-                .Principal.Identities.FirstOrDefault()
-                ?.Claims.Select(claim => new
-                {
-                    claim.Issuer,
-                    claim.OriginalIssuer,
-                    claim.Type,
-                    claim.Value
-                })
-                .ToList();
+        //    var claims = result
+        //        .Principal.Identities.FirstOrDefault()
+        //        ?.Claims.Select(claim => new
+        //        {
+        //            claim.Issuer,
+        //            claim.OriginalIssuer,
+        //            claim.Type,
+        //            claim.Value
+        //        })
+        //        .ToList();
 
-            User newUser;
-            string? userName = null;
-            string? userEmail = null;
+        //    User newUser;
+        //    string? userName = null;
+        //    string? userEmail = null;
 
-            if (claims == null || claims.Count == 0)
-            {
-                throw new ArgumentOutOfRangeException("Claims count cannot be 0");
-            }
+        //    if (claims == null || claims.Count == 0)
+        //    {
+        //        throw new ArgumentOutOfRangeException("Claims count cannot be 0");
+        //    }
 
-            var googleId = claims
-                .FirstOrDefault(c =>
-                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-                )
-                .Value;
+        //    var googleId = claims
+        //        .FirstOrDefault(c =>
+        //            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+        //        )
+        //        .Value;
 
-            var user = dbContext.User.SingleOrDefault(user => user.GoogleId == googleId);
-            return user;
-        }
+        //    var user = dbContext.User.SingleOrDefault(user => user.GoogleId == googleId);
+        //    return user;
+        //}
 
+        // Get poll by id
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] string pollTitle, int pollId, int userId)
         {
@@ -140,6 +134,7 @@ namespace realTimePolls.Controllers
             return View(pollViewModel);
         }
 
+        //Create poll
         [HttpPost]
         public ActionResult Create(
             [FromForm] string title,
@@ -190,6 +185,7 @@ namespace realTimePolls.Controllers
             }
         }
 
+        // Delete poll
         public ActionResult Delete([FromQuery] int pollid)
         {
             try
@@ -217,7 +213,8 @@ namespace realTimePolls.Controllers
             }
         }
 
-        public static void SendMessage()
+        // helper
+        private static void SendMessage()
         {
             _myHubContext.Clients.All.SendAsync("ReceiveMessage");
         }

@@ -31,17 +31,8 @@ namespace RealTimePolls.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<List<Genre>> GetDropdownList()
-        {
-            var dropdownList = await dbContext.Genre.OrderBy(g => g.Name).ToListAsync();
 
-            return dropdownList;
-        }
-
-        public Task<IActionResult> GetPolls()
-        {
-            throw new NotImplementedException();
-        }
+ 
 
         public async Task<string> GetUserProfilePicture(AuthenticateResult result)
         {
@@ -92,11 +83,6 @@ namespace RealTimePolls.Repositories
 
            domainPolls = await this.GetProfilePictures(domainPolls);
 
-            //one method to get polls
-            //anothe rmethod to get vote count for each poll
-            //another method to get profiel picture
-
- 
             return domainPolls;
         }
 
@@ -110,24 +96,6 @@ namespace RealTimePolls.Repositories
 
                 poll.SecondVoteCount = userpolls.Where(up => up.PollId == up.Id && up.Vote == false).Count();
             }
-     
-
-
-            //var polls = domainPolls.Select(p => new HomeViewModel
-            //{
-            //    Poll = mapper.Map<PollDto>(p),
-            //    FirstVoteCount = dbContext
-            //.UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
-            //.Count(),
-            //    SecondVoteCount = dbContext
-            //.UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
-            //.Count(),
-            //    UserName = dbContext.User.SingleOrDefault(user => user.Id == p.UserId).Name,
-            //    ProfilePicture = dbContext
-            //.User.SingleOrDefault(user => user.Id == p.UserId)
-            //.ProfilePicture
-            //});
-
 
             return polls;
         }

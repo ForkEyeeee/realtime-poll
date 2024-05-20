@@ -10,8 +10,6 @@ namespace RealTimePolls.Repositories
     public interface IHomeRepository
     {
         Task<List<Poll>> Index();
-        Task<IActionResult> GetPolls();
-        Task<List<Genre>> GetDropdownList();
         Task<string> GetUserProfilePicture(AuthenticateResult result);
     }
 }

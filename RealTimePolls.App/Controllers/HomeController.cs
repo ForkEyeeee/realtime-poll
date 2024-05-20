@@ -1,15 +1,11 @@
 using System.Diagnostics;
-using System.Text;
 using AutoMapper;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
-using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 
@@ -17,28 +13,21 @@ namespace RealTimePolls.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly RealTimePollsDbContext dbContext;
 
-        private readonly IWebHostEnvironment environment;
         private readonly IHomeRepository homeRepository;
         private readonly IMapper mapper;
         private readonly UserManager<IdentityUser> userManager;
 
         public HomeController(
-            RealTimePollsDbContext dbContext,
-            IWebHostEnvironment environment,
             IHomeRepository homeRepository,
-            IMapper mapper,
-            UserManager<IdentityUser> userManager
+            IMapper mapper
         )
         {
-            this.dbContext = dbContext;
-            this.environment = environment;
             this.homeRepository = homeRepository;
             this.mapper = mapper;
-            this.userManager = userManager;
         }
 
+        // Get home view
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -54,40 +43,18 @@ namespace RealTimePolls.Controllers
             return View(homeViewModel);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPolls()
-        {
-            var polls = await homeRepository.Index();
 
-            var homeViewModel = new List<HomeViewModel>();
+        //[HttpGet]
+        //public async Task<string> GetUserProfilePicture()
+        //{
+        //    AuthenticateResult result = await HttpContext.AuthenticateAsync(
+        //        CookieAuthenticationDefaults.AuthenticationScheme
+        //    );
 
-            foreach (var poll in polls)
-            {
-                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
-            }
+        //    var profilePicture = await homeRepository.GetUserProfilePicture(result);
 
-            return Json(homeViewModel);
-        }
-
-        [HttpGet]
-        public async Task<List<Genre>> GetDropdownList()
-        {
-            var genreOptions = await homeRepository.GetDropdownList();
-
-            return genreOptions;
-        }
-
-        [HttpGet]
-        public async Task<string> GetUserProfilePicture()
-        {
-            AuthenticateResult result = await HttpContext.AuthenticateAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
-
-            var profilePicture = await homeRepository.GetUserProfilePicture(result);
-
-            return profilePicture;
-        }
+        //    return profilePicture;
+        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

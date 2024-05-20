@@ -63,6 +63,7 @@ builder
 // This adds services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
+builder.Services.AddScoped<IPollsApiRepository, SQLPollsApiRepository>();
 builder.Services.AddScoped<IPollRepository, SQLPollRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
