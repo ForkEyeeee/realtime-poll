@@ -7,9 +7,6 @@ using RealTimePolls.Controllers;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace HomeUnitTests
@@ -23,19 +20,16 @@ namespace HomeUnitTests
 
         public HomeControllerTests()
         {
-            //Dependencies
             _logger = A.Fake<ILogger<HomeController>>();
             _homeRepository = A.Fake<IHomeRepository>();
             _mapper = A.Fake<IMapper>();
 
-            // SUT
             _homeController = new HomeController(_homeRepository, _mapper);
         }
 
         [Fact]
         public async Task HomeController_Index_ReturnsSuccess()
         {
-            // Arrange
             var polls = new List<Poll>
             {
                 new Poll { Id = 1, UserId = 1, Title = "Title", FirstOption = "FirstOption", SecondOption = "SecondOption" }
@@ -46,10 +40,8 @@ namespace HomeUnitTests
             A.CallTo(() => _homeRepository.Index()).Returns(Task.FromResult(polls));
             A.CallTo(() => _mapper.Map<HomeViewModel>(A<Poll>.That.Matches(p => p.Id == 1))).Returns(homeViewModels.First());
 
-            // Act
             var result = await _homeController.Index();
 
-            // Assert
             result.Should().BeOfType<ViewResult>();
             var viewResult = result as ViewResult;
             viewResult.Model.Should().BeEquivalentTo(homeViewModels);

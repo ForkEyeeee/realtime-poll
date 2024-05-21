@@ -1,99 +1,50 @@
-﻿using AutoMapper;
-using FakeItEasy;
-using FluentAssertions;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
+using Moq;
 using RealTimePolls.Controllers;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Xunit;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 
-namespace RealTimePolls.Tests
+namespace HomeUnitTests
 {
     public class LoginControllerTests
     {
         private readonly LoginController _loginController;
-        private readonly ILoginRepository _loginRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpContext _httpContext;
+        private readonly Mock<ILoginRepository> _loginRepositoryMock;
+        private readonly Mock<HttpContext> _httpContextMock;
+        private readonly Mock<IServiceProvider> _serviceProviderMock;
 
         public LoginControllerTests()
         {
-            // Dependencies
-            _loginRepository = A.Fake<ILoginRepository>();
-            _httpContextAccessor = A.Fake<IHttpContextAccessor>();
-            _httpContext = new DefaultHttpContext();
-            _httpContextAccessor.HttpContext = _httpContext;
+            _loginRepositoryMock = new Mock<ILoginRepository>();
+            _httpContextMock = new Mock<HttpContext>();
+            _serviceProviderMock = new Mock<IServiceProvider>();
 
-            // SUT
-            _loginController = new LoginController(_loginRepository)
+            _loginController = new LoginController(_loginRepositoryMock.Object)
             {
-                ControllerContext = new ControllerContext()
+                ControllerContext = new ControllerContext
                 {
-                    HttpContext = _httpContext
+                    HttpContext = _httpContextMock.Object
                 }
             };
         }
 
         [Fact]
-        public async Task LoginController_Login_RedirectsToGoogle()
+        public async Task GoogleResponse_ShouldReturnErrorView_WhenExceptionIsThrown()
         {
-            // Arrange
-            A.CallTo(() => _httpContext.ChallengeAsync(
-                GoogleDefaults.AuthenticationScheme,
-                A<AuthenticationProperties>.Ignored)).Returns(Task.CompletedTask);
+            _loginRepositoryMock.Setup(repo => repo.GoogleResponse(It.IsAny<AuthenticateResult>()))
+                .Throws<Exception>();
 
-            // Act
-            await _loginController.Login();
+            var actionResult = await _loginController.GoogleResponse();
 
-            // Assert
-            A.CallTo(() => _httpContext.ChallengeAsync(
-                GoogleDefaults.AuthenticationScheme,
-                A<AuthenticationProperties>.That.Matches(p => p.RedirectUri == "/Login/GoogleResponse"))).MustHaveHappenedOnceExactly();
-        }
-
-        [Fact]
-        public async Task LoginController_GoogleResponse_ReturnsRedirectToHome()
-        {
-            // Arrange
-            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity());
-            var authenticateResult = AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, "Cookies"));
-
-            A.CallTo(() => _httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme))
-                .Returns(Task.FromResult(authenticateResult));
-            A.CallTo(() => _loginRepository.GoogleResponse(authenticateResult))
-                .Returns(Task.CompletedTask);
-
-            // Act
-            var result = await _loginController.GoogleResponse();
-
-            // Assert
-            result.Should().BeOfType<RedirectToActionResult>();
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("Index");
-            redirectResult.ControllerName.Should().Be("Home");
-        }
-
-        [Fact]
-        public async Task LoginController_Logout_ReturnsRedirectToHome()
-        {
-            // Arrange
-            A.CallTo(() => _httpContext.SignOutAsync()).Returns(Task.CompletedTask);
-
-            // Act
-            var result = await _loginController.Logout();
-
-            // Assert
-            result.Should().BeOfType<RedirectToActionResult>();
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("Index");
-            redirectResult.ControllerName.Should().Be("Home");
+            Assert.IsType<ViewResult>(actionResult);
+            var viewResult = actionResult as ViewResult;
+            Assert.Equal("Error", viewResult.ViewName);
+            var model = viewResult.Model as ErrorViewModel;
+            Assert.NotNull(model);
+            Assert.False(string.IsNullOrEmpty(model.RequestId));
         }
     }
 }

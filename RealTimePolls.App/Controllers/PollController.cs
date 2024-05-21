@@ -11,7 +11,7 @@ using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 using SignalRChat.Hubs;
 
-namespace realTimePolls.Controllers
+namespace RealTimePolls.Controllers
 {
     public class PollController : Controller
     {
