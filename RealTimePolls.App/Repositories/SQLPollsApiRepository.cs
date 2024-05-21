@@ -18,6 +18,15 @@ namespace RealTimePolls.Repositories
         {
             var polls = await dbContext.Polls.Include(p => p.User).Include(p => p.Genre).ToListAsync();
 
+            var userpolls = await dbContext.UserPoll.ToListAsync();
+
+            foreach (var poll in polls)
+            {
+                poll.FirstVoteCount = userpolls.Where(up => up.PollId == poll.Id && up.Vote == true).Count();
+
+                poll.SecondVoteCount = userpolls.Where(up => up.PollId == poll.Id && up.Vote == false).Count();
+            }
+
             return polls;
         }
 

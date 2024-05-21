@@ -33,9 +33,9 @@ namespace RealTimePolls.Repositories
 
             foreach (var poll in polls)
             {
-                poll.FirstVoteCount = userpolls.Where(up => up.PollId == up.Id && up.Vote == true).Count();
+                poll.FirstVoteCount = userpolls.Where(up => up.PollId == poll.Id && up.Vote == true).Count();
 
-                poll.SecondVoteCount = userpolls.Where(up => up.PollId == up.Id && up.Vote == false).Count();
+                poll.SecondVoteCount = userpolls.Where(up => up.PollId == poll.Id && up.Vote == false).Count();
             }
 
             return polls;
