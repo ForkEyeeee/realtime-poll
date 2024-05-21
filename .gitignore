@@ -277,3 +277,4 @@ __pycache__/
 #ignore everything in signalr directory
 RealTimePolls.App/wwwroot/js/signalr/*.ts
 RealTimePolls.App/wwwroot/js/signalr/*.js
+/RealTimePolls.App/Logs
