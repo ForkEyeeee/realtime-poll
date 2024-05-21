@@ -9,9 +9,9 @@ namespace RealTimePolls.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly SQLLoginRepository loginRepository;
+        private readonly ILoginRepository loginRepository;
 
-        public LoginController(SQLLoginRepository loginRepository)
+        public LoginController(ILoginRepository loginRepository)
         {
             this.loginRepository = loginRepository;
         }
