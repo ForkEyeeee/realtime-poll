@@ -1,4 +1,5 @@
-﻿using RealTimePolls.Models.Domain;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using RealTimePolls.Models.Domain;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RealTimePolls.Models.ViewModels
@@ -13,9 +14,9 @@ namespace RealTimePolls.Models.ViewModels
         public string SecondOption { get; set; }
 
         public int GenreId { get; set; }
-        public int UserId { get; set; }
 
-
+        [BindNever]
+        public int? UserId { get; set; }
 
     }
 }

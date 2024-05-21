@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
@@ -12,7 +11,6 @@ namespace RealTimePolls.Controllers
 
         private readonly IHomeRepository homeRepository;
         private readonly IMapper mapper;
-        private readonly UserManager<IdentityUser> userManager;
 
         public HomeController(
             IHomeRepository homeRepository,

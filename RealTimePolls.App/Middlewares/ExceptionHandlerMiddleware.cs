@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging;
 
-namespace NZWalks.API.Middlewares
+namespace RealTimePolls
 {
     public class ExceptionHandlerMiddleware
     {

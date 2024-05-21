@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using NZWalks.API.CustomActionFilters;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
@@ -38,8 +39,6 @@ namespace realTimePolls.Controllers
             this.logger = logger;
         }
 
-
-        // Get poll by id
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] string pollTitle, int pollId, int userId)
         {
@@ -60,12 +59,12 @@ namespace realTimePolls.Controllers
 
             return View(pollViewModel);
         }
-        // <--refactor the rest of these methods -->
 
-        //Create poll
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create(AddPollRequest addPollRequest)
         {
+
             AuthenticateResult result = await HttpContext.AuthenticateAsync(
                  CookieAuthenticationDefaults.AuthenticationScheme
               );
@@ -79,7 +78,6 @@ namespace realTimePolls.Controllers
         }
 
         [HttpDelete]
-        // Delete poll
         public async Task<IActionResult> DeletePollAsync([FromQuery] int pollid)
         {
 
@@ -88,15 +86,14 @@ namespace realTimePolls.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> VoteAsync([FromForm] int userId, int pollId, string vote)
+        [ValidateModel]
+        public async Task<IActionResult> VoteAsync(AddVoteRequest addVoteRequest)
         {
             AuthenticateResult result = await HttpContext.AuthenticateAsync(
                  CookieAuthenticationDefaults.AuthenticationScheme
              );
 
-            await pollRepository.VoteAsync(result, userId, pollId, vote);
-
-
+            await pollRepository.VoteAsync(result, addVoteRequest);
             return RedirectToAction("Index", "Home", new { area = "" });
 
         }

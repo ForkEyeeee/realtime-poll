@@ -13,6 +13,6 @@ namespace RealTimePolls.Repositories
 
         Task<Poll> DeletePollAsync(int pollId);
 
-        Task<UserPoll> VoteAsync(AuthenticateResult result, int userId, int pollId, string vote);
+        Task<UserPoll> VoteAsync(AuthenticateResult result, AddVoteRequest addVoteRequest);
     }
 }

@@ -9,6 +9,7 @@ using RealTimePolls.Mappings;
 using RealTimePolls.Repositories;
 using SignalRChat.Hubs;
 using Serilog;
+using RealTimePolls;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,6 +84,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

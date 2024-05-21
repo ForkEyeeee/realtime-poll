@@ -88,15 +88,15 @@ namespace RealTimePolls.Repositories
 
         }
 
-        public async Task<UserPoll> VoteAsync(AuthenticateResult result, int userId, int pollId, string vote)
+        public async Task<UserPoll> VoteAsync(AuthenticateResult result, AddVoteRequest addVoteRequest)
         {
             bool userVoter;
             var currentUserId = await helpersRepository.GetUserId(result);
             var userPoll = new UserPoll();
 
-            if (vote == "Vote First")
+            if (addVoteRequest.Vote == "Vote First")
                 userVoter = true;
-            else if (vote == "Vote Second")
+            else if (addVoteRequest.Vote == "Vote Second")
                 userVoter = false;
             else
                 throw new Exception("Unable to vote");
@@ -104,12 +104,12 @@ namespace RealTimePolls.Repositories
             var userPolls = await dbContext.UserPoll.ToListAsync();
 
             var currentUserPoll = userPolls.FirstOrDefault(up =>
-                up.PollId == pollId && up.UserId == currentUserId);
+                up.PollId == addVoteRequest.PollId && up.UserId == currentUserId);
 
             if (currentUserPoll == null)
             {
                 userPoll.UserId = currentUserId;
-                userPoll.PollId = pollId;
+                userPoll.PollId = addVoteRequest.PollId;
                 userPoll.Vote = userVoter;
                 await dbContext.UserPoll.AddAsync(userPoll);
             }
