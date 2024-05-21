@@ -1,27 +1,22 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
-using RealTimePolls.Data;
-using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.ViewModels;
+using RealTimePolls.Repositories;
 
 namespace RealTimePolls.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly ILogger<LoginController> _logger;
+        private readonly SQLLoginRepository loginRepository;
 
-        private readonly RealTimePollsDbContext _context; // Declare the DbContext variable
-
-        public LoginController(ILogger<LoginController> logger, RealTimePollsDbContext context)
+        public LoginController(SQLLoginRepository loginRepository)
         {
-            _logger = logger;
-            _context = context;
+            this.loginRepository = loginRepository;
         }
 
-        public async Task Login() //redirects user to google login page
+        public async Task Login()
         {
             try
             {
@@ -36,104 +31,18 @@ namespace RealTimePolls.Controllers
             }
         }
 
-        public async Task<IActionResult> GoogleResponse() //authentication
+        public async Task<IActionResult> GoogleResponse()
         {
             try
             {
                 var result = await HttpContext.AuthenticateAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme
+                CookieAuthenticationDefaults.AuthenticationScheme
                 );
 
-                if (result.Principal == null)
-                    throw new Exception("Could not authenticate");
+                await loginRepository.GoogleResponse(result);
 
-                var claims = result
-                    .Principal.Identities.FirstOrDefault()
-                    ?.Claims.Select(claim => new
-                    {
-                        claim.Issuer,
-                        claim.OriginalIssuer,
-                        claim.Type,
-                        claim.Value
-                    })
-                    .ToList();
-
-                User newUser;
-                string? userName = null;
-                string? userEmail = null;
-
-                if (claims == null || claims.Count == 0)
-                {
-                    throw new ArgumentOutOfRangeException("Claims count cannot be 0");
-                }
-
-                var googleIdClaim = claims.FirstOrDefault(c =>
-                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-                );
-
-                var profilePicture = result.Principal.FindFirstValue("urn:google:picture");
-
-                if (googleIdClaim != null)
-                {
-                    var googleId = googleIdClaim.Value;
-                    User userWithGoogleId = _context.User.SingleOrDefault(user =>
-                        user.GoogleId == googleId
-                    );
-
-                    if (userWithGoogleId == null)
-                    {
-                        userName = claims
-                            .FirstOrDefault(c =>
-                                c.Type
-                                == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-                            )
-                            ?.Value;
-                        userEmail = claims
-                            .FirstOrDefault(c =>
-                                c.Type
-                                == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-                            )
-                            ?.Value;
-
-                        newUser = new User
-                        {
-                            GoogleId = googleId,
-                            Name = userName,
-                            Email = userEmail,
-                            ProfilePicture = profilePicture
-                        };
-                        _context.User.Add(newUser);
-                    }
-                    else
-                    {
-                        var existingUser = new
-                        {
-                            UserName = userWithGoogleId.Name,
-                            UserEmail = userWithGoogleId.Email,
-                            UserProfilePicture = profilePicture
-                        };
-
-                        _context.SaveChanges();
-
-                        User viewModel =
-                            new()
-                            {
-                                GoogleId = googleId,
-                                Name = existingUser.UserName,
-                                Email = existingUser.UserEmail,
-                                ProfilePicture = existingUser.UserProfilePicture
-                            };
-
-                        return RedirectToAction("Index", "Home", new { area = "" });
-                    }
-                }
-                else
-                {
-                    throw new Exception("GoogleId cannot be found");
-                }
-
-                _context.SaveChanges();
                 return RedirectToAction("Index", "Home", new { area = "" });
+
             }
             catch (Exception e)
             {

@@ -54,6 +54,7 @@ builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
 builder.Services.AddScoped<IPollsApiRepository, SQLPollsApiRepository>();
 builder.Services.AddScoped<IPollRepository, SQLPollRepository>();
 builder.Services.AddScoped<IHelpersRepository, SQLHelpersRepository>();
+builder.Services.AddScoped<ILoginRepository, SQLLoginRepository>();
 
 var logger = new LoggerConfiguration()
     .WriteTo.Console()

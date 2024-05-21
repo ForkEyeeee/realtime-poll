@@ -1,11 +1,7 @@
 using System.Diagnostics;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using RealTimePolls.Data;
-using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 
@@ -27,7 +23,6 @@ namespace RealTimePolls.Controllers
             this.mapper = mapper;
         }
 
-        // Get home view
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -42,7 +37,6 @@ namespace RealTimePolls.Controllers
 
             return View(homeViewModel);
         }
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
