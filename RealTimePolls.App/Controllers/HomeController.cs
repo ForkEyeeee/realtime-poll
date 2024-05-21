@@ -44,8 +44,6 @@ namespace RealTimePolls.Controllers
         }
 
 
-
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -58,65 +56,4 @@ namespace RealTimePolls.Controllers
         }
     }
 
-    //[HttpPost]
-    //public IActionResult Poll(string pollName)
-    //{
-    //    try
-    //    {
-    //        Poll poll = _context.Polls.FirstOrDefault(u => u.Title == pollName);
-
-    //        if (poll == null)
-    //            throw new Exception("Poll cannot be found");
-
-    //        int firstVoteCount = _context.UserPoll.Count(up =>
-    //                up.PollId == poll.Id && up.Vote == true
-    //            ),
-    //            secondVoteCount = _context.UserPoll.Count(up =>
-    //                up.PollId == poll.Id && up.Vote == true
-    //            );
-
-    //        var viewModel = _context
-    //            .Polls.Select(p => new PollItem
-    //            {
-    //                Poll = poll,
-    //                FirstVoteCount = firstVoteCount,
-    //                SecondVoteCount = secondVoteCount
-    //            })
-    //            .ToList();
-
-    //        return View("index", viewModel);
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-    //        return View("Error", errorViewModel);
-    //    }
-    //}
-
-    //[HttpPost]
-    //public async Task<IActionResult> GetRawContent()
-    //{
-    //    try
-    //    {
-    //        string rawContent = string.Empty;
-    //        using (
-    //            var reader = new StreamReader(
-    //                Request.Body,
-    //                encoding: Encoding.UTF8,
-    //                detectEncodingFromByteOrderMarks: false
-    //            )
-    //        )
-    //        {
-    //            rawContent = await reader.ReadToEndAsync();
-    //        }
-    //        return Ok(rawContent);
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-    //        return View("Error", errorViewModel);
-    //    }
-    //}
-
-    //}
 }

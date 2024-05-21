@@ -4,10 +4,14 @@ using RealTimePolls.Models.ViewModels;
 
 namespace RealTimePolls.Repositories
 {
-    public interface IPollRepository {
-    
+    public interface IPollRepository
+    {
+
         Task<PollViewModelDomain> GetPollAsync(string pollTitle, int pollTd, int userId);
         Task<Poll> CreatePollAsync(Poll poll);
 
+        Task<Poll> DeletePollAsync(int pollId);
+
+        Task<Poll> VoteAsync(Poll poll);
     }
 }

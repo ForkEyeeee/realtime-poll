@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using realTimePolls.Controllers;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
@@ -8,7 +9,8 @@ using RealTimePolls.Models.ViewModels;
 
 namespace RealTimePolls.Repositories
 {
-    public class SQLPollRepository : IPollRepository {
+    public class SQLPollRepository : IPollRepository
+    {
         private readonly RealTimePollsDbContext dbContext;
 
         public SQLPollRepository(RealTimePollsDbContext dbContext)
@@ -52,7 +54,7 @@ namespace RealTimePolls.Repositories
                 SecondVoteCount = secondVoteCount,
                 Vote = userPoll == null ? null : userPoll.Vote,
             };
-        
+
             return pollViewModelDomain;
         }
 
@@ -61,6 +63,68 @@ namespace RealTimePolls.Repositories
             await dbContext.AddAsync(poll);
             await dbContext.SaveChangesAsync();
             return poll;
+        }
+
+        public async Task<Poll> DeletePollAsync(int pollId)
+        {
+            var userPolls = await dbContext.UserPoll.Where(up => up.PollId == pollId).ToListAsync();
+
+            if (userPolls.Any())
+            {
+                dbContext.UserPoll.RemoveRange(userPolls);
+                await dbContext.SaveChangesAsync();
+            }
+
+            var poll = dbContext.Polls.SingleOrDefault(p => p.Id == pollId);
+            if (poll == null)
+                return null;
+
+            dbContext.Polls.Remove(poll);
+            await dbContext.SaveChangesAsync();
+            return poll;
+
+        }
+
+        //public async Task<Poll> VoteAsync(int userId, int pollId, string vote)
+        //{
+        //    bool userVoter;
+        //    var currentUserId = await GetUserId();
+
+        //    if (vote == "Vote First")
+        //        userVoter = true;
+        //    else if (vote == "Vote Second")
+        //        userVoter = false;
+        //    else
+        //        throw new Exception("Unable to vote");
+
+        //    var currentUserPoll = dbContext.UserPoll.FirstOrDefault(up =>
+        //        up.PollId == pollid && up.UserId == currentUserId
+        //    );
+
+        //    if (currentUserPoll == null)
+        //    {
+        //        dbContext.UserPoll.Add(
+        //            new UserPoll
+        //            {
+        //                UserId = currentUserId,
+        //                PollId = pollid,
+        //                Vote = userVoter
+        //            }
+        //        );
+        //    }
+        //    else
+        //    {
+        //        currentUserPoll.Vote = userVoter;
+        //    }
+
+        //    dbContext.SaveChanges();
+        //    SendMessage();
+        //    return RedirectToAction("Index", "Home", new { area = "" });
+        //}
+
+        public Task<Poll> VoteAsync(Poll poll)
+        {
+            throw new NotImplementedException();
         }
     }
 }
