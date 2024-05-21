@@ -5,5 +5,7 @@ namespace RealTimePolls.Repositories
     public interface IHelpersRepository
     {
         Task<int> GetUserId(AuthenticateResult result);
+
+        Task SendMessage();
     }
 }

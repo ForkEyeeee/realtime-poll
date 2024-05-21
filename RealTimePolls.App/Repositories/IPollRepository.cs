@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.ViewModels;
 
@@ -12,6 +13,6 @@ namespace RealTimePolls.Repositories
 
         Task<Poll> DeletePollAsync(int pollId);
 
-        Task<Poll> VoteAsync(Poll poll);
+        Task<UserPoll> VoteAsync(AuthenticateResult result, int userId, int pollId, string vote);
     }
 }

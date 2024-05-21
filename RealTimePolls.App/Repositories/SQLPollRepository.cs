@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using realTimePolls.Controllers;
@@ -12,10 +13,12 @@ namespace RealTimePolls.Repositories
     public class SQLPollRepository : IPollRepository
     {
         private readonly RealTimePollsDbContext dbContext;
+        private readonly IHelpersRepository helpersRepository;
 
-        public SQLPollRepository(RealTimePollsDbContext dbContext)
+        public SQLPollRepository(RealTimePollsDbContext dbContext, IHelpersRepository helpersRepository)
         {
             this.dbContext = dbContext;
+            this.helpersRepository = helpersRepository;
         }
 
         public async Task<PollViewModelDomain> GetPollAsync([FromQuery] string pollTitle, int pollId, int userId)
@@ -85,46 +88,42 @@ namespace RealTimePolls.Repositories
 
         }
 
-        //public async Task<Poll> VoteAsync(int userId, int pollId, string vote)
-        //{
-        //    bool userVoter;
-        //    var currentUserId = await GetUserId();
-
-        //    if (vote == "Vote First")
-        //        userVoter = true;
-        //    else if (vote == "Vote Second")
-        //        userVoter = false;
-        //    else
-        //        throw new Exception("Unable to vote");
-
-        //    var currentUserPoll = dbContext.UserPoll.FirstOrDefault(up =>
-        //        up.PollId == pollid && up.UserId == currentUserId
-        //    );
-
-        //    if (currentUserPoll == null)
-        //    {
-        //        dbContext.UserPoll.Add(
-        //            new UserPoll
-        //            {
-        //                UserId = currentUserId,
-        //                PollId = pollid,
-        //                Vote = userVoter
-        //            }
-        //        );
-        //    }
-        //    else
-        //    {
-        //        currentUserPoll.Vote = userVoter;
-        //    }
-
-        //    dbContext.SaveChanges();
-        //    SendMessage();
-        //    return RedirectToAction("Index", "Home", new { area = "" });
-        //}
-
-        public Task<Poll> VoteAsync(Poll poll)
+        public async Task<UserPoll> VoteAsync(AuthenticateResult result, int userId, int pollId, string vote)
         {
-            throw new NotImplementedException();
+            bool userVoter;
+            var currentUserId = await helpersRepository.GetUserId(result);
+            var userPoll = new UserPoll();
+
+            if (vote == "Vote First")
+                userVoter = true;
+            else if (vote == "Vote Second")
+                userVoter = false;
+            else
+                throw new Exception("Unable to vote");
+
+            var userPolls = await dbContext.UserPoll.ToListAsync();
+
+            var currentUserPoll = userPolls.FirstOrDefault(up =>
+                up.PollId == pollId && up.UserId == currentUserId);
+
+            if (currentUserPoll == null)
+            {
+                userPoll.UserId = currentUserId;
+                userPoll.PollId = pollId;
+                userPoll.Vote = userVoter;
+                await dbContext.UserPoll.AddAsync(userPoll);
+            }
+            else
+            {
+                currentUserPoll.Vote = userVoter;
+            }
+
+            await dbContext.SaveChangesAsync();
+            await helpersRepository.SendMessage();
+
+            return userPoll;
         }
+
+
     }
 }

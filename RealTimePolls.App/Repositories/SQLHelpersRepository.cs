@@ -1,18 +1,27 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
 using RealTimePolls.Models;
 using RealTimePolls.Models.Domain;
+using SignalRChat.Hubs;
 
 namespace RealTimePolls.Repositories
 {
     public class SQLHelpersRepository : IHelpersRepository
     {
         private readonly RealTimePollsDbContext dbContext;
+        private readonly IHubContext<PollHub> myHubContext;
 
-        public SQLHelpersRepository(RealTimePollsDbContext dbContext)
+        public SQLHelpersRepository(RealTimePollsDbContext dbContext, IHubContext<PollHub> myHubContext)
         {
             this.dbContext = dbContext;
+            this.myHubContext = myHubContext;
+        }
+        public async Task SendMessage()
+        {
+            await myHubContext.Clients.All.SendAsync("ReceiveMessage");
+            return;
         }
 
         public async Task<int> GetUserId(AuthenticateResult result)
@@ -48,8 +57,8 @@ namespace RealTimePolls.Repositories
                 .Value;
 
             var user = await dbContext.User.FirstOrDefaultAsync(u => u.GoogleId == googleId);
-
             return user.Id;
         }
     }
 }
+

@@ -8,6 +8,7 @@ using RealTimePolls.Data;
 using RealTimePolls.Mappings;
 using RealTimePolls.Repositories;
 using SignalRChat.Hubs;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,12 +40,6 @@ builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RealTimePollsConnectionString"))
 );
 
-builder.Services.AddDbContext<RealTimePollsAuthDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("RealTimePollsAuthConnectionString")
-    )
-);
-
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 {
     builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
@@ -53,19 +48,23 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
     });
 }
 
-builder
-    .Services.AddIdentityCore<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("RealTimePolls")
-    .AddEntityFrameworkStores<RealTimePollsAuthDbContext>()
-    .AddDefaultTokenProviders();
-
 // This adds services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
 builder.Services.AddScoped<IPollsApiRepository, SQLPollsApiRepository>();
 builder.Services.AddScoped<IPollRepository, SQLPollRepository>();
 builder.Services.AddScoped<IHelpersRepository, SQLHelpersRepository>();
+
+var logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/NzWalks_Log.txt", rollingInterval: RollingInterval.Minute)
+    .MinimumLevel.Warning()
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
+
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddSignalR();

@@ -2,18 +2,28 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
+using RealTimePolls.Repositories;
 
 namespace RealTimePolls.Helpers
 {
-    public static class GoogleId
+    public class GoogleId
     {
-        public static string GetGoogleId(AuthenticateResult result)
+        private readonly SQLHelpersRepository helpersRepository;
+
+        public GoogleId(SQLHelpersRepository helpersRepository)
         {
+            this.helpersRepository = helpersRepository;
+        }
 
+        public async Task SendMessage()
+        {
+            await helpersRepository.SendMessage();
+            return;
+        }
 
-
-
-            return null;
+        public async Task<int> GetUserId(AuthenticateResult result)
+        {
+            return await helpersRepository.GetUserId(result);
         }
     }
 }
