@@ -1,77 +1,99 @@
-﻿//using System.Security.Claims;
-//using FakeItEasy;
-//using FluentAssertions;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.Extensions.Logging;
-//using realTimePolls.Controllers;
-//using RealTimePolls.Data;
-//using Xunit;
+﻿using AutoMapper;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using RealTimePolls.Controllers;
+using RealTimePolls.Models.ViewModels;
+using RealTimePolls.Repositories;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Xunit;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
-//namespace realTimePolls.Tests
-//{
-//    public class LoginControllerTests
-//    {
-//        private LoginController _LoginController;
-//        private ILogger<LoginController> _logger;
-//        private RealTimePollsContext _context; //declare variables
+namespace RealTimePolls.Tests
+{
+    public class LoginControllerTests
+    {
+        private readonly LoginController _loginController;
+        private readonly ILoginRepository _loginRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpContext _httpContext;
 
-//        public LoginControllerTests() //constructor
-//        {
-//            //Dependencies
-//            _logger = A.Fake<ILogger<LoginController>>();
+        public LoginControllerTests()
+        {
+            // Dependencies
+            _loginRepository = A.Fake<ILoginRepository>();
+            _httpContextAccessor = A.Fake<IHttpContextAccessor>();
+            _httpContext = new DefaultHttpContext();
+            _httpContextAccessor.HttpContext = _httpContext;
 
-//            var options = new DbContextOptionsBuilder<RealTimePollsContext>()
-//                .UseInMemoryDatabase(databaseName: "TestDatabase")
-//                .Options;
+            // SUT
+            _loginController = new LoginController(_loginRepository)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = _httpContext
+                }
+            };
+        }
 
-//            _context = new RealTimePollsContext(options);
+        [Fact]
+        public async Task LoginController_Login_RedirectsToGoogle()
+        {
+            // Arrange
+            A.CallTo(() => _httpContext.ChallengeAsync(
+                GoogleDefaults.AuthenticationScheme,
+                A<AuthenticationProperties>.Ignored)).Returns(Task.CompletedTask);
 
-//            //SUT
-//            _LoginController = new LoginController(_logger, _context);
-//        }
+            // Act
+            await _loginController.Login();
 
-//        [Fact]
-//        public void LoginController_Index_ReturnsSuccess()
-//        {
-//            //Arrange - What do i need to bring in?
+            // Assert
+            A.CallTo(() => _httpContext.ChallengeAsync(
+                GoogleDefaults.AuthenticationScheme,
+                A<AuthenticationProperties>.That.Matches(p => p.RedirectUri == "/Login/GoogleResponse"))).MustHaveHappenedOnceExactly();
+        }
 
-//            //Act
-//            var result = _LoginController.Login();
+        [Fact]
+        public async Task LoginController_GoogleResponse_ReturnsRedirectToHome()
+        {
+            // Arrange
+            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity());
+            var authenticateResult = AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, "Cookies"));
 
-//            //Assert - check the object
-//            result.IsCompleted.Equals(true);
-//        }
+            A.CallTo(() => _httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme))
+                .Returns(Task.FromResult(authenticateResult));
+            A.CallTo(() => _loginRepository.GoogleResponse(authenticateResult))
+                .Returns(Task.CompletedTask);
 
-//        [Fact]
-//        public async Task LoginController_GoogleResponse_ReturnsSuccess()
-//        {
-//            //Arrange - What do i need to bring in?
-//            var fakeClaimsPrincipal = new ClaimsPrincipal(
-//                new ClaimsIdentity(
-//                    new List<Claim>
-//                    {
-//                        new Claim(ClaimTypes.NameIdentifier, "GoogleId123"),
-//                        new Claim(ClaimTypes.Name, "Test User"),
-//                        new Claim(ClaimTypes.Email, "test@example.com"),
-//                    },
-//                    "TestAuthentication"
-//                )
-//            );
+            // Act
+            var result = await _loginController.GoogleResponse();
 
-//            var contextMock = new DefaultHttpContext();
-//            contextMock.User = fakeClaimsPrincipal;
+            // Assert
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("Index");
+            redirectResult.ControllerName.Should().Be("Home");
+        }
 
-//            var controllerContext = new ControllerContext { HttpContext = contextMock };
+        [Fact]
+        public async Task LoginController_Logout_ReturnsRedirectToHome()
+        {
+            // Arrange
+            A.CallTo(() => _httpContext.SignOutAsync()).Returns(Task.CompletedTask);
 
-//            _LoginController.ControllerContext = controllerContext;
+            // Act
+            var result = await _loginController.Logout();
 
-//            // Act
-//            var result = await _LoginController.GoogleResponse();
-
-//            //Assert - check the object
-//            result.Should().BeOfType<ViewResult>();
-//        }
-//    }
-//}
+            // Assert
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("Index");
+            redirectResult.ControllerName.Should().Be("Home");
+        }
+    }
+}

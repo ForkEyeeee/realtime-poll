@@ -1,69 +1,58 @@
-﻿//using FakeItEasy;
-//using FluentAssertions;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.Extensions.Logging;
-//using realTimePolls.Controllers;
-//using realTimePolls.Models;
-//using RealTimePolls.Data;
-//using Xunit;
+﻿using AutoMapper;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using RealTimePolls.Controllers;
+using RealTimePolls.Models.Domain;
+using RealTimePolls.Models.ViewModels;
+using RealTimePolls.Repositories;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 
-//namespace HomeUnitTests
-//{
-//    public class HomeControllerTests
-//    {
-//        private HomeController _HomeController;
-//        private ILogger<HomeController> _logger;
-//        private RealTimePollsContext _context; //declare variables
+namespace HomeUnitTests
+{
+    public class HomeControllerTests
+    {
+        private readonly HomeController _homeController;
+        private readonly IHomeRepository _homeRepository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<HomeController> _logger;
 
-//        public HomeControllerTests() //constructor
-//        {
-//            //Dependencies
-//            _logger = A.Fake<ILogger<HomeController>>();
+        public HomeControllerTests()
+        {
+            //Dependencies
+            _logger = A.Fake<ILogger<HomeController>>();
+            _homeRepository = A.Fake<IHomeRepository>();
+            _mapper = A.Fake<IMapper>();
 
-//            var options = new DbContextOptionsBuilder<RealTimePollsContext>()
-//                .UseInMemoryDatabase(databaseName: "TestDatabase")
-//                .Options;
+            // SUT
+            _homeController = new HomeController(_homeRepository, _mapper);
+        }
 
-//            _context = new RealTimePollsContext(options);
+        [Fact]
+        public async Task HomeController_Index_ReturnsSuccess()
+        {
+            // Arrange
+            var polls = new List<Poll>
+            {
+                new Poll { Id = 1, UserId = 1, Title = "Title", FirstOption = "FirstOption", SecondOption = "SecondOption" }
+            };
 
-//            //SUT
-//            _HomeController = new HomeController(_logger, _context, null);
-//        }
+            var homeViewModels = polls.Select(p => new HomeViewModel { Id = p.Id, Title = p.Title, FirstOption = p.FirstOption, SecondOption = p.SecondOption }).ToList();
 
-//        [Fact]
-//        public void HomeController_Index_ReturnsSuccess()
-//        {
-//            //Arrange - What do i need to bring in?
+            A.CallTo(() => _homeRepository.Index()).Returns(Task.FromResult(polls));
+            A.CallTo(() => _mapper.Map<HomeViewModel>(A<Poll>.That.Matches(p => p.Id == 1))).Returns(homeViewModels.First());
 
-//            //Act
-//            var result = _HomeController.Index();
+            // Act
+            var result = await _homeController.Index();
 
-//            //Assert - check the object
-//            result.Should().BeOfType<Task<IActionResult>>();
-//        }
-
-//        [Fact]
-//        public void HomeController_Poll_ReturnsSuccess()
-//        {
-//            //Arrange - What do i need to bring in?
-
-//            var poll = new Poll
-//            {
-//                UserId = 1,
-//                Title = "Title",
-//                FirstOption = "FirstOption",
-//                SecondOption = "SecondOption"
-//            };
-
-//            //Act
-//            _context.Polls.Add(poll);
-//            _context.SaveChanges();
-
-//            var result = _HomeController.Poll(poll.Title);
-
-//            //Assert - check the object
-//            result.Should().BeOfType<ViewResult>();
-//        }
-//    }
-//}
+            // Assert
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            viewResult.Model.Should().BeEquivalentTo(homeViewModels);
+        }
+    }
+}
