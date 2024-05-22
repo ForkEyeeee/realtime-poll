@@ -39,6 +39,7 @@ namespace RealTimePolls.Data
                 new Genre { Id = 20, Name = "DIY & Crafts" }
             };
 
+
             var polls = new List<Poll>
             {
                 new Poll
@@ -47,7 +48,7 @@ namespace RealTimePolls.Data
                     FirstOption = "Chicken",
                     SecondOption = "Egg",
                     Title = "Which came first?",
-                    GenreId = 2,
+                    GenreId = 4,
                     UserId = 1,
                 },
                 new Poll
@@ -56,7 +57,7 @@ namespace RealTimePolls.Data
                     FirstOption = "First choice",
                     SecondOption = "Second choice",
                     Title = "What is your option?",
-                    GenreId = 5,
+                    GenreId = 6,
                     UserId = 1,
                 },
             };

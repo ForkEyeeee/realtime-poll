@@ -1,18 +1,22 @@
 ﻿
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
+using RealTimePolls.Models.ViewModels;
 
 namespace RealTimePolls.Repositories
 {
     public class SQLPollsApiRepository : IPollsApiRepository
     {
         private readonly RealTimePollsDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public SQLPollsApiRepository(RealTimePollsDbContext dbContext)
+        public SQLPollsApiRepository(RealTimePollsDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
         public async Task<List<Poll>> GetPollsListAsync()
         {
@@ -76,5 +80,26 @@ namespace RealTimePolls.Repositories
                 return string.Empty;
         }
 
+        public async Task<List<Poll>> GetSearchResults(string query)
+        {
+            var pattern = $"%{query}%";
+
+            var polls = await dbContext
+                .Polls.Include(p => p.Genre).Include(p => p.User)
+                .Where(c => EF.Functions.Like(c.Title.ToLower(), pattern.ToLower())).ToListAsync();
+
+            int pollLength = dbContext
+                .Polls.Where(c => EF.Functions.Like(c.Title, pattern))
+                .Count();
+
+            var homeViewModel = new List<HomeViewModel>();
+
+            foreach (var poll in polls)
+            {
+                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
+            }
+
+            return polls;
+        }
     }
 }

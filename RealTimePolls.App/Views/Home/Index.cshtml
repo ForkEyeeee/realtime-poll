@@ -188,7 +188,7 @@
     }
 
     const getSearchResults = async (text, page) => {
-        const url = baseURL + "Polls/GetSearchResults?search=" + text + "&page=" + page
+        const url = baseURL + "api/GetSearchResults?search=" + text + "&page=" + page
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -317,7 +317,8 @@
                 nextURL = `?search=${search}`
                 nextURL = baseURL + nextURL
                 window.history.replaceState(nextState, nextTitle, nextURL);
-                ({ polls, pollCount } = await getSearchResults(search, page));
+                polls = await getSearchResults(search, page);
+                pollCount = polls.length
             }
 
 

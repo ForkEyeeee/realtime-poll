@@ -17,8 +17,6 @@ namespace RealTimePolls.Models.Domain
         public int FirstVoteCount { get; set; }
         [NotMapped]
         public int SecondVoteCount { get; set; }
-        [NotMapped]
-        public string ProfilePicture { get; set; }
 
         public int GenreId { get; set; }
         public int UserId { get; set; }

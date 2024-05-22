@@ -11,5 +11,7 @@ namespace RealTimePolls.Repositories
 
         Task<string> GetUserProfilePicture(AuthenticateResult result);
 
+        Task<List<Poll>> GetSearchResults(string query);
+
     }
 }
