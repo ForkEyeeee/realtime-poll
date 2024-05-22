@@ -353,25 +353,29 @@
 <script>
     const getGenreResults = async (genreId) => {
 
-        const url = baseURL + "Polls/GetGenreResults/" + "?genreId=" + genreId
+        const url = baseURL + "api/GetGenreResults/" + "?genreId=" + genreId
 
         const userId = {
             Id: hubConnection.connection.connectionId
         }
 
         const response = await fetch(url, {
-            method: "POST",
+            method: "GET",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
 
-            },
-            body: JSON.stringify(genreId)
+            }
         })
 
         if (!response.ok) throw new Error("Failed to fetch polls")
 
-        return await response.json()
+        const polls = await response.json()
+
+        return {
+            polls: polls, 
+            pollCount: polls.length
+        };
     }
 
     const genreDropdown = document.querySelector("#genre-search")

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Repositories;
+using RealTimePolls.Models.Domain;
 
 namespace realTimePolls.Controllers
 {
@@ -51,54 +52,26 @@ namespace realTimePolls.Controllers
         public async Task<JsonResult> GetSearchResults([FromQuery] string search)
         {
 
-            var domainPolls = await pollsApiRepository.GetSearchResults(search);
+            var polls = await pollsApiRepository.GetSearchResults(search);
 
-            return Json(domainPolls);
+            return Json(polls);
+
+        }
+
+        [HttpGet]
+        [Route("api/[action]")]
+        public async Task<JsonResult> GetGenreResults([FromQuery] int genreId)
+        {
+            var polls = await pollsApiRepository.GetGenreResults(genreId);
+
+            return Json(polls);
+
 
         }
 
     }
 }
 
-//[HttpPost]
-//public IActionResult GetGenreResults([FromBody] int genreId)
-//{
-//    try
-//    {
-//        var polls = _context
-//            .Polls.Include(p => p.Genre)
-//            .Where(p => p.GenreId == genreId)
-//            .Select(p => new PollItem
-//            {
-//                Poll = p,
-//                FirstVoteCount = _context
-//                    .UserPoll.Where(up => up.PollId == p.Id && up.Vote == true)
-//                    .Count(),
-//                SecondVoteCount = _context
-//                    .UserPoll.Where(up => up.PollId == p.Id && up.Vote == false)
-//                    .Count(),
-//                UserName = _context.User.SingleOrDefault(user => user.Id == p.UserId).Name,
-//                ProfilePicture = _context
-//                    .User.SingleOrDefault(user => user.Id == p.UserId)
-//                    .ProfilePicture
-//            })
-//            .ToList();
 
-//        int pollLength = _context
-//            .Polls.Where(p => p.GenreId == genreId)
-//            .Select(p => new PollItem { Poll = p, })
-//            .Count();
 
-//        var pollList = new PollsList { Polls = polls, PollCount = pollLength };
-
-//        return Json(pollList);
-//    }
-//    catch (Exception e)
-//    {
-//        var errorViewModel = new ErrorViewModel { RequestId = e.Message };
-//        return View("Error", errorViewModel);
-//    }
-//}
-//}
-//}
 

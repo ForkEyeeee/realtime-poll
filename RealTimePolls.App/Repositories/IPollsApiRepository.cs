@@ -13,5 +13,7 @@ namespace RealTimePolls.Repositories
 
         Task<List<Poll>> GetSearchResults(string query);
 
+        Task<List<Poll>> GetGenreResults(int genreId);
+
     }
 }

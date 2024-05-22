@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
@@ -70,12 +71,12 @@ namespace RealTimePolls.Repositories
                 )
                 .Value;
 
-            string profilePicture = dbContext
-                .User.SingleOrDefault(user => user.GoogleId == googleId)
-                .ProfilePicture;
+            var user = await dbContext
+                .User.SingleOrDefaultAsync(user => user.GoogleId == googleId);
 
-            if (profilePicture != null)
-                return profilePicture;
+
+            if (user != null)
+                return user.ProfilePicture;
             else
                 return string.Empty;
         }
@@ -90,6 +91,27 @@ namespace RealTimePolls.Repositories
 
             int pollLength = dbContext
                 .Polls.Where(c => EF.Functions.Like(c.Title, pattern))
+                .Count();
+
+            var homeViewModel = new List<HomeViewModel>();
+
+            foreach (var poll in polls)
+            {
+                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
+            }
+
+            return polls;
+        }
+
+        public async Task<List<Poll>> GetGenreResults(int genreId)
+        {
+
+            var polls = await dbContext
+                .Polls.Include(p => p.Genre).Include(p => p.User)
+                .Where(p => p.GenreId == genreId).ToListAsync();
+
+            int pollLength = dbContext
+                .Polls.Where(p => p.GenreId == genreId)
                 .Count();
 
             var homeViewModel = new List<HomeViewModel>();
