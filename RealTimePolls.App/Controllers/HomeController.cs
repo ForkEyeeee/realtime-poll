@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
@@ -22,6 +23,7 @@ namespace RealTimePolls.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "")]
         public async Task<IActionResult> Index()
         {
             var domainPolls = await homeRepository.Index();

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealTimePolls.Data;
 
@@ -11,9 +12,11 @@ using RealTimePolls.Data;
 namespace RealTimePolls.Migrations
 {
     [DbContext(typeof(RealTimePollsDbContext))]
-    partial class RealTimePollsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240523192134_Adjusted Seed data")]
+    partial class AdjustedSeeddata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,7 +261,7 @@ namespace RealTimePolls.Migrations
                             Email = "user1@gmail.com",
                             GoogleId = "1111111",
                             Name = "User One",
-                            ProfilePicture = "https://picsum.photos/500"
+                            ProfilePicture = "https://fastly.picsum.photos/id/1011/5000/3333.jpg?hmac=7dZBmDddTg4Y1HX5N8lZg1b78F3TcD9FZ5ZuBcG1bZc"
                         },
                         new
                         {
@@ -266,7 +269,7 @@ namespace RealTimePolls.Migrations
                             Email = "user2@gmail.com",
                             GoogleId = "2222222",
                             Name = "User Two",
-                            ProfilePicture = "https://picsum.photos/500"
+                            ProfilePicture = "https://fastly.picsum.photos/id/1027/5000/3333.jpg?hmac=Zlkm7by_Afr8RFdY1MZAnL9m8oxfGkl_A5oOIdD_vBc"
                         },
                         new
                         {
@@ -274,7 +277,7 @@ namespace RealTimePolls.Migrations
                             Email = "user3@gmail.com",
                             GoogleId = "3333333",
                             Name = "User Three",
-                            ProfilePicture = "https://picsum.photos/500"
+                            ProfilePicture = "https://fastly.picsum.photos/id/1029/5000/3333.jpg?hmac=oi5G1bcGJ-8KOc7Zt9I1F7vU1g2nDjVljqzM0ElF_Qk"
                         });
                 });
 

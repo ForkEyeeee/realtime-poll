@@ -39,39 +39,84 @@ namespace RealTimePolls.Data
                 new Genre { Id = 20, Name = "DIY & Crafts" }
             };
 
-
             var polls = new List<Poll>
-            {
-                new Poll
                 {
-                    Id = 1,
-                    FirstOption = "Chicken",
-                    SecondOption = "Egg",
-                    Title = "Which came first?",
-                    GenreId = 4,
-                    UserId = 1,
-                },
-                new Poll
-                {
-                    Id = 2,
-                    FirstOption = "First choice",
-                    SecondOption = "Second choice",
-                    Title = "What is your option?",
-                    GenreId = 6,
-                    UserId = 1,
-                },
-            };
+                    new Poll
+                    {
+                        Id = 1,
+                        FirstOption = "Chicken",
+                        SecondOption = "Egg",
+                        Title = "Which came first?",
+                        GenreId = 4,
+                        UserId = 1,
+                    },
+                    new Poll
+                    {
+                        Id = 2,
+                        FirstOption = "First choice",
+                        SecondOption = "Second choice",
+                        Title = "What is your option?",
+                        GenreId = 6,
+                        UserId = 1,
+                    },
+                    new Poll
+                    {
+                        Id = 3,
+                        FirstOption = "Summer",
+                        SecondOption = "Winter",
+                        Title = "Which season do you prefer?",
+                        GenreId = 18,
+                        UserId = 2,
+                    },
+                    new Poll
+                    {
+                        Id = 4,
+                        FirstOption = "Apple",
+                        SecondOption = "Android",
+                        Title = "Which smartphone brand do you prefer?",
+                        GenreId = 1,
+                        UserId = 2,
+                    },
+                    new Poll
+                    {
+                        Id = 5,
+                        FirstOption = "Pizza",
+                        SecondOption = "Burger",
+                        Title = "Favorite fast food?",
+                        GenreId = 8,
+                        UserId = 3,
+                    }
+                };
 
-            var user = new User
+            var users = new List<User>
+{
+            new User
             {
                 Id = 1,
-                Email = "user@gmail.com",
-                GoogleId = "9999999",
-                Name = "Anonymous User",
-                ProfilePicture = "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU"
-            };
+                Email = "user1@gmail.com",
+                GoogleId = "1111111",
+                Name = "User One",
+                ProfilePicture = "https://picsum.photos/500"
+            },
+            new User
+            {
+                Id = 2,
+                Email = "user2@gmail.com",
+                GoogleId = "2222222",
+                Name = "User Two",
+                ProfilePicture = "https://picsum.photos/500"
+            },
+            new User
+            {
+                Id = 3,
+                Email = "user3@gmail.com",
+                GoogleId = "3333333",
+                Name = "User Three",
+                ProfilePicture = "https://picsum.photos/500"
+            }
+        };
 
-            modelBuilder.Entity<User>().HasData(user);
+            modelBuilder.Entity<User>().HasData(users);
             modelBuilder.Entity<Genre>().HasData(genres);
             modelBuilder.Entity<Poll>().HasData(polls);
 

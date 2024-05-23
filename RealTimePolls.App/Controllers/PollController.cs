@@ -97,9 +97,6 @@ namespace RealTimePolls.Controllers
             return RedirectToAction("Index", "Home", new { area = "" });
 
         }
-
-
     }
-
 }
 

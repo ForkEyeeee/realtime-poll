@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Repositories;
-using RealTimePolls.Models.Domain;
 
 namespace realTimePolls.Controllers
 {

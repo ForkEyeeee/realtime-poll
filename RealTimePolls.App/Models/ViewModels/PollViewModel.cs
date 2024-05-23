@@ -1,5 +1,4 @@
-﻿using RealTimePolls.Models.Domain;
-using RealTimePolls.Models.DTO;
+﻿using RealTimePolls.Models.DTO;
 
 namespace RealTimePolls.Models.ViewModels
 {

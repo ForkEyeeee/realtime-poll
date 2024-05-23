@@ -1,8 +1,7 @@
 ﻿@{
     var userId = Context.User.Identity.Name;
 }
-@* show correct default
- *@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -304,7 +303,7 @@
     <script>
         const getProfilePicture = async () => {
             const url = `${baseURL}api/GetUserProfilePicture`
-            // pass userid to server
+
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
@@ -316,8 +315,6 @@
             if (!response.ok) throw new Error("Failed to fetch profile picture")
             const profilePicture = await response.json()
             const avatar = document.querySelector(".navbar-avatar")
-
-
 
             if (!profilePicture) return
 
