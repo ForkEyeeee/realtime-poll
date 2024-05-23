@@ -280,6 +280,7 @@
     resetSearch()
 </script>
 
+@*allow for searching in genre*@
 
 @* Populates the grid when the first page loads *@
 
@@ -299,11 +300,12 @@
         const populateGridFromSearch = async (search) => {
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
+            const genre = searchParams.get('genreId')
             const nextState = { additionalInformation: 'Updated the URL with JS' };
             const nextTitle = 'Home';
             let polls;
             let pollCount;
-
+            console.log('test')
             var dataContainer = $('#data-container');
 
             let nextURL;
@@ -314,10 +316,13 @@
                 window.history.replaceState(nextState, nextTitle, nextURL);
                 ({ polls, pollCount } = await getData(page));
             } else {
-                nextURL = `?search=${search}`
+                // nextURL = `?search=${search}` + !genre ?
+                
+                nextUrl = `?search=${search}${genre ? `&genreId=${genre}` : ""}`
+
                 nextURL = baseURL + nextURL
                 window.history.replaceState(nextState, nextTitle, nextURL);
-                polls = await getSearchResults(search, page);
+                polls = await getSearchResults(search, page, genre);
                 pollCount = polls.length
             }
 
@@ -340,7 +345,7 @@
             })
         };
         searchBox.addEventListener('input', async (e) => {
-            genreDropdown.value = "Choose a genre to sort by..."
+            // genreDropdown.value = "Choose a genre to sort by..."
             populateGridFromSearch(e.target.value);
         });
     } catch (e) {
@@ -383,8 +388,9 @@
     genreDropdown.addEventListener('change', async (e) => {
         try {
             const searchBox = document.getElementById("search-box")
-            if (searchBox.value !== "") searchBox.value = ""
-
+            if (searchBox.value !== "") { 
+                    // searchbox.value = ""
+            } 
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
             const genreId = e.target.value
