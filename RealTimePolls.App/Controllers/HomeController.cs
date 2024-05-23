@@ -23,7 +23,6 @@ namespace RealTimePolls.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "")]
         public async Task<IActionResult> Index()
         {
             var domainPolls = await homeRepository.Index();
