@@ -1,15 +1,5 @@
 ﻿@model List<RealTimePolls.Models.ViewModels.HomeViewModel>;
 
-@* <div>
-    @if (Model != null && Model.Any())
-    {
-        @foreach (var poll in Model)
-        {
-            <p>test</p>
-        }
-    }
-</div> *@
-
 <div class="text-center pt-0">
     @if (Context.User.Identity.IsAuthenticated)
     {
@@ -85,7 +75,6 @@
     const baseURL = `https://localhost:${location.port}/`;
 
     const model = @Html.Raw(Json.Serialize(@Model))
-   
 
 </script>
 
@@ -187,8 +176,8 @@
         }
     }
 
-    const getSearchResults = async (text, page) => {
-        const url = baseURL + "api/GetSearchResults?search=" + text + "&page=" + page
+    const getSearchResults = async (text, genreId) => {
+        const url = `${baseURL}api/GetSearchResults?search=${text}${genreId ? `&genreId=${genreId}` : ""}`
 
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -203,7 +192,10 @@
         if (!response.ok) throw new Error("Failed to fetch polls")
 
         const polls = await response.json()
-        return polls
+        return {
+            polls,
+            pollCount: polls.length
+        };
     }
 
     const checkPollCount = (polls) => {
@@ -280,7 +272,6 @@
     resetSearch()
 </script>
 
-@*allow for searching in genre*@
 
 @* Populates the grid when the first page loads *@
 
@@ -305,28 +296,15 @@
             const nextTitle = 'Home';
             let polls;
             let pollCount;
-            console.log('test')
-            var dataContainer = $('#data-container');
+            const dataContainer = $('#data-container');
 
             let nextURL;
-
-            if (search === "") {
-                nextURL = `?page=1`
-                nextURL = baseURL + nextURL
-                window.history.replaceState(nextState, nextTitle, nextURL);
-                ({ polls, pollCount } = await getData(page));
-            } else {
-                // nextURL = `?search=${search}` + !genre ?
                 
-                nextUrl = `?search=${search}${genre ? `&genreId=${genre}` : ""}`
+            nextURL = `?search=${search}${genre ? `&genreId=${genre}` : ""}`
 
-                nextURL = baseURL + nextURL
-                window.history.replaceState(nextState, nextTitle, nextURL);
-                polls = await getSearchResults(search, page, genre);
-                pollCount = polls.length
-            }
-
-
+            nextURL = baseURL + nextURL
+            window.history.replaceState(nextState, nextTitle, nextURL);
+            ({ polls, pollCount } = await getSearchResults(search, genre));
 
             if (checkPollCount(polls)) return
 
@@ -335,17 +313,12 @@
                 pageSize: 5,
                 pageRange: 1,
                 callback: function (data, pagination) {
-
-
-
-
                     var html = template(data);
                     dataContainer.html(html);
                 }
             })
         };
         searchBox.addEventListener('input', async (e) => {
-            // genreDropdown.value = "Choose a genre to sort by..."
             populateGridFromSearch(e.target.value);
         });
     } catch (e) {
@@ -356,45 +329,15 @@
 @* Filters grid by genre *@
 
 <script>
-    const getGenreResults = async (genreId) => {
-
-        const url = baseURL + "api/GetGenreResults/" + "?genreId=" + genreId
-
-        const userId = {
-            Id: hubConnection.connection.connectionId
-        }
-
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-
-            }
-        })
-
-        if (!response.ok) throw new Error("Failed to fetch polls")
-
-        const polls = await response.json()
-
-        return {
-            polls: polls, 
-            pollCount: polls.length
-        };
-    }
-
     const genreDropdown = document.querySelector("#genre-search")
 
     genreDropdown.addEventListener('change', async (e) => {
         try {
             const searchBox = document.getElementById("search-box")
-            if (searchBox.value !== "") { 
-                    // searchbox.value = ""
-            } 
             const searchParams = new URLSearchParams(window.location.search);
             const page = searchParams.get('page')
             const genreId = e.target.value
-            const { polls, pollCount } = await getGenreResults(genreId);
+            const { polls, pollCount } = await getSearchResults(searchBox.value, genreId);
 
             if (checkPollCount(polls)) return
 

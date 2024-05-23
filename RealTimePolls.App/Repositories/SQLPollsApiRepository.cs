@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
@@ -81,13 +82,16 @@ namespace RealTimePolls.Repositories
                 return string.Empty;
         }
 
-        public async Task<List<Poll>> GetSearchResults(string query)
+        public async Task<List<Poll>> GetSearchResults(string query, int genreId)
         {
+
+            var polls = new List<Poll>();
+
             var pattern = $"%{query}%";
 
-            var polls = await dbContext
+            polls = await dbContext
                 .Polls.Include(p => p.Genre).Include(p => p.User)
-                .Where(c => EF.Functions.Like(c.Title.ToLower(), pattern.ToLower())).ToListAsync();
+                .Where(c => query != string.Empty ? EF.Functions.Like(c.Title.ToLower(), pattern.ToLower()) : true).Where(p => genreId != 0 ? p.GenreId == genreId : true).ToListAsync();
 
             int pollLength = dbContext
                 .Polls.Where(c => EF.Functions.Like(c.Title, pattern))
@@ -103,25 +107,5 @@ namespace RealTimePolls.Repositories
             return polls;
         }
 
-        public async Task<List<Poll>> GetGenreResults(int genreId)
-        {
-
-            var polls = await dbContext
-                .Polls.Include(p => p.Genre).Include(p => p.User)
-                .Where(p => p.GenreId == genreId).ToListAsync();
-
-            int pollLength = dbContext
-                .Polls.Where(p => p.GenreId == genreId)
-                .Count();
-
-            var homeViewModel = new List<HomeViewModel>();
-
-            foreach (var poll in polls)
-            {
-                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
-            }
-
-            return polls;
-        }
     }
 }

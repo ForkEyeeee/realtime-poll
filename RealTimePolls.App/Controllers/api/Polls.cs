@@ -49,23 +49,12 @@ namespace realTimePolls.Controllers
 
         [HttpGet]
         [Route("api/[action]")]
-        public async Task<JsonResult> GetSearchResults([FromQuery] string search)
+        public async Task<JsonResult> GetSearchResults([FromQuery] string search, int genreId)
         {
 
-            var polls = await pollsApiRepository.GetSearchResults(search);
+            var polls = await pollsApiRepository.GetSearchResults(search, genreId);
 
             return Json(polls);
-
-        }
-
-        [HttpGet]
-        [Route("api/[action]")]
-        public async Task<JsonResult> GetGenreResults([FromQuery] int genreId)
-        {
-            var polls = await pollsApiRepository.GetGenreResults(genreId);
-
-            return Json(polls);
-
 
         }
 
