@@ -91,14 +91,14 @@
                             <img src="@ViewBag.Message" class="navbar-avatar" />
                         </div>
                         <ul class="dropdown-menu dropdown-menu-navbar ">
-                            <a asp-controller="Login" class="dropdown-item logout-btn " asp-action="Logout">Logout</a>
+                            <a asp-controller="Auth" class="dropdown-item logout-btn " asp-action="Logout">Logout</a>
                         </ul>
                     </div>
                 </div>
             }
             else
             {
-                <a asp-controller="Login" class="sign-in-link" asp-action="Login">Sign-In</a>
+                <a asp-controller="Auth" class="sign-in-link" asp-action="Login">Sign-In</a>
             }
         </nav>
     </header>

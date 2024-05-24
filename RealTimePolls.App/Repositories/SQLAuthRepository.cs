@@ -3,16 +3,21 @@ using RealTimePolls.Data;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Models.Domain;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace RealTimePolls.Repositories
 {
-    public class SQLLoginRepository : ILoginRepository
+    public class SQLAuthRepository : IAuthRepository
     {
         private readonly RealTimePollsDbContext dbContext;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public SQLLoginRepository(RealTimePollsDbContext dbContext)
+        public SQLAuthRepository(RealTimePollsDbContext dbContext
+        , UserManager<IdentityUser> userManager
+        )
         {
             this.dbContext = dbContext;
+            this.userManager = userManager;
         }
 
         public async Task GoogleResponse(AuthenticateResult result)
@@ -87,6 +92,8 @@ namespace RealTimePolls.Repositories
                         UserProfilePicture = profilePicture
                     };
 
+
+
                     await dbContext.SaveChangesAsync();
 
                     User viewModel =
@@ -103,10 +110,8 @@ namespace RealTimePolls.Repositories
             {
                 throw new Exception("GoogleId cannot be found");
             }
-
             await dbContext.SaveChangesAsync();
         }
-
 
     }
 }

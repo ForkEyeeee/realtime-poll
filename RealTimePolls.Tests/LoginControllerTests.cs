@@ -9,20 +9,20 @@ using Microsoft.AspNetCore.Http;
 
 namespace HomeUnitTests
 {
-    public class LoginControllerTests
+    public class AuthControllerTests
     {
-        private readonly LoginController _loginController;
-        private readonly Mock<ILoginRepository> _loginRepositoryMock;
+        private readonly AuthController _loginController;
+        private readonly Mock<IAuthRepository> _loginRepositoryMock;
         private readonly Mock<HttpContext> _httpContextMock;
         private readonly Mock<IServiceProvider> _serviceProviderMock;
 
-        public LoginControllerTests()
+        public AuthControllerTests()
         {
-            _loginRepositoryMock = new Mock<ILoginRepository>();
+            _loginRepositoryMock = new Mock<IAuthRepository>();
             _httpContextMock = new Mock<HttpContext>();
             _serviceProviderMock = new Mock<IServiceProvider>();
 
-            _loginController = new LoginController(_loginRepositoryMock.Object)
+            _loginController = new AuthController(_loginRepositoryMock.Object)
             {
                 ControllerContext = new ControllerContext
                 {

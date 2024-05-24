@@ -95,7 +95,6 @@ namespace RealTimePolls.Controllers
 
             await pollRepository.VoteAsync(result, addVoteRequest);
             return RedirectToAction("Index", "Home", new { area = "" });
-
         }
     }
 }

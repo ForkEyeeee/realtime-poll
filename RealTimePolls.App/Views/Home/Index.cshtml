@@ -395,8 +395,8 @@
 
             for (let i = 0; i <= polls.length - 1; i++) {
 
-                if (firstVoteIds.includes(polls[i].poll.id) && firstVotes[i].innerHTML != polls[i].firstVoteCount ||
-                    secondVoteIds.includes(polls[i].poll.id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
+                if (firstVoteIds.includes(polls[i].id) && firstVotes[i].innerHTML != polls[i].firstVoteCount ||
+                    secondVoteIds.includes(polls[i].id) && secondVotes[i].innerHTML != polls[i].secondVoteCount) {
                     firstVotes[i].innerHTML = polls[i].firstVoteCount
                     secondVotes[i].innerHTML = polls[i].secondVoteCount
                     if (firstVotes[i].innerHTML > secondVotes[i].innerHTML) {

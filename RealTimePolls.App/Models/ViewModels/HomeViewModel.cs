@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RealTimePolls.Models.Domain;
-using RealTimePolls.Models.DTO;
+﻿using RealTimePolls.Models.Domain;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RealTimePolls.Models.ViewModels

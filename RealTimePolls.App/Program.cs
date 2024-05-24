@@ -41,6 +41,11 @@ builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RealTimePollsConnectionString"))
 );
 
+builder.Services.AddDbContext<RealTimePollsAuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RealTimePollsAuthConnectionString"))
+);
+
+
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 {
     builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
@@ -49,13 +54,20 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
     });
 }
 
+
 // This adds services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
 builder.Services.AddScoped<IPollsApiRepository, SQLPollsApiRepository>();
 builder.Services.AddScoped<IPollRepository, SQLPollRepository>();
 builder.Services.AddScoped<IHelpersRepository, SQLHelpersRepository>();
-builder.Services.AddScoped<ILoginRepository, SQLLoginRepository>();
+builder.Services.AddScoped<IAuthRepository, SQLAuthRepository>();
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("RealTimePolls")
+    .AddEntityFrameworkStores<RealTimePollsAuthDbContext>()
+    .AddDefaultTokenProviders();
 
 var logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -70,6 +82,7 @@ builder.Logging.AddSerilog(logger);
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 

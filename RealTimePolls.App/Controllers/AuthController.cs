@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 
 namespace RealTimePolls.Controllers
 {
-    public class LoginController : Controller
+    public class AuthController : Controller
     {
-        private readonly ILoginRepository loginRepository;
+        private readonly IAuthRepository authRepository;
 
-        public LoginController(ILoginRepository loginRepository)
+        public AuthController(IAuthRepository authRepository)
         {
-            this.loginRepository = loginRepository;
+            this.authRepository = authRepository;
         }
 
         public async Task Login()
@@ -35,11 +36,12 @@ namespace RealTimePolls.Controllers
         {
             try
             {
+
                 var result = await HttpContext.AuthenticateAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme
                 );
 
-                await loginRepository.GoogleResponse(result);
+                await authRepository.GoogleResponse(result);
 
                 return RedirectToAction("Index", "Home", new { area = "" });
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.ViewModels;
 
