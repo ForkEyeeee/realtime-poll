@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RealTimePolls.Data;
 
 #nullable disable
@@ -12,8 +12,8 @@ using RealTimePolls.Data;
 namespace RealTimePolls.Migrations
 {
     [DbContext(typeof(RealTimePollsDbContext))]
-    [Migration("20240522005600_Removed Profile Picture from Poll")]
-    partial class RemovedProfilePicturefromPoll
+    [Migration("20240524224210_Moved to Postgres")]
+    partial class MovedtoPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,21 +21,21 @@ namespace RealTimePolls.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("RealTimePolls.Models.Domain.Genre", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -148,27 +148,27 @@ namespace RealTimePolls.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FirstOption")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("GenreId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SecondOption")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -196,6 +196,33 @@ namespace RealTimePolls.Migrations
                             SecondOption = "Second choice",
                             Title = "What is your option?",
                             UserId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FirstOption = "Summer",
+                            GenreId = 18,
+                            SecondOption = "Winter",
+                            Title = "Which season do you prefer?",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            FirstOption = "Apple",
+                            GenreId = 1,
+                            SecondOption = "Android",
+                            Title = "Which smartphone brand do you prefer?",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            FirstOption = "Pizza",
+                            GenreId = 8,
+                            SecondOption = "Burger",
+                            Title = "Favorite fast food?",
+                            UserId = 3
                         });
                 });
 
@@ -203,25 +230,25 @@ namespace RealTimePolls.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("GoogleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProfilePicture")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -231,10 +258,26 @@ namespace RealTimePolls.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "user@gmail.com",
-                            GoogleId = "9999999",
-                            Name = "Anonymous User",
-                            ProfilePicture = "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU"
+                            Email = "user1@gmail.com",
+                            GoogleId = "1111111",
+                            Name = "User One",
+                            ProfilePicture = "https://picsum.photos/500"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "user2@gmail.com",
+                            GoogleId = "2222222",
+                            Name = "User Two",
+                            ProfilePicture = "https://picsum.photos/500"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "user3@gmail.com",
+                            GoogleId = "3333333",
+                            Name = "User Three",
+                            ProfilePicture = "https://picsum.photos/500"
                         });
                 });
 
@@ -242,18 +285,18 @@ namespace RealTimePolls.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("PollId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool?>("Vote")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

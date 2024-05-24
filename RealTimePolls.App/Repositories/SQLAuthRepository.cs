@@ -10,14 +10,11 @@ namespace RealTimePolls.Repositories
     public class SQLAuthRepository : IAuthRepository
     {
         private readonly RealTimePollsDbContext dbContext;
-        private readonly UserManager<IdentityUser> userManager;
 
         public SQLAuthRepository(RealTimePollsDbContext dbContext
-        , UserManager<IdentityUser> userManager
         )
         {
             this.dbContext = dbContext;
-            this.userManager = userManager;
         }
 
         public async Task GoogleResponse(AuthenticateResult result)
