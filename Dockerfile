@@ -3,10 +3,10 @@ WORKDIR /App
 
 COPY RealTimePolls.App/RealTimePolls.App.csproj RealTimePolls.App/
 WORKDIR /App/RealTimePolls.App
-RUN dotnet restore
+RUN dotnet restore RealTimePolls.App.csproj
 
 COPY RealTimePolls.App/. ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish RealTimePolls.App.csproj -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
