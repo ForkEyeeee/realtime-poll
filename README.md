@@ -1,4 +1,4 @@
-﻿﻿
+
 # Real-time Poll App
 
 Poll application built with ASP.NET CORE & PostgreSQL, featuring Google authentication, user-created polls, and real-time data display.
