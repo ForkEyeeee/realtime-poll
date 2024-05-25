@@ -278,3 +278,5 @@ __pycache__/
 RealTimePolls.App/wwwroot/js/signalr/*.ts
 RealTimePolls.App/wwwroot/js/signalr/*.js
 /RealTimePolls.App/Logs
+/out
+/.env
