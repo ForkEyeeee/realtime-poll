@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 using RealTimePolls.Data;
 using RealTimePolls.Mappings;
 using RealTimePolls.Repositories;
-using SignalRChat.Hubs;
 using Serilog;
-using RealTimePolls;
+using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("Logs/NzWalks_Log.txt", rollingInterval: RollingInterval.Minute)
+    .WriteTo.File("Logs/RealTimePolls_Logs.txt", rollingInterval: RollingInterval.Minute)
     .MinimumLevel.Warning()
     .CreateLogger();
 
@@ -27,33 +27,30 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
 .AddCookie()
-.AddGoogle(
-    GoogleDefaults.AuthenticationScheme,
-    options =>
-    {
-        options.ClientId = builder.Environment.IsProduction()
-            ? Environment.GetEnvironmentVariable("GoogleKeys_ClientId")
-            : builder.Configuration["GoogleKeys:ClientId"];
-        options.ClientSecret = builder.Environment.IsProduction()
-            ? Environment.GetEnvironmentVariable("GoogleKeys_ClientSecret")
-            : builder.Configuration["GoogleKeys:ClientSecret"];
-        options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-        options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
-    }
-);
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    options.ClientId = builder.Configuration["GoogleKeys:ClientId"] ?? Environment.GetEnvironmentVariable("GoogleKeys_ClientId");
+    options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"] ?? Environment.GetEnvironmentVariable("GoogleKeys_ClientSecret");
+    options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+    options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
+});
 
-if (builder.Environment.IsProduction())
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+
+string connectionString = builder.Configuration.GetConnectionString("RealTimePollsConnectionString") ??
+    Environment.GetEnvironmentVariable("RealTimePollsConnectionString");
+
+if (builder.Environment.EnvironmentName == "Docker" && connectionString.Contains("localhost"))
 {
-    string connectionString = Environment.GetEnvironmentVariable("RealTimePollsConnectionString");
-    builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
-        options.UseNpgsql(connectionString));
+    connectionString = connectionString.Replace("localhost", "db");
 }
-else
+
+Console.WriteLine($"Connection String: {connectionString}");
+
+builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
 {
-    string connectionString = builder.Configuration.GetConnectionString("RealTimePollsConnectionString");
-    builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
-        options.UseNpgsql(connectionString));
-}
+    options.UseNpgsql(connectionString);
+});
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 {
@@ -63,24 +60,43 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
     });
 }
 
-using (var scope = builder.Services.BuildServiceProvider().CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<RealTimePollsDbContext>();
-    dbContext.Database.Migrate();
-}
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
 builder.Services.AddScoped<IPollsApiRepository, SQLPollsApiRepository>();
 builder.Services.AddScoped<IPollRepository, SQLPollRepository>();
 builder.Services.AddScoped<IHelpersRepository, SQLHelpersRepository>();
 builder.Services.AddScoped<IAuthRepository, SQLAuthRepository>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedProto });
+var retryPolicy = Policy
+    .Handle<Exception>()
+    .WaitAndRetry(new[]
+    {
+        TimeSpan.FromSeconds(5),
+        TimeSpan.FromSeconds(10),
+        TimeSpan.FromSeconds(15)
+    });
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<RealTimePollsDbContext>();
+    retryPolicy.Execute(() =>
+    {
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            context.Database.Migrate();
+        }
+    });
+}
+
+app.UseForwardedHeaders(
+    new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedProto }
+);
 
 if (!app.Environment.IsDevelopment())
 {
@@ -88,7 +104,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -97,7 +112,10 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
 });
 
 app.MapHub<PollHub>("/pollHub");
