@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealTimePolls", "RealTimePolls.App\RealTimePolls.csproj", "{34514DBD-417A-4BD7-9173-9DFACBE5A5AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealTimePolls.App", "RealTimePolls.App\RealTimePolls.App.csproj", "{34514DBD-417A-4BD7-9173-9DFACBE5A5AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "realTimePolls.Tests", "RealTimePolls.Tests\realTimePolls.Tests.csproj", "{9411BA35-E604-47F9-93E3-83171A9F48E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealTimePolls.Tests", "RealTimePolls.Tests\RealTimePolls.Tests.csproj", "{9411BA35-E604-47F9-93E3-83171A9F48E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
