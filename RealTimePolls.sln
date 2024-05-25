@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealTimePolls.App", "RealTi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealTimePolls.Tests", "RealTimePolls.Tests\RealTimePolls.Tests.csproj", "{9411BA35-E604-47F9-93E3-83171A9F48E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealTimePolls", "RealTimePolls.App\RealTimePolls.csproj", "{F4994422-3070-4FAB-9858-CDF3D348E3A1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
