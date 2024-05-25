@@ -35,8 +35,7 @@ For user authentication, you'll need to obtain a Google Client ID and Client Sec
 In the root directory of your project, create a `.env` file and add your secrets credentials:
 
 ```env
-ASPNETCORE_ENVIRONMENT=Development
-ConnectionStrings__RealTimePollsConnectionString=<Your__Postgres__Connection__String>
+RealTimePollsConnectionString=
 POSTGRES_DB=
 POSTGRES_USER=
 POSTGRES_PASSWORD=
