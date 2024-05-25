@@ -282,7 +282,6 @@
 
             const options = await response.json()
             const dropdown = document.querySelectorAll(".Genre")
-            console.log(options)
             dropdown.forEach(element => {
                 for (let i = 0; i < options.length; i++) {
                     const option = document.createElement("option")

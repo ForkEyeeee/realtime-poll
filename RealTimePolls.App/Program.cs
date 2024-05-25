@@ -21,36 +21,29 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-{
-    options.ClientId = builder.Configuration["GoogleKeys:ClientId"] ?? Environment.GetEnvironmentVariable("GoogleKeys_ClientId");
-    options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"] ?? Environment.GetEnvironmentVariable("GoogleKeys_ClientSecret");
-    options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-    options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
-});
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddGoogle(
+        GoogleDefaults.AuthenticationScheme,
+        options =>
+        {
+            options.ClientId = builder.Configuration["GoogleKeys:ClientId"] ?? Environment.GetEnvironmentVariable("GoogleKeys_ClientId");
+            options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"] ?? Environment.GetEnvironmentVariable("GoogleKeys_ClientSecret");
+            options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+            options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
+        }
+    );
 
-Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
-
-string connectionString = builder.Configuration.GetConnectionString("RealTimePollsConnectionString") ??
-    Environment.GetEnvironmentVariable("RealTimePollsConnectionString");
-
-if (builder.Environment.EnvironmentName == "Docker" && connectionString.Contains("localhost"))
-{
-    connectionString = connectionString.Replace("localhost", "db");
-}
-
-Console.WriteLine($"Connection String: {connectionString}");
+string connectionString = builder.Configuration["RealTimePollsConnectionString"] ??
+                          Environment.GetEnvironmentVariable("RealTimePollsConnectionString");
 
 builder.Services.AddDbContext<RealTimePollsDbContext>(options =>
-{
-    options.UseNpgsql(connectionString);
-});
+    options.UseNpgsql(connectionString));
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 {

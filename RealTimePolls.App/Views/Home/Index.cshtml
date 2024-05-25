@@ -1,5 +1,4 @@
 ﻿@model List<RealTimePolls.Models.ViewModels.HomeViewModel>;
-@hostingEnv.EnvironmentName
 
 <div class="text-center pt-0">
     @if (Context.User.Identity.IsAuthenticated)
@@ -74,10 +73,7 @@
 
 <script>
     const environment = @Html.Raw(Json.Serialize(@hostingEnv.EnvironmentName))
-    const baseURL = environment === "Docker" ? "https://realtime-poll.onrender.com/" : `https://localhost:${location.port}/`;
-    
-    console.log(baseURL)
-    console.log(environment)
+    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : `http://localhost:${location.port}/`;
 </script>
 
 @* Connects client to signalR server *@
