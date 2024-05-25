@@ -7,7 +7,7 @@ using Xunit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
-namespace HomeUnitTests
+namespace AuthUnitTests
 {
     public class AuthControllerTests
     {

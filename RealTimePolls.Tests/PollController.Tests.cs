@@ -11,7 +11,7 @@ using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 using Xunit;
 
-namespace HomeUnitTests
+namespace PollUnitTests
 {
     public class PollControllerTests
     {

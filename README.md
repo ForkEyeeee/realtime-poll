@@ -1,4 +1,5 @@
-﻿# Real-time Poll App
+﻿﻿
+# Real-time Poll App
 
 Poll application built with ASP.NET CORE & PostgreSQL, featuring Google authentication, user-created polls, and real-time data display.
 
@@ -29,14 +30,21 @@ For user authentication, you'll need to obtain a Google Client ID and Client Sec
 2. Create a project and navigate to the Credentials page.
 3. Create OAuth 2.0 credentials to get your Client ID and Client Secret.
 
-After getting the `ClientID` and `ClientSecret`, store them in your project:
+### 3. Create a `.env` File
 
-```bash
-dotnet user-secrets set "GoogleKeys:ClientId" "<ClientID>"
-dotnet user-secrets set "GoogleKeys:ClientSecret" "<ClientSecret>"
+In the root directory of your project, create a `.env` file and add your secrets credentials:
+
+```env
+ASPNETCORE_ENVIRONMENT=Development
+ConnectionStrings__RealTimePollsConnectionString=<Your__Postgres__Connection__String>
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+GoogleKeys__ClientId=
+GoogleKeys__ClientSecret=
 ```
 
-### 3. Run with Docker
+### 4. Run with Docker
 
 Navigate to the project root directory in your terminal, then run:
 
@@ -44,4 +52,6 @@ Navigate to the project root directory in your terminal, then run:
 docker-compose up
 ```
 
-Visit [https://localhost:8081](https://localhost:8081) to access the application.
+Visit [http://localhost:8080](http://localhost:8080) to access the application.
+
+---
