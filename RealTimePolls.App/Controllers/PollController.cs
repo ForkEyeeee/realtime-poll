@@ -57,6 +57,7 @@ namespace RealTimePolls.Controllers
                 Vote = pollViewModelDomain.Vote
             };
 
+            ViewBag.UserId = userId;
             return View(pollViewModel);
         }
 
@@ -78,7 +79,7 @@ namespace RealTimePolls.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeletePollAsync([FromQuery] int pollid)
+        public async Task<RedirectToActionResult> DeletePollAsync([FromQuery] int pollid)
         {
 
             await pollRepository.DeletePollAsync(pollid);

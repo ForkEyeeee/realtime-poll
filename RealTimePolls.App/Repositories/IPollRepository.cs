@@ -9,9 +9,7 @@ namespace RealTimePolls.Repositories
 
         Task<PollViewModelDomain> GetPollAsync(string pollTitle, int pollTd, int userId);
         Task<Poll> CreatePollAsync(Poll poll);
-
-        Task<Poll> DeletePollAsync(int pollId);
-
+        Task DeletePollAsync(int pollId);
         Task<UserPoll> VoteAsync(AuthenticateResult result, AddVoteRequest addVoteRequest);
     }
 }

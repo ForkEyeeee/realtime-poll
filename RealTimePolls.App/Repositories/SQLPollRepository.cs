@@ -40,16 +40,6 @@ namespace RealTimePolls.Repositories
                 dbContext.UserPoll.FirstOrDefaultAsync(up => up.UserId == userId && up.PollId == pollId)
                 ?? null;
 
-            //if (HttpContext.User.Identity.IsAuthenticated)
-            //{
-            //    var userId = await GetUserId();
-            //    var currentUser = dbContext.UserPoll.FirstOrDefault(up =>
-            //        up.UserId == userId && up.PollId == pollid
-            //    );
-            //    ViewData["UserId"] = userId;
-            //    ViewData["CurrentVote"] = currentUser == null ? null : currentUser.Vote;
-            //}
-
             var pollViewModelDomain = new PollViewModelDomain
             {
                 Poll = poll,
@@ -68,23 +58,19 @@ namespace RealTimePolls.Repositories
             return poll;
         }
 
-        public async Task<Poll> DeletePollAsync(int pollId)
+        public async Task DeletePollAsync(int pollId)
         {
             var userPolls = await dbContext.UserPoll.Where(up => up.PollId == pollId).ToListAsync();
 
             if (userPolls.Any())
             {
                 dbContext.UserPoll.RemoveRange(userPolls);
-                await dbContext.SaveChangesAsync();
             }
 
             var poll = dbContext.Polls.SingleOrDefault(p => p.Id == pollId);
-            if (poll == null)
-                return null;
 
             dbContext.Polls.Remove(poll);
             await dbContext.SaveChangesAsync();
-            return poll;
 
         }
 

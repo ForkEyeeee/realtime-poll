@@ -73,7 +73,7 @@
 
 <script>
     const environment = @Html.Raw(Json.Serialize(@hostingEnv.EnvironmentName))
-    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : `http://localhost:${location.port}/`;
+    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : `https://localhost:${location.port}/`;
 </script>
 
 @* Connects client to signalR server *@
@@ -148,12 +148,11 @@
                             `;
         });
         html += '</tbody></table>';
-        console.log(polls)
         return html;
     }
 
     const getData = async (page) => {
-        //data is in model
+
         const url = page === undefined ? baseURL + "api/GetPollsList" : baseURL + "api/GetPollsList" + `?page=${page}`
         const userId = {
             Id: hubConnection.connection.connectionId
@@ -167,7 +166,6 @@
         if (!response.ok) throw new Error("Failed to fetch polls")
 
         const polls = await response.json()
-        console.log(polls, polls.length)
         return { 
             polls: polls, 
             pollCount: polls.length

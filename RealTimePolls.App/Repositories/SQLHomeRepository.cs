@@ -22,8 +22,6 @@ namespace RealTimePolls.Repositories
 
             domainPolls = await this.GetVoteCounts(domainPolls);
 
-            //domainPolls = await this.GetProfilePictures(domainPolls);
-
             return domainPolls;
         }
 
@@ -41,16 +39,5 @@ namespace RealTimePolls.Repositories
             return polls;
         }
 
-        //private async Task<List<Poll>> GetProfilePictures(List<Poll> polls)
-        //{
-
-        //    foreach (var poll in polls)
-        //    {
-        //        var user = await dbContext.User.SingleOrDefaultAsync(user => user.Id == poll.UserId);
-        //        poll.ProfilePicture = user.ProfilePicture;
-        //    }
-
-        //    return polls;
-        //}
     }
 }
