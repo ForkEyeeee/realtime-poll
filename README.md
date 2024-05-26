@@ -35,12 +35,12 @@ For user authentication, you'll need to obtain a Google Client ID and Client Sec
 In the root directory of your project, create a `.env` file and add your secrets credentials:
 
 ```env
-RealTimePollsConnectionString=
-POSTGRES_DB=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-GoogleKeys__ClientId=
-GoogleKeys__ClientSecret=
+RealTimePollsConnectionString=Host=db;Database=<database_name>;Username=<db_username>;Password=<db_password>;
+POSTGRES_DB=<database_name>
+POSTGRES_USER=<db_username> 
+POSTGRES_PASSWORD=<db_password>
+GoogleKeys_ClientId=<google_client_id>
+GoogleKeys_ClientSecret=<google_client_secret>
 ```
 
 ### 4. Run with Docker
