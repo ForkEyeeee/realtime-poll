@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using NZWalks.API.CustomActionFilters;
+using realTimePolls.Controllers;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
@@ -57,7 +58,15 @@ namespace RealTimePolls.Controllers
                 Vote = pollViewModelDomain.Vote
             };
 
-            ViewBag.UserId = userId;
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                AuthenticateResult result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+                var currentUserId = await helpersRepository.GetUserId(result);
+                ViewBag.UserId = currentUserId;
+            }
+
             return View(pollViewModel);
         }
 

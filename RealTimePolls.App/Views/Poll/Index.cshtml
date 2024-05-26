@@ -34,7 +34,7 @@
                 <div class="d-flex justify-content-end gap-3 mt-3">
                     @if (Model.Poll.UserId == userId)
                     {
-                    <button type="button" value="Delete" onclick="deletePost(@Model.Poll.Id)">Delete</button>
+                    <button type="button" value="Delete" class="btn btn-danger" onclick="deletePost(@Model.Poll.Id)">Delete</button>
                     }
                     @if (Context.User.Identity.IsAuthenticated)
                     {
@@ -142,7 +142,8 @@
 @*Sets global base url*@
 
 <script>
-    const baseURL = `https://localhost:${location.port}/`;
+    const environment = @Html.Raw(Json.Serialize(@hostingEnv.EnvironmentName))
+    const baseURL = environment === "Production" ? "https://realtime-poll.onrender.com/" : window.location.protocol.includes('https') ? `https://localhost:${location.port}/` : `http://localhost:${location.port}/`;
 </script>
 
 @* Connects client to signalR server *@

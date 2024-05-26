@@ -77,7 +77,7 @@ namespace PollUnitTests
             }
 
             public Task<Poll> CreatePollAsync(Poll poll) => Task.FromResult(poll);
-            public Task<Poll> DeletePollAsync(int pollId) => Task.FromResult(new Poll { Id = pollId });
+            public Task DeletePollAsync(int pollId) => Task.FromResult(new Poll { Id = pollId });
             public Task<UserPoll> VoteAsync(AuthenticateResult result, AddVoteRequest addVoteRequest) => Task.FromResult(new UserPoll());
         }
     }
