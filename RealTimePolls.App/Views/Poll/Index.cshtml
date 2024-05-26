@@ -3,9 +3,6 @@
     bool? currentVote = ViewData["CurrentVote"] as bool?;
 }
 
-
-
-
 <div class="main">
     <div class="card">
         <div class="container">
@@ -142,29 +139,6 @@
         }
 </style>
 
-<script>
-
-    const deletePost = async (pollId) => {
-        console.log('test')
-        try {
-            const url = `${baseURL}Poll/DeletePoll?pollid=${pollId}`
-
-            const response = await fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'Content-type': 'application/json'
-                }
-            })
-            if (response.ok) window.location.href = '/Home/Index';
-        } catch (e) {
-            console.error(e)
-        }
-
-    }
-
-</script>
-
-
 @*Sets global base url*@
 
 <script>
@@ -236,3 +210,23 @@
         }
     });
 </script>
+
+<script>
+    const deletePost = async (pollId) => {
+        try {
+            const url = `${baseURL}Poll/DeletePoll?pollid=${pollId}`
+
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            })
+            if (response.ok) window.location.href = '/Home/Index';
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+</script>
+

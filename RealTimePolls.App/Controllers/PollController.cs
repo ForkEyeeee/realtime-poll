@@ -79,11 +79,11 @@ namespace RealTimePolls.Controllers
         }
 
         [HttpDelete]
-        public async Task<RedirectToActionResult> DeletePollAsync([FromQuery] int pollid)
+        public async Task<IActionResult> DeletePollAsync([FromQuery] int pollid)
         {
 
             await pollRepository.DeletePollAsync(pollid);
-            return RedirectToAction("Index", "Home");
+            return Ok();
         }
 
         [HttpPost]

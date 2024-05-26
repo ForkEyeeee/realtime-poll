@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using realTimePolls.Controllers;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
-using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
 
 namespace RealTimePolls.Repositories
@@ -70,8 +68,7 @@ namespace RealTimePolls.Repositories
             var poll = dbContext.Polls.SingleOrDefault(p => p.Id == pollId);
 
             dbContext.Polls.Remove(poll);
-            await dbContext.SaveChangesAsync();
-
+            return;
         }
 
         public async Task<UserPoll> VoteAsync(AuthenticateResult result, AddVoteRequest addVoteRequest)
