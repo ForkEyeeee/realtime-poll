@@ -50,6 +50,7 @@ namespace RealTimePolls.Controllers
                 );
                 var currentUserId = await helpersService.GetUserId(result);
                 ViewBag.UserId = currentUserId;
+                ViewBag.CurrentVote = pollViewModel.Vote;
             }
 
             return View(pollViewModel);
