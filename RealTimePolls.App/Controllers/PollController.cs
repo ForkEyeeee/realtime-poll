@@ -44,30 +44,23 @@ namespace RealTimePolls.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] string pollTitle, int pollId, int userId)
         {
-            var pollViewModelDomain = await pollService.GetPollAsync(pollTitle, pollId, userId);
+            var pollViewModel = await pollService.Index(pollTitle, pollId, userId);
 
-            if (pollViewModelDomain == null)
-                return null;
-            
-            PollViewModel pollViewModel = new PollViewModel()
-            {
-                Poll = mapper.Map<PollDto>(pollViewModelDomain.Poll),
-                FirstVoteCount = pollViewModelDomain.FirstVoteCount,
-                SecondVoteCount = pollViewModelDomain.SecondVoteCount,
-                Vote = pollViewModelDomain.Vote
-            };
+            if (pollViewModel == null)
+                return NotFound();
 
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 AuthenticateResult result = await HttpContext.AuthenticateAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
+                    CookieAuthenticationDefaults.AuthenticationScheme
+                );
                 var currentUserId = await helpersService.GetUserId(result);
                 ViewBag.UserId = currentUserId;
             }
 
             return View(pollViewModel);
         }
+
 
         [HttpPost]
         [ValidateModel]
@@ -79,9 +72,7 @@ namespace RealTimePolls.Controllers
               );
 
             addPollRequest.UserId = await helpersService.GetUserId(result);
-
-            var domainPoll = mapper.Map<Poll>(addPollRequest);
-            await pollService.CreatePollAsync(domainPoll);
+            await pollService.CreatePollAsync(addPollRequest);
             return RedirectToAction("Index", "Home");
 
         }
@@ -89,7 +80,6 @@ namespace RealTimePolls.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePollAsync([FromQuery] int pollid)
         {
-
             await pollService.DeletePollAsync(pollid);
             return Ok();
         }
@@ -103,7 +93,7 @@ namespace RealTimePolls.Controllers
              );
 
             await pollService.VoteAsync(result, addVoteRequest);
-            return RedirectToAction("Index", "Home", new { area = "" });
+            return RedirectToAction("Index", "Home");
         }
     }
 }

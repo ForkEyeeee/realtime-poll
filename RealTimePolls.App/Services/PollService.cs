@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
+using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
 
 namespace RealTimePolls.Repositories
@@ -12,48 +12,48 @@ namespace RealTimePolls.Repositories
     {
         private readonly RealTimePollsDbContext dbContext;
         private readonly IHelpersService helpersRepository;
+        private readonly IMapper mapper;
 
-        public PollService(RealTimePollsDbContext dbContext, IHelpersService helpersRepository)
+        public PollService(RealTimePollsDbContext dbContext, IHelpersService helpersRepository, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.helpersRepository = helpersRepository;
+            this.mapper = mapper;
         }
 
-        public async Task<PollViewModelDomain> GetPollAsync([FromQuery] string pollTitle, int pollId, int userId)
+        public async Task<PollViewModel> Index(string pollTitle, int pollId, int userId)
         {
-            Poll poll = await dbContext
-            .Polls.Include("Genre").FirstOrDefaultAsync(p => p.Id == pollId && p.UserId == userId && p.Title == pollTitle);
+            var poll = await dbContext.Polls
+                .Include(p => p.User)
+                .Include(p => p.Genre)
+                .FirstOrDefaultAsync(p => p.Title == pollTitle && p.Id == pollId && p.UserId == userId);
 
             if (poll == null)
                 return null;
 
-            int firstVoteCount = await dbContext
-                    .UserPoll.Where(up => up.PollId == pollId && up.Vote == true)
-                    .CountAsync(),
-                secondVoteCount = await dbContext
-            .UserPoll.Where(up => up.PollId == pollId && up.Vote == false)
-            .CountAsync();
+            var userPolls = await dbContext.UserPoll
+                .Where(up => up.PollId == poll.Id)
+                .ToListAsync();
 
-            UserPoll userPoll = await
-                dbContext.UserPoll.FirstOrDefaultAsync(up => up.UserId == userId && up.PollId == pollId)
-                ?? null;
+            int firstVoteCount = userPolls.Count(up => up.Vote == true);
+            int secondVoteCount = userPolls.Count(up => up.Vote == false);
+            bool? userVote = userPolls.FirstOrDefault(up => up.UserId == userId)?.Vote;
 
-            var pollViewModelDomain = new PollViewModelDomain
+            return new PollViewModel
             {
-                Poll = poll,
+                Poll = mapper.Map<PollDto>(poll),
                 FirstVoteCount = firstVoteCount,
                 SecondVoteCount = secondVoteCount,
-                Vote = userPoll == null ? null : userPoll.Vote,
+                Vote = userVote
             };
-
-            return pollViewModelDomain;
         }
 
-        public async Task<Poll> CreatePollAsync(Poll poll)
+        public async Task<PollDto> CreatePollAsync(AddPollRequest addPollRequest)
         {
-            await dbContext.AddAsync(poll);
+            var domainPoll = mapper.Map<Poll>(addPollRequest);
+            await dbContext.Polls.AddAsync(domainPoll);
             await dbContext.SaveChangesAsync();
-            return poll;
+            return mapper.Map<PollDto>(domainPoll);      
         }
 
         public async Task DeletePollAsync(int pollId)
