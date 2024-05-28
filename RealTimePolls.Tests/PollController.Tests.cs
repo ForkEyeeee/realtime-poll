@@ -1,14 +1,16 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
+﻿using FakeItEasy;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RealTimePolls.Controllers;
 using RealTimePolls.Data;
-using RealTimePolls.Models.Domain;
 using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
+using SignalRChat.Hubs;
 using Xunit;
 
 namespace PollUnitTests
@@ -17,7 +19,9 @@ namespace PollUnitTests
     {
         private readonly PollController _pollController;
         private readonly RealTimePollsDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly IHubContext<PollHub> _myHubContext;
+        private readonly IPollService _pollService;
+        private readonly IHelpersService _helpersService;
         private readonly ILogger<PollController> _logger;
 
         public PollControllerTests()
@@ -27,58 +31,49 @@ namespace PollUnitTests
                 .Options;
             _dbContext = new RealTimePollsDbContext(options);
 
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Poll, PollDto>());
-            _mapper = config.CreateMapper();
+            _myHubContext = A.Fake<IHubContext<PollHub>>();
+            _pollService = A.Fake<IPollService>();
+            _helpersService = A.Fake<IHelpersService>();
+            _logger = A.Fake<ILogger<PollController>>();
 
-            _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<PollController>();
+            _pollController = new PollController(_dbContext, _myHubContext, _pollService, _helpersService, _logger);
 
-            _pollController = new PollController(_dbContext, null, new TestPollRepository(), null, _mapper, _logger);
+            var httpContext = new DefaultHttpContext();
+            _pollController.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
         }
 
         [Fact]
         public async Task Index_ShouldReturnViewResult()
         {
-            var poll = new Poll
+            var pollViewModel = new PollViewModel
             {
-                Id = 1,
-                Title = "Test Poll",
-                UserId = 1,
-                FirstOption = "Option 1",
-                SecondOption = "Option 2"
+                Poll = new PollDto { Id = 1, Title = "Test Poll", FirstOption = "Option 1", SecondOption = "Option 2" },
+                FirstVoteCount = 0,
+                SecondVoteCount = 0,
+                Vote = null
             };
-            await _dbContext.Polls.AddAsync(poll);
-            await _dbContext.SaveChangesAsync();
+
+            A.CallTo(() => _pollService.Index("Test Poll", 1, 1)).Returns(Task.FromResult(pollViewModel));
 
             var result = await _pollController.Index("Test Poll", 1, 1);
 
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsAssignableFrom<PollViewModel>(viewResult.Model);
-            Assert.NotNull(model);
-        }
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            viewResult.Model.Should().BeEquivalentTo(pollViewModel);
+        }  
 
-        private class TestPollRepository : IPollService
+        [Fact]
+        public async Task DeletePollAsync_ShouldReturnOkResult()
         {
-            public Task<PollViewModelDomain> GetPollAsync(string pollTitle, int pollId, int userId)
-            {
-                return Task.FromResult(new PollViewModelDomain
-                {
-                    Poll = new Poll
-                    {
-                        Id = pollId,
-                        Title = pollTitle,
-                        UserId = userId,
-                        FirstOption = "Option 1",
-                        SecondOption = "Option 2"
-                    },
-                    FirstVoteCount = 0,
-                    SecondVoteCount = 0,
-                    Vote = null
-                });
-            }
+            A.CallTo(() => _pollService.DeletePollAsync(1)).Returns(Task.CompletedTask);
 
-            public Task<Poll> CreatePollAsync(Poll poll) => Task.FromResult(poll);
-            public Task DeletePollAsync(int pollId) => Task.FromResult(new Poll { Id = pollId });
-            public Task<UserPoll> VoteAsync(AuthenticateResult result, AddVoteRequest addVoteRequest) => Task.FromResult(new UserPoll());
+            var result = await _pollController.DeletePollAsync(1);
+
+            result.Should().BeOfType<OkResult>();
         }
+
     }
 }

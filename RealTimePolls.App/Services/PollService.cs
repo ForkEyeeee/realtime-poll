@@ -66,10 +66,12 @@ namespace RealTimePolls.Repositories
                 dbContext.UserPoll.RemoveRange(userPolls);
             }
 
-            var poll = dbContext.Polls.SingleOrDefault(p => p.Id == pollId);
-
-            dbContext.Polls.Remove(poll);
-            return;
+            var poll = await dbContext.Polls.SingleOrDefaultAsync(p => p.Id == pollId);
+            if (poll != null)
+            {
+                dbContext.Polls.Remove(poll);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<UserPoll> VoteAsync(AuthenticateResult result, AddVoteRequest addVoteRequest)
