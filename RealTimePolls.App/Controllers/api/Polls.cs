@@ -7,9 +7,9 @@ namespace realTimePolls.Controllers
 {
     public class Polls : Controller
     {
-        private readonly IPollsApiRepository pollsApiRepository;
+        private readonly IPollsApiService pollsApiRepository;
 
-        public Polls(IPollsApiRepository pollsApiRepository)
+        public Polls(IPollsApiService pollsApiRepository)
         {
             this.pollsApiRepository = pollsApiRepository;
         }

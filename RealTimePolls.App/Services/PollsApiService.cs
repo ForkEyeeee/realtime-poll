@@ -1,44 +1,43 @@
 ﻿
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
+using RealTimePolls.App.Models.DTO;
 using RealTimePolls.Data;
 using RealTimePolls.Models.Domain;
-using RealTimePolls.Models.ViewModels;
+using RealTimePolls.Models.DTO;
 
 namespace RealTimePolls.Repositories
 {
-    public class PollsApiRepository : IPollsApiRepository
+    public class PollsApiService : IPollsApiService
     {
         private readonly RealTimePollsDbContext dbContext;
         private readonly IMapper mapper;
 
-        public PollsApiRepository(RealTimePollsDbContext dbContext, IMapper mapper)
+        public PollsApiService(RealTimePollsDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
-        public async Task<List<Poll>> GetPollsListAsync()
+        public async Task<List<PollDto>> GetPollsListAsync()
         {
-            var polls = await dbContext.Polls.Include(p => p.User).Include(p => p.Genre).ToListAsync();
+            var userPolls = await dbContext.UserPoll.ToListAsync();
 
-            var userpolls = await dbContext.UserPoll.ToListAsync();
+            var polls = await dbContext.Polls.ProjectTo<PollDto>(mapper.ConfigurationProvider).ToListAsync();
 
             foreach (var poll in polls)
             {
-                poll.FirstVoteCount = userpolls.Where(up => up.PollId == poll.Id && up.Vote == true).Count();
-
-                poll.SecondVoteCount = userpolls.Where(up => up.PollId == poll.Id && up.Vote == false).Count();
+                poll.FirstVoteCount = userPolls.Where(up => up.PollId == poll.Id && up.Vote == true).Count();
+                poll.SecondVoteCount = userPolls.Where(up => up.PollId == poll.Id && up.Vote == false).Count();
             }
 
             return polls;
         }
 
-        public async Task<List<Genre>> GetDropdownListAsync()
+        public async Task<List<GenreDto>> GetDropdownListAsync()
         {
-            return await dbContext.Genre.OrderBy(g => g.Name).ToListAsync();
+            return await dbContext.Genre.ProjectTo<GenreDto>(mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<string> GetUserProfilePicture(AuthenticateResult result)
@@ -81,31 +80,31 @@ namespace RealTimePolls.Repositories
             else
                 return string.Empty;
         }
-
-        public async Task<List<Poll>> GetSearchResults(string query, int genreId)
+        public async Task<List<PollDto>> GetSearchResults(string query, int genreId)
         {
-
-            var polls = new List<Poll>();
-
             var pattern = $"%{query}%";
 
-            polls = await dbContext
-                .Polls.Include(p => p.Genre).Include(p => p.User)
-                .Where(c => query != string.Empty ? EF.Functions.Like(c.Title.ToLower(), pattern.ToLower()) : true).Where(p => genreId != 0 ? p.GenreId == genreId : true).ToListAsync();
+            var pollsQuery = dbContext.Polls
+                .Include(p => p.Genre)
+                .Include(p => p.User)
+                .Where(p => (query != string.Empty ? EF.Functions.Like(p.Title.ToLower(), pattern.ToLower()) : true) &&
+                            (genreId != 0 ? p.GenreId == genreId : true));
 
-            int pollLength = dbContext
-                .Polls.Where(c => EF.Functions.Like(c.Title, pattern))
-                .Count();
+            var polls = await pollsQuery
+                .ProjectTo<PollDto>(mapper.ConfigurationProvider)
+                .ToListAsync();
 
-            var homeViewModel = new List<HomeViewModel>();
+            var userPolls = await dbContext.UserPoll.ToListAsync();
 
             foreach (var poll in polls)
             {
-                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
+                poll.FirstVoteCount = userPolls.Count(up => up.PollId == poll.Id && up.Vote == true);
+                poll.SecondVoteCount = userPolls.Count(up => up.PollId == poll.Id && up.Vote == false);
             }
 
             return polls;
         }
+
 
     }
 }

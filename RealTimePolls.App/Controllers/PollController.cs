@@ -47,10 +47,8 @@ namespace RealTimePolls.Controllers
             var pollViewModelDomain = await pollService.GetPollAsync(pollTitle, pollId, userId);
 
             if (pollViewModelDomain == null)
-            {
                 return null;
-            }
-
+            
             PollViewModel pollViewModel = new PollViewModel()
             {
                 Poll = mapper.Map<PollDto>(pollViewModelDomain.Poll),

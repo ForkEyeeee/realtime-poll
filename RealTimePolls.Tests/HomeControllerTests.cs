@@ -3,9 +3,9 @@ using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RealTimePolls.App.Models.ViewModels;
 using RealTimePolls.Controllers;
 using RealTimePolls.Models.Domain;
-using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 using Xunit;
 

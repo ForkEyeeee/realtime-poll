@@ -55,7 +55,7 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHomeService, HomeService>();
-builder.Services.AddScoped<IPollsApiRepository, PollsApiRepository>();
+builder.Services.AddScoped<IPollsApiService, PollsApiService>();
 builder.Services.AddScoped<IPollService, PollService>();
 builder.Services.AddScoped<IHelpersService, HelpersService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

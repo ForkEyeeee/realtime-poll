@@ -1,10 +1,10 @@
-﻿using RealTimePolls.Models.Domain;
+﻿using RealTimePolls.Models.ViewModels;
 
 
 namespace RealTimePolls.Repositories
 {
     public interface IHomeService
     {
-        Task<List<Poll>> Index();
+        Task<HomeViewModel> Index();
     }
 }

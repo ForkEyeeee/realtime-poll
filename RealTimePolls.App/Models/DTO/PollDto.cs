@@ -9,6 +9,8 @@ namespace RealTimePolls.Models.DTO
         public string Title { get; set; }
         public string FirstOption { get; set; }
         public string SecondOption { get; set; }
+        public int FirstVoteCount { get; set; }
+        public int SecondVoteCount { get; set; }   
         public int GenreId { get; set; }
 
         //Navigation properties

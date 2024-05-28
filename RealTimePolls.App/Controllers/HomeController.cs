@@ -23,15 +23,7 @@ namespace RealTimePolls.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var domainPolls = await homeService.Index();
-
-            var homeViewModel = new List<HomeViewModel>();
-
-            foreach (var poll in domainPolls)
-            {
-                homeViewModel.Add(mapper.Map<HomeViewModel>(poll));
-            }
-
+            var homeViewModel = await homeService.Index();
             return View(homeViewModel);
         }
 
