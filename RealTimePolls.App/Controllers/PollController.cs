@@ -38,18 +38,27 @@ namespace RealTimePolls.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] string pollTitle, int pollId, int userId)
         {
-            var pollViewModel = await pollService.Index(pollTitle, pollId, userId);
-
-            if (pollViewModel == null)
-                return NotFound();
+            int? currentUserId = null;
 
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 AuthenticateResult result = await HttpContext.AuthenticateAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme
                 );
-                var currentUserId = await helpersService.GetUserId(result);
+
+                currentUserId = await helpersService.GetUserId(result);
                 ViewBag.UserId = currentUserId;
+            }
+
+            var pollViewModel = await pollService.Index(pollTitle, pollId, userId, currentUserId ?? 0);
+
+            if (pollViewModel == null)
+            {
+                return NotFound();
+            }
+
+            if (currentUserId.HasValue)
+            {
                 ViewBag.CurrentVote = pollViewModel.Vote;
             }
 

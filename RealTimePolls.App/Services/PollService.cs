@@ -22,7 +22,7 @@ namespace RealTimePolls.Repositories
             this.mapper = mapper;
         }
 
-        public async Task<PollViewModel> Index(string pollTitle, int pollId, int userId)
+        public async Task<PollViewModel> Index(string pollTitle, int pollId, int userId, int currentUserId)
         {
             var pollDto = await dbContext.Polls
                  .Where(p => p.Title == pollTitle && p.Id == pollId && p.UserId == userId)
@@ -38,7 +38,8 @@ namespace RealTimePolls.Repositories
 
             int firstVoteCount = userPolls.Count(up => up.Vote == true);
             int secondVoteCount = userPolls.Count(up => up.Vote == false);
-            bool? userVote = userPolls.FirstOrDefault(up => up.UserId == userId)?.Vote;
+
+            bool? userVote = userPolls.FirstOrDefault(up => up.UserId == currentUserId)?.Vote;
 
             return new PollViewModel
             {
