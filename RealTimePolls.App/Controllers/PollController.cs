@@ -1,12 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using NZWalks.API.CustomActionFilters;
 using RealTimePolls.Data;
-using RealTimePolls.Models.Domain;
-using RealTimePolls.Models.DTO;
 using RealTimePolls.Models.ViewModels;
 using RealTimePolls.Repositories;
 using SignalRChat.Hubs;
@@ -20,7 +17,6 @@ namespace RealTimePolls.Controllers
         private readonly IHubContext<PollHub> myHubContext;
         private readonly IPollService pollService;
         private readonly IHelpersService helpersService;
-        private readonly IMapper mapper;
         private readonly ILogger<PollController> logger;
 
         public PollController(
@@ -28,7 +24,6 @@ namespace RealTimePolls.Controllers
             IHubContext<PollHub> myHubContext,
             IPollService pollService,
             IHelpersService helpersService,
-            IMapper mapper,
             ILogger<PollController> logger
 
         )
@@ -37,7 +32,6 @@ namespace RealTimePolls.Controllers
             this.myHubContext = myHubContext;
             this.pollService = pollService;
             this.helpersService = helpersService;
-            this.mapper = mapper;
             this.logger = logger;
         }
 
@@ -60,7 +54,6 @@ namespace RealTimePolls.Controllers
 
             return View(pollViewModel);
         }
-
 
         [HttpPost]
         [ValidateModel]

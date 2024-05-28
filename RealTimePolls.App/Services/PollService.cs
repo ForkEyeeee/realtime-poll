@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using RealTimePolls.Data;
@@ -23,16 +24,16 @@ namespace RealTimePolls.Repositories
 
         public async Task<PollViewModel> Index(string pollTitle, int pollId, int userId)
         {
-            var poll = await dbContext.Polls
-                .Include(p => p.User)
-                .Include(p => p.Genre)
-                .FirstOrDefaultAsync(p => p.Title == pollTitle && p.Id == pollId && p.UserId == userId);
+            var pollDto = await dbContext.Polls
+                 .Where(p => p.Title == pollTitle && p.Id == pollId && p.UserId == userId)
+                 .ProjectTo<PollDto>(mapper.ConfigurationProvider)
+                 .FirstOrDefaultAsync();
 
-            if (poll == null)
+            if (pollDto == null)
                 return null;
 
             var userPolls = await dbContext.UserPoll
-                .Where(up => up.PollId == poll.Id)
+                .Where(up => up.PollId == pollDto.Id)
                 .ToListAsync();
 
             int firstVoteCount = userPolls.Count(up => up.Vote == true);
@@ -41,7 +42,7 @@ namespace RealTimePolls.Repositories
 
             return new PollViewModel
             {
-                Poll = mapper.Map<PollDto>(poll),
+                Poll = pollDto,
                 FirstVoteCount = firstVoteCount,
                 SecondVoteCount = secondVoteCount,
                 Vote = userVote

@@ -25,10 +25,8 @@ namespace RealTimePolls.Repositories
         public async Task<HomeViewModel> Index()
         {
             var polls = await dbContext.Polls
-                .Include(p => p.User)
-                .Include(p => p.Genre)
-                .ProjectTo<PollDto>(mapper.ConfigurationProvider)
-                .ToListAsync();
+                 .ProjectTo<PollDto>(mapper.ConfigurationProvider)
+                 .ToListAsync();
 
             var homeViewModel = new HomeViewModel
             {

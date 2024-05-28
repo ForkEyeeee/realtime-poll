@@ -9,15 +9,12 @@ namespace RealTimePolls.Controllers
     public class HomeController : Controller
     {
         private readonly IHomeService homeService;
-        private readonly IMapper mapper;
 
         public HomeController(
-            IHomeService homeService,
-            IMapper mapper
+            IHomeService homeService
         )
         {
             this.homeService = homeService;
-            this.mapper = mapper;
         }
 
         [HttpGet]

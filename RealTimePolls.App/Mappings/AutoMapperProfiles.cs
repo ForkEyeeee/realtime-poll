@@ -10,13 +10,13 @@ namespace RealTimePolls.Mappings
     {
         public AutoMapperProfiles()
         {
-            CreateMap<Poll, PollDto>().ReverseMap();
-            CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<Genre, GenreDto>().ReverseMap();
-            CreateMap<List<Genre>, GenreDto>().ReverseMap();
-            CreateMap<List<PollDto>, HomeViewModel>().ReverseMap();
-            CreateMap<Poll, HomeViewModel>().ReverseMap();
-            CreateMap<Poll, AddPollRequest>().ReverseMap();
+            CreateMap<Poll, PollDto>();
+            CreateMap<User, UserDto>();
+            CreateMap<Genre, GenreDto>();
+            CreateMap<List<Genre>, GenreDto>();
+            CreateMap<List<PollDto>, HomeViewModel>();
+            CreateMap<Poll, HomeViewModel>();
+            CreateMap<Poll, AddPollRequest>();
         }
     }
 }
