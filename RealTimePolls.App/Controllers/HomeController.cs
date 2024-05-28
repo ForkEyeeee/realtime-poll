@@ -8,23 +8,22 @@ namespace RealTimePolls.Controllers
 {
     public class HomeController : Controller
     {
-
-        private readonly IHomeRepository homeRepository;
+        private readonly IHomeService homeService;
         private readonly IMapper mapper;
 
         public HomeController(
-            IHomeRepository homeRepository,
+            IHomeService homeService,
             IMapper mapper
         )
         {
-            this.homeRepository = homeRepository;
+            this.homeService = homeService;
             this.mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var domainPolls = await homeRepository.Index();
+            var domainPolls = await homeService.Index();
 
             var homeViewModel = new List<HomeViewModel>();
 

@@ -9,11 +9,11 @@ namespace RealTimePolls.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly IAuthRepository authRepository;
+        private readonly IAuthService authService;
 
-        public AuthController(IAuthRepository authRepository)
+        public AuthController(IAuthService authService)
         {
-            this.authRepository = authRepository;
+            this.authService = authService;
         }
 
         public async Task Login()
@@ -40,7 +40,7 @@ namespace RealTimePolls.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme
                 );
 
-                await authRepository.GoogleResponse(result);
+                await authService.GoogleResponse(result);
 
                 return RedirectToAction("Index", "Home", new { area = "" });
 

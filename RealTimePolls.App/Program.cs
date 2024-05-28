@@ -54,11 +54,11 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
 }
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IHomeRepository, SQLHomeRepository>();
-builder.Services.AddScoped<IPollsApiRepository, SQLPollsApiRepository>();
-builder.Services.AddScoped<IPollRepository, SQLPollRepository>();
-builder.Services.AddScoped<IHelpersRepository, SQLHelpersRepository>();
-builder.Services.AddScoped<IAuthRepository, SQLAuthRepository>();
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IPollsApiRepository, PollsApiRepository>();
+builder.Services.AddScoped<IPollService, PollService>();
+builder.Services.AddScoped<IHelpersService, HelpersService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddSignalR();

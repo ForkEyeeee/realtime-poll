@@ -8,12 +8,12 @@ using SignalRChat.Hubs;
 
 namespace RealTimePolls.Repositories
 {
-    public class SQLHelpersRepository : IHelpersRepository
+    public class HelpersService : IHelpersService
     {
         private readonly RealTimePollsDbContext dbContext;
         private readonly IHubContext<PollHub> myHubContext;
 
-        public SQLHelpersRepository(RealTimePollsDbContext dbContext, IHubContext<PollHub> myHubContext)
+        public HelpersService(RealTimePollsDbContext dbContext, IHubContext<PollHub> myHubContext)
         {
             this.dbContext = dbContext;
             this.myHubContext = myHubContext;

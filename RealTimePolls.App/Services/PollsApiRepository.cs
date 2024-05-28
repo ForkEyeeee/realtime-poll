@@ -10,12 +10,12 @@ using RealTimePolls.Models.ViewModels;
 
 namespace RealTimePolls.Repositories
 {
-    public class SQLPollsApiRepository : IPollsApiRepository
+    public class PollsApiRepository : IPollsApiRepository
     {
         private readonly RealTimePollsDbContext dbContext;
         private readonly IMapper mapper;
 
-        public SQLPollsApiRepository(RealTimePollsDbContext dbContext, IMapper mapper)
+        public PollsApiRepository(RealTimePollsDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;

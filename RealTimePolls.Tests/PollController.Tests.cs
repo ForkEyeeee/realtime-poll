@@ -56,7 +56,7 @@ namespace PollUnitTests
             Assert.NotNull(model);
         }
 
-        private class TestPollRepository : IPollRepository
+        private class TestPollRepository : IPollService
         {
             public Task<PollViewModelDomain> GetPollAsync(string pollTitle, int pollId, int userId)
             {

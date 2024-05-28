@@ -8,12 +8,12 @@ using RealTimePolls.Models.ViewModels;
 
 namespace RealTimePolls.Repositories
 {
-    public class SQLPollRepository : IPollRepository
+    public class PollService : IPollService
     {
         private readonly RealTimePollsDbContext dbContext;
-        private readonly IHelpersRepository helpersRepository;
+        private readonly IHelpersService helpersRepository;
 
-        public SQLPollRepository(RealTimePollsDbContext dbContext, IHelpersRepository helpersRepository)
+        public PollService(RealTimePollsDbContext dbContext, IHelpersService helpersRepository)
         {
             this.dbContext = dbContext;
             this.helpersRepository = helpersRepository;

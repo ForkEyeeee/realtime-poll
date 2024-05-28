@@ -2,7 +2,7 @@
 
 namespace RealTimePolls.Repositories
 {
-    public interface IHelpersRepository
+    public interface IHelpersService
     {
         Task<int> GetUserId(AuthenticateResult result);
 

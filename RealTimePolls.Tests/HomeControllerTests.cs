@@ -14,14 +14,14 @@ namespace HomeUnitTests
     public class HomeControllerTests
     {
         private readonly HomeController _homeController;
-        private readonly IHomeRepository _homeRepository;
+        private readonly IHomeService _homeRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<HomeController> _logger;
 
         public HomeControllerTests()
         {
             _logger = A.Fake<ILogger<HomeController>>();
-            _homeRepository = A.Fake<IHomeRepository>();
+            _homeRepository = A.Fake<IHomeService>();
             _mapper = A.Fake<IMapper>();
 
             _homeController = new HomeController(_homeRepository, _mapper);

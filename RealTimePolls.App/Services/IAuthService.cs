@@ -2,7 +2,7 @@
 
 namespace RealTimePolls.Repositories
 {
-    public interface IAuthRepository
+    public interface IAuthService
     {
         Task GoogleResponse(AuthenticateResult result);
     }

@@ -5,11 +5,11 @@ using RealTimePolls.Models.Domain;
 
 namespace RealTimePolls.Repositories
 {
-    public class SQLHomeRepository : IHomeRepository
+    public class HomeService : IHomeService
     {
         private readonly RealTimePollsDbContext dbContext;
 
-        public SQLHomeRepository(
+        public HomeService(
             RealTimePollsDbContext dbContext
         )
         {

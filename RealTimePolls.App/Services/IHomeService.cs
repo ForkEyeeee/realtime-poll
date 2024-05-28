@@ -3,7 +3,7 @@
 
 namespace RealTimePolls.Repositories
 {
-    public interface IHomeRepository
+    public interface IHomeService
     {
         Task<List<Poll>> Index();
     }

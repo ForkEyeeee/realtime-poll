@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace RealTimePolls.Repositories
 {
-    public class SQLAuthRepository : IAuthRepository
+    public class AuthService : IAuthService
     {
         private readonly RealTimePollsDbContext dbContext;
 
-        public SQLAuthRepository(RealTimePollsDbContext dbContext
+        public AuthService(RealTimePollsDbContext dbContext
         )
         {
             this.dbContext = dbContext;
